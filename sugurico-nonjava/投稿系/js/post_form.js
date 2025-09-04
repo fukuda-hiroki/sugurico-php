@@ -57,7 +57,11 @@ document.addEventListener('DOMContentLoaded', async () =>{
             
             // --- 3. タグをDBに保存 ---
             const tagInputs = document.querySelectorAll('#tag-container input.tag-input');
-            const tags = Array.from(tagInputs).map(input => input.value.trim()).filter(Boolean);
+            const tagValues = Array.from(tagInputs).map(input => input.value.trim()).filter(Boolean);
+
+            // 配列から重複したタグを自動的に除去
+            const tags = [...new Set(tagValues)];
+            
             if (tags.length > 0) {
                 await saveTags(savedForum.forum_id, tags);
 
