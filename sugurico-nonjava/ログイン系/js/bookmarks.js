@@ -6,21 +6,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const postsListContainer = document.getElementById('bookmarks-list');
     const paginationContainer = document.getElementById('pagination-container');
 
-    // --- 1. ログイン状態とプレミアム状態をチェック ---
+    // --- 1. ログイン状態をチェック ---
     const { data: { session } } = await supabaseClient.auth.getSession();
+
     if (!session) {
         // ログインしていなければ、ログインページにリダイレクト
         window.location.href = 'login.html';
         return;
     }
+
     const currentUser = session.user;
 
-    // プレミアム状態をチェック（ブックマーク機能はプレミアム限定なので）
-    const { data: profile } = await supabaseClient.from('users').select('premium_expires_at').eq('id', currentUser.id).single();
-    const isPremium = profile && profile.premium_expires_at && new Date(profile.premium_expires_at) > new Date();
+    // ★ 共通関数を呼び出すように変更
+    const isPremium = await isCurrentUserPremium();
 
     if (!isPremium) {
-        // プレミアム会員でない場合、プレミアム紹介ページへリダイレクト
         document.querySelector('main').innerHTML = '<h1>アクセス権がありません</h1><p>この機能はプレミアム会員限定です。</p>';
         return;
     }
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         `;
     }
 
-function renderPagination(totalItems, currentPage, itemsPerPage) {
+    function renderPagination(totalItems, currentPage, itemsPerPage) {
         // ★ 変数名を totalPages に修正
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         if (totalPages <= 1) {

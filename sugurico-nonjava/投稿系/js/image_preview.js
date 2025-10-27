@@ -23,41 +23,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    /**
-     * Supabaseに問い合わせてプレミアム状態を判定する関数
-     */
-    async function checkPremiumStatus() {
-        // 1. 現在のログインユーザー情報を取得
-        const { data: { user } } = await supabaseClient.auth.getUser();
-
-        // 2. ログインしていなければプレミアムではない
-        if (!user) {
-            return false;
-        }
-
-        // 3. 'premium'テーブルからユーザーの情報を取得
-        const { data: premium, error } = await supabaseClient
-            .from('premium')
-            .select('status, limit_date')
-            .eq('id', user.id)
-            .single(); // ユーザーIDが一致するレコードを1件だけ取得
-
-        if (error || !premium) {
-            // レコードが存在しない、または取得時にエラーが発生した場合はプレミアムではない
-            return false;
-        }
-
-        // 4. ステータスが 'active' で、かつ有効期限が切れていないかチェック
-        const isActive = premium.status === 'active';
-        const isNotExpired = new Date(premium.limit_date) > new Date();
-
-        return isActive && isNotExpired;
-    }
-
+    // ★ 共通関数を呼び出すように変更
     let currentObjectUrls = [];
 
-    // ★ プレミアム機能の判定を、Supabaseに問い合わせる関数呼び出しに変更
-    const isPremium = await checkPremiumStatus();
+    // ★ 共通関数を呼び出すように変更
+    const isPremium = await isCurrentUserPremium(); 
     const maxImages = isPremium ? 6 : 3;
     maxImagesCountSpan.textContent = maxImages;
 

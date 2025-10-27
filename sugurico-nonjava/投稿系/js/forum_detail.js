@@ -20,24 +20,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        // --- 3. 必要なデータを並行して取得 ---
-        let isPremium = false;
-        let isBookmarked = false;
+            // --- 3. 必要なデータを並行して取得 ---
+            
+            // ★ isPremium の判定を共通関数に置き換え
+            const isPremium = currentUser ? await isCurrentUserPremium() : false;
 
-        // ログインしている場合のみ、プレミアム情報とブックマーク情報を取得
-        if (currentUser) {
-            const [profileRes, bookmarkRes] = await Promise.all([
-                supabaseClient.from('users').select('premium_expires_at').eq('id', currentUser.id).single(),
-                supabaseClient.from('bookmark').select('*').eq('user_id', currentUser.id).eq('post_id', forumId).maybeSingle()
-            ]);
+            let isBookmarked = false;
 
-            if (profileRes.data && profileRes.data.premium_expires_at && new Date(profileRes.data.premium_expires_at) > new Date()) {
-                isPremium = true;
+            // ログインしている場合のみブックマーク情報を取得
+            if (currentUser) {
+                // ▼▼▼ Promise.allからプレミアム判定を削除 ▼▼▼
+                const { data: bookmarkRes } = await supabaseClient
+                    .from('bookmark')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .eq('post_id', forumId)
+                    .maybeSingle();
+                
+                if (bookmarkRes) {
+                    isBookmarked = true;
+                }
             }
-            if (bookmarkRes.data) {
-                isBookmarked = true;
-            }
-        }
 
         // 投稿関連のデータを取得
         const [postRes, tagsRes, imagesRes, commentsRes] = await Promise.all([

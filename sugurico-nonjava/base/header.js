@@ -167,5 +167,39 @@ function escapeHTML(str) {
     });
 }
 
+/**
+ * ログイン中のユーザーが有効なプレミアム会員か判定する共通関数
+ * @returns {Promise<boolean>} プレミアムならtrue, それ以外はfalse
+ */
+async function isCurrentUserPremium() {
+    // Supabaseクライアントはheader.jsで既に初期化済み
+    
+    // 1. 現在のログインユーザー情報を取得
+    const { data: { user } } = await supabaseClient.auth.getUser();
+
+    // 2. ログインしていなければプレミアムではない
+    if (!user) {
+        return false;
+    }
+
+    // 3. 'premium'テーブルからユーザーの情報を取得
+    const { data: premium, error } = await supabaseClient
+        .from('premium')
+        .select('status, limit_date')
+        .eq('id', user.id)
+        .single();
+
+    if (error || !premium) {
+        // レコードが存在しない、または取得時にエラーが発生した場合
+        return false;
+    }
+
+    // 4. ステータスが 'active' で、かつ有効期限が切れていないかチェック
+    const isActive = premium.status === 'active';
+    const isNotExpired = new Date(premium.limit_date) > new Date();
+
+    return isActive && isNotExpired;
+}
+
 // --- 関数の実行 ---
 setupHeaderAndFooter();
