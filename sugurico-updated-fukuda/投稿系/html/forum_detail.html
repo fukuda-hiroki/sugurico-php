@@ -1,0 +1,40 @@
+<!--forum_detail.html-->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投稿詳細 | スグリコ</title>
+    <link rel="stylesheet" href="../../base/style.css">
+    <link rel="stylesheet" href="../css/forum_detail.css">
+</head>
+
+<body>
+    <header id="header-container"></header>
+    <main>
+        <!-- JSでここに投稿内容が挿入される -->
+        <article id="post-detail-container" class="post-detail">
+            <p>読み込み中...</p>
+        </article>
+        <hr>
+        <section class="comment-section">
+
+            <!-- ログイン時のみJSで表示されるコメントフォーム -->
+            <div id="comment-form-container"></div>
+            <h2>コメント</h2>
+            <!-- コメント一覧を表示するエリア -->
+            <div id="comment-list-container" class="comment-list">
+                <p>読み込み中...</p>
+            </div>
+        </section>
+    </main>
+    <footer id="footer-container"></footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../base/util.js"></script>
+    <script src="../../base/header.js"></script>
+    <script src="../js/forum_detail.js" defer></script>
+    <script src="../../base/escape.js"></script>
+</body>
+
+</html>

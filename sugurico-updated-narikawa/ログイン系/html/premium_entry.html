@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プレミアム会員登録 - Sugurico</title>
+    <link rel="stylesheet" href="../../base/style.css">
+    <link rel="stylesheet" href="../css/premium.css"> <!-- プレミアムページ専用CSS -->
+</head>
+
+<body>
+    <!-- 共通ヘッダー -->
+    <header id="header-container"></header>
+
+    <main>
+        <h1>プレミアム会員登録</h1>
+
+        <!-- ▼▼▼ 本人確認エリア ▼▼▼ -->
+        <div id="password-auth-section">
+            <h2>ステップ1: ご本人様確認</h2>
+            <p>セキュリティのため、現在のパスワードを入力してください。</p>
+            <div id="auth-message-area" class="message" style="display: none;"></div>
+
+            <div class="form-group">
+                <input type="password" id="password-input" placeholder="パスワード" required>
+                <button type="button" id="auth-button">認証する</button>
+            </div>
+            <a href="mypage.html">マイページに戻る</a>
+        </div>
+
+        <!-- ▼▼▼ 支払い情報エリア (最初は非表示) ▼▼▼ -->
+        <div id="payment-section" style="display: none;">
+            <h2>ステップ2: プラン選択とお支払い</h2>
+            <div class="premium-features">
+                <h3>プレミアム特典</h3>
+                <ul>
+                    <li>広告非表示</li>
+                    <li>投稿の編集履歴閲覧</li>
+                    <li>限定タグの利用</li>
+                    <li>優先サポート</li>
+                </ul>
+            </div>
+
+            <div class="form-group">
+                <label for="plan-select">プランを選択</label>
+                <select id="plan-select">
+                    <option value="monthly">月額プラン - 500円/月</option>
+                    <option value="yearly">年額プラン - 5,000円/年 (2ヶ月分お得!)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>カード情報を入力 (シミュレーション)</label>
+                <input type="text" id="card-number" placeholder="カード番号">
+                <input type="text" id="expiry-date" placeholder="有効期限 (MM/YY)">
+                <input type="text" id="cardholder-name" placeholder="カード名義人">
+                <input type="text" id="cvc" placeholder="セキュリティコード (CVC)">
+            </div>
+
+            <button type="button" id="subscribe-button">この内容で登録する</button>
+            <div id="subscription-status" class="message" style="display: none;"></div>
+        </div>
+    </main>
+
+    <!-- 共通フッター -->
+    <footer id="footer-container"></footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../base/header.js"></script>
+    <script src="../js/premium_entry.js" defer></script>
+    <script src="../../base/util.js"></script>
+    <script src="../../base/escape.js"></script>
+</body>
+
+</html>

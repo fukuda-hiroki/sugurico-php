@@ -1,0 +1,173 @@
+/* --- forum_detail.php --- */
+/* --- 投稿詳細ページのレイアウト --- */
+main {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0, 1);
+}
+
+.post-detail h1 {
+    font-size: 2em;
+    margin-bottom: 0.5em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5em;
+}
+
+.post-meta {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* --- 投稿画像 --- */
+.post-images-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.post-image-wrapper {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.post-image:hover {
+    transform: scale(1.1);
+}
+
+/* --- 投稿本文 --- */
+.post-content {
+    font-size: 1.1em;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    /* 改行とスペースをそのまま表示 */
+    margin-bottom: 20px;
+}
+
+/* --- 投稿タグ --- */
+.post-tags {
+    margin-bottom: 20px;
+}
+
+.tag-link {
+    display: inline-block;
+    background-color: #e9ecef;
+    color: #495957;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    margin-right: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.tag-link:hover {
+    background-color: #ced4da;
+}
+
+/* --- コメントセクション --- */
+.comment-section {
+    margin-top: 30px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.comment-section h2 {
+    font-size: 1.5em;
+}
+
+/* コメント投稿フォーム */
+#comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    resize: vertical;
+}
+
+#comment-form button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#comment-form button:hover {
+    background-color: #0056b3;
+}
+
+/* コメント一覧 */
+.comment-list {
+    overflow-y: scroll;
+    max-height: 400px;
+}
+
+.comment-item {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 15px 0;
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-item strong {
+    font-weight: bold;
+    color: 333;
+}
+
+.comment-item p {
+    margin: 5px 0;
+}
+
+.comment-item small {
+    font-size: 0.8em;
+    color: #888;
+}
+
+/* --- レスポンシブ設定 (画面幅が768px以下) --- */
+@media (max-width: 768px) {
+
+    /* --- メインコンテンツ --- */
+    main {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .post-detail h1 {
+        font-size: 1.5em;
+        /* タイトルの文字サイズを少し小さく */
+    }
+
+    /* --- 投稿画像 --- */
+    .post-images-container {
+        justify-content: center;
+        /* 画像を中央揃えに */
+    }
+
+    .post-image-wrapper {
+        width: calc(50% - 5px);
+        /* 2カラムで表示されるように調整 */
+        height: auto;
+        aspect-ratio: 1 / 1;
+        /* 正方形を保つ */
+    }
+}

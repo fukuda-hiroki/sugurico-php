@@ -1,0 +1,52 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スグリコ - メインページ</title>
+    <link rel="stylesheet" href="../../base/style.css">
+</head>
+
+<body>
+    <!-- ヘッダーは、共通のheader.htmlをJSで読み込むか、静的に記述 -->
+    <header id="header-container"></header>
+
+    <main>
+        <h1>ようこそ、スグリコへ！</h1>
+
+        <div class="posts-container">
+            <!-- 「あなたの投稿」を表示するエリア（ログイン時のみ表示） -->
+            <section id="my-posts-section" class="posts-column" style="display: none;">
+                <h2>あなたの投稿</h2>
+                <div id="my-posts-list" class="post-list">
+                    <!-- JSでここに投稿が挿入される -->
+                </div>
+            </section>
+
+            <section id="all-posts-section" class="posts-column">
+                <h2>皆さんの投稿</h2>
+                <div id="all-posts-list" class="post-list">
+                    <!-- JSでここに投稿が挿入される -->
+                </div>
+            </section>
+        </div>
+    </main>
+    <!-- 新規投稿ボタン（ログイン時のみ表示） -->
+
+    <a href="../../投稿系/html/forum_input.html" id="new-post-button" class="floating-button" style="display: none;">+</a>
+
+    <!-- 共通フッター -->
+    <footer id="footer-container"></footer>
+
+    <!-- Supabaseライブラリと、このページ専用のJSを読み込む -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../base/util.js"></script>
+    <script src="../../base/header.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../../base/escape.js"></script>
+    <!-- header.jsのような共通JSも必要なら読み込む -->
+</body>
+
+</html>

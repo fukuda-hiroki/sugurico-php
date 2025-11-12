@@ -1,0 +1,61 @@
+<!--update.html-->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登録情報変更 | スグリコ</title>
+    <link rel="stylesheet" href="../../base/style.css">
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+
+<body>
+    <!-- 共通ヘッダー -->
+    <header id="header-container"></header>
+    <main class="form-container">
+        <h1>登録情報変更</h1>
+        <div id="message-area" class="message" style="display: none;">
+
+        </div>
+        <form id="update-form">
+            <div class="form-group">
+                <label for="nameInput">名前</label>
+                <input type="text" name="name" id="nameInput">
+            </div>
+            <div class="form-group">
+                <label for="usernameInput">ユーザー名</label>
+                <input type="text" name="user_name" id="usernameInput" required>
+            </div>
+            <div class="form-group">
+                <label for="loginIdInput">ログインID</label>
+                <input type="text" name="login_id" id="loginIdInput" required>
+            </div>
+            <div class="form-group">
+                <label for="emailInput">メールアドレス</label>
+                <input type="email" name="email" id="emailInput" disabled>
+                <!-- メールアドレスは変更不可が一般的 -->
+            </div>
+            <hr>
+            <p>パスワードを変更する場合のみ入力してください</p>
+            <div class="form-group">
+                <label for="passwordInput">新しいパスワード</label>
+                <input type="password" name="password" id="passwordInput" placeholder="変更しない場合は空のまま">
+            </div>
+            <button type="submit" id="submitButton" class="form-button">更新する</button>
+        </form>
+
+        <hr>
+        <div class="form-group" style="text-align: center;">
+            <p style="color: #dc3545;">注意: アカウントを削除すると、全ての投稿とデータが完全に失われ、元に戻すことはできません。</p>
+            <button type="button" id="delete-account-button" class="form-button" style="background-color: #dc3545;">アカウントを完全に削除する</button>
+        </div>
+    </main>
+    <footer id="footer-container"></footer>
+    <!-- JSライブラリと、このページ専用のJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../base/header.js" defer></script>
+    <script src="../js/update.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,199 @@
+body{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding:0;
+    background-color: #e2e2e2;;
+    color: #333;
+}
+
+main{
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+a{
+    color: #007bFF;
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: underline;
+}
+
+h1, h2, h3{
+    margin-top: 0;
+}
+
+header {
+    background-color: #fff;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+header h1 a {
+    color:inherit;
+    text-decoration: none;
+}
+
+header nav  a {
+    margin-left: 15px;
+}
+
+.post-list .post-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    transition: box-shadow 0.2s;
+}
+
+.post-list .post-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-item .post-list a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.post-list h3 {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.post-list .post-item {
+    display: flex; /* メイン部分とボタンを横並びに */
+    justify-content: space-between; /* 両端に寄せる */
+    align-items: center; /* 上下中央揃え */
+    gap: 15px;
+}
+
+.post-item-main {
+    flex-grow: 1; /* 残りのスペースをすべて使う */
+}
+
+.post-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.post-item-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0; /* ボタンが縮まないように */
+}
+
+/* --- 詳細検索フォーム --- */
+.advanced-search-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-bottom: 20px;
+
+    /* PC表示 (デフォルト): Flexboxで横1列に */
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* 各検索アイテム */
+.search-item{
+    display: flex;
+    flex-direction: column; /* ラベルと入力欄を縦に並べる */
+}
+
+.search-item label {
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+.search-item input,
+.search-item select {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* キーワード入力欄だけ幅を広げる */
+.search-item-keyword {
+    flex-grow: 1; /* 残りのスペースをすべて使う */
+}
+
+/* ボタンの縦位置を調整 */
+.search-item-button {
+    align-self: flex-end; /* 自分だけ一番下に揃える */
+}
+
+.action-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+    text-align: center;
+}
+
+.action-button.edit-button {
+    background-color: #007bff; /* 青 */
+}
+.action-button.edit-button:hover {
+    background-color: #0056b3;
+}
+
+.action-button.delete-button {
+    background-color: #dc3545; /* 赤 */
+}
+.action-button.delete-button:hover {
+    background-color: #c82333;
+}
+
+/* スマホ表示 (768px以下) */
+
+@media screen and (max-width: 768px) {
+    .advanced-search-container {
+        flex-wrap: wrap;
+    }
+
+    .search-item {
+        width: calc(50% - 10px);
+    }
+
+    .search-item-keyword {
+        width: 100%;
+    }
+
+    .post-list .post-item {
+        flex-direction: column; /* 縦積みに変更 */
+        align-items: flex-start; /* 左揃えに */
+    }
+
+    .post-item-actions {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .action-button {
+        flex-grow: 1; /* ボタンが利用可能なスペースを分け合う */
+    }
+}

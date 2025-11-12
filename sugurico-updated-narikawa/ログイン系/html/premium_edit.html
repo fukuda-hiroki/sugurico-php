@@ -1,0 +1,65 @@
+<!-- premium_edit.html -->
+<!DOCTYPE html>
+<html lang="jp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プレミアム会員情報</title>
+    <link rel="stylesheet" href="../../base/style.css">
+    <link rel="stylesheet" href="../css/premium.css">
+</head>
+
+<body>
+    <header id="header-container"></header>
+    <main>
+        <h1>プレミアム会員情報</h1>
+
+        <!-- 現在の契約情報を表示するエリア -->
+        <div id="current-plan-section">
+            <h2>現在のご契約プラン</h2>
+            <div id="status-message-area" style="display: none;"></div>
+            <p>プラン: <span id="current-plan">読み込み中...</span></p>
+            <p>ステータス: <span id="current-status">読み込み中...</span></p>
+            <p>次回の更新日(有効期限): <span id="next-billing-date">読み込み中...</span></p>
+        </div>
+        <hr>
+
+        <!-- プラン変更・カード情報更新エリア -->
+        <div id="edit-section">
+            <h2>プラン・お支払情報の変更</h2>
+            <div class="form-group">
+                <label for="plan-select">新しいプランを選択</label>
+                <select id="plan-select">
+                    <option value="monthly">月額プラン - 500円/月</option>
+                    <option value="yearly">年額プラン - 5000円/年</option>
+                </select>
+                <button type="button" id="update-plan-button" class="change-button">プランを変更する</button>
+            </div>
+            <div class="form-group">
+                <label>新しいカード情報を入力(シミュレーション)</label>
+                <input type="text" id="card-number" placeholder="カード番号">
+                <input type="text" id="expiry-date" placeholder="有効期限(MM/YY)">
+                <button type="button" id="update-card-button" class="change-button">カード情報を更新する</button>
+            </div>
+            <div id="edit-message-area" class="message" style="display: none;"></div>
+        </div>
+        <hr>
+
+        <div id=cancel-section>
+            <h2>解約手続き</h2>
+            <p>プレミアム会員を解約すると、次回の更新日をもって特典が利用できなくなります。</p>
+            <button type="button" id="cancel-subscription-button" class="danger-button">プレミアム会員を解約する</button>
+        </div>
+    </main>
+    <footer id="footer-container"></footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../base/header.js"></script>
+    <script src="../js/premium_edit.js" defer></script>
+    <script src="../../base/util.js"></script>
+    <script src="../../base/escape.js"></script>
+</body>
+
+</html>

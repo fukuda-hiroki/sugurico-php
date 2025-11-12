@@ -1,0 +1,88 @@
+<!-- search.html -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>検索結果 | スグリコ</title>
+    <link rel="stylesheet" href="../../base/style.css">
+</head>
+
+<body>
+    <!-- 共通ヘッダー -->
+    <header id="header-container">
+
+    </header>
+    <main>
+        <!-- JSでここに「〇〇の検索結果」と表示 -->
+        <h1 id="search-title">検索結果</h1><button type="button" id="toggle-search-button">詳細検索</button>
+        <div id="advanced-search-form" class="advanced-search-container" style="display: none;">
+            <!-- 1. キーワード入力 (タイトル/本文) -->
+            <div class="search-item">
+                <label for="keyword-input">キーワード:</label>
+                <input type="text" id="keyword-input" placeholder="タイトルか本文">
+            </div>
+
+            <!-- 2. 投稿者名で絞り込み -->
+            <div class="search-item">
+                <label for="author-input">投稿者名:</label>
+                <input type="text" id="author-input" placeholder="ユーザー名">
+            </div>
+
+            <!-- 3. タグ名で絞り込み -->
+            <div class="search-item">
+                <label for="tag-input">タグ:</label>
+                <input type="text" id="tag-input" placeholder="タグ名">
+            </div>
+
+            <!-- 4. 期間で絞り込み -->
+            <div class="search-item">
+                <label for="period-select">投稿期間:</label>
+                <select id="period-select">
+                    <option value="all">指定なし</option>
+                    <option value="1day">1日以内</option>
+                    <option value="3days">3日以内</option>
+                    <option value="1week">1週間以内</option>
+                    <option value="1month">1ヶ月以内</option>
+                    <option value="1year">1年以内</option>
+                </select>
+            </div>
+
+            <!-- 5. 並び順 -->
+            <div class="search-item">
+                <label for="sort-select">並び順:</label>
+                <select id="sort-select">
+                    <option value="desc">新しい順</option>
+                    <option value="asc">古い順</option>
+                </select>
+            </div>
+
+            <!-- 絞り込みボタン -->
+            <div class="search-item">
+                <button type="button" id="filter-button">絞り込み検索</button>
+            </div>
+        </div>
+        <p id="search-count"></p>
+
+        <!-- 投稿一覧を表示するエリア -->
+        <section id="posts-list-container" class="post-list">
+            <p>検索中...</p>
+        </section>
+
+        <!-- ページネーションのリンクを表示するエリア -->
+        <nav id="pagination-container" class="pagination"></nav>
+    </main>
+
+    <!-- 共通フッター -->
+    <footer id="footer-container"></footer>
+
+    <!-- JSライブラリと、このページ専用のJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../base/util.js"></script>
+    <script src="../../base/header.js"></script>
+    <script src="../js/search.js"></script>
+    <script src="../../base/escape.js"></script>
+</body>
+
+</html>

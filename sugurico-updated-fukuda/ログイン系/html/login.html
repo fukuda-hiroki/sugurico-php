@@ -1,0 +1,54 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン | スグリコ</title>
+    <link rel="stylesheet" href="../../base/style.css">
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+
+<body>
+    <header id="header-container"></header>
+    <main class="form-container">
+        <h1>ログイン</h1>
+
+        <!-- エラー/成功メッセージを表示するための領域 -->
+
+        <div id="message-area" style="display: none;"></div>
+
+        <!-- フォームにはidを付け、actionは不要 -->
+        <form id="login-form">
+            <div class="form-group">
+                <label for="emailInput">メールアドレスまたはログインID</label>
+
+                <!-- ★Supabaseはメールアドレスでログインするのが基本 -->
+                <input type="text" name="email" id="emailInput" required>
+            </div>
+            <div class="form-group">
+                <label for="passwordInput">パスワード</label>
+                <input type="password" name="password" id="passwordInput" required>
+            </div>
+            <button type="submit" id="loginButton" class="form-button">ログイン</button>
+        </form>
+<!-- ... フォームの下あたり ... -->
+        <div class="form-footer">
+            <a href="register.html">新規登録はこちら</a>
+            <a href="password_reset_request.html">パスワードを忘れた方はこちら</a>
+        </div>
+    </main>
+
+    <!-- 共通フッター -->
+    <footer id="footer-container"></footer>
+
+    <!-- ▼▼▼ ここを追記 ▼▼▼ -->
+    <!-- 1. Supabaseの公式ライブラリを読み込む -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- 3. 作成した../js/login.jsを "defer" 付きで読み込む -->
+    <script src="../../base/header.js"></script>
+    <script src="../js/login.js" defer></script>
+</body>
+
+</html>

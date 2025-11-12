@@ -1,0 +1,102 @@
+<!--forum_input.html-->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規投稿 | スグリコ</title>
+    <link rel="stylesheet" href="../../base/style.css">
+    <link rel="stylesheet" href="../css/forum_input.css">
+</head>
+
+<body>
+    <!-- 共通ヘッダー -->
+    <header id="header-container"></header>
+    <main class="form-container">
+        <h1>新しい記録を投稿</h1>
+        <div id="message-area" class="message" style="display: none;"></div>
+
+        <form id="post-form">
+            <!-- タイトル -->
+            <div class="form-group">
+                <label for="titleInput">タイトル</label>
+                <input type="text" id="titleInput" required>
+            </div>
+            <!-- 本文 -->
+            <div class="form-group">
+                <label for="textInput">本文</label>
+                <textarea id="textInput" rows="10"></textarea>
+            </div>
+            <!-- 公開期限 -->
+            <div class="form-group">
+                <label for="expireSelect">公開期限</label>
+                <small id="current-expiration-info" style="display: none; color: gray;"></small>
+                <select id="expireSelect">
+                    <option value="private">非公開</option>
+                    <option value="1day">1日後</option>
+                    <option value="2days">2日後</option>
+                    <option value="3days">3日後</option>
+                    <option value="4days">4日後</option>
+                    <option value="5days">5日後</option>
+                    <option value="6days">6日後</option>
+                    <option value="7days">7日後</option>
+                    <option value="permanent" selected>無期限</option>
+                </select>
+                <!-- プレミアム機能は後でJSで表示制御 -->
+
+                <div id="premium-expire-input-area" style="display: none;">
+                    <input type="datetime-local" id="premiumExpireInput"><label for="isPrivateCheckbox">非公開にする<input type="checkbox" id="isPrivateCheckbox"></label>
+                    
+                </div>
+                <p style="font-size: 0.8em; color: gray; margin-top: 5px;">
+                        分単位で日時を指定できます。空欄の場合は「無期限」になります。
+                    </p>
+            </div>
+            <!-- 画像添付 -->
+            <div class="form-group">
+                <label>画像 (最大<span id="max-images-count">3</span>枚まで)</label>
+
+                <!-- 画像入力欄を管理するコンテナ -->
+                <div id="image-input-container">
+                    <div class="image-input-wrapper">
+                        <input type="file" name="images[]" class="image-input" accept="image/*">
+                    </div>
+                </div>
+                <!-- 操作ボタン -->
+                <div class="image-buttons" style="margin-top: 10px;">
+                    <button type="button" id="add-image-button" class="insert-button">画像を追加</button>
+                    <button type="button" id="remove-image-button" class="delete-button">最後の画像を削除</button>
+                </div>
+                <!-- 画像プレビューを表示するエリア -->
+                <div id="image-preview-container"></div>
+            </div>
+
+
+            <!-- タグ -->
+            <div class="form-group">
+                <label>タグ (最大10個まで)</label>
+                <div id="tag-container">
+                    <div class="tag-input-wrapper">
+                        <input type="text" name="tags[]" class="tag-input" placeholder="タグを入力">
+                    </div>
+                    <div class="tag-buttons">
+                        <button type="button" id="insert-tags" class="insert-button">追加</button>
+                        <button type="button" id="delete-tags" class="delete-button">削除</button>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" id="submitButton" class="submit-button">投稿する</button>
+        </form>
+    </main>
+    <!-- 共通フッター -->
+    <footer id="footer-container"></footer>
+    <!-- JSライブラリと、このページ専用のJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../base/header.js" defer></script>
+    <script src="../js/image_preview.js" defer></script><!-- 画像プレビュー用JS -->
+    <script src="../js/tag_form_supabase.js" defer></script><!-- タグ入力用JS -->
+    <script src="../js/post_forum.js" defer></script><!-- このページのメインJS -->
+</body>
+
+</html>

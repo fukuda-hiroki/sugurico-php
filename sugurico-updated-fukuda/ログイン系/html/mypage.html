@@ -1,0 +1,79 @@
+<!--mypage.html-->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイページ | スグリコ</title>
+    <link rel="stylesheet" href="../../base/style.css">
+</head>
+
+<body>
+    <!-- 共通ヘッダー -->
+    <header id="header-container"></header>
+    <main>
+        <!-- JSでここに「〇〇さんの投稿一覧」と表示 -->
+        <h2 id="mypage-title">
+            あなたの投稿一覧
+        </h2>
+        <p>
+            <a href="update.html">登録情報を変更する</a>
+            <a href="bookmarks.html">ブックマーク一覧を見る</a>
+            <a href="block_list.html">ブロック中のユーザー管理</a>
+            <button type="button" id="toggle-search-button">詳細検索</button>
+            <a href="premium_entry.html">プレミアム機能</a>
+        </p>
+        <div id="advanced-search-form" class="advanced-search-container" style="display: none;">
+            <div class="search-item search-item-keyword">
+                <label for="search-keyword">キーワード:</label>
+                <input type="text" id="search-keyword">
+            </div>
+            <div class="search-item">
+                <label for="period-select">期間:</label>
+                <select id="period-select">
+                    <option value="all">指定なし</option>
+                    <option value="1day">1日以内</option>
+                    <option value="3days">3日以内</option>
+                    <option value="1week">1週間以内</option>
+                    <option value="1month">1ヶ月以内</option>
+                    <option value="1year">1年以内</option>
+                </select>
+            </div>
+            <div class="search-item">
+                <label for="sort-select">並び順:</label>
+                <select id="sort-select">
+                    <option value="desc">新しい順</option>
+                    <option value="asc">古い順</option>
+                </select>
+            </div>
+            <div class="search-item">
+                <label for="tag-select">タグ:</label>
+                <select id="tag-select">
+                    <option value="">すべてのタグ</option>
+                </select>
+            </div>
+            <div class="search-item search-item-button">
+                <button type="button" id="filter-button">絞り込み</button>
+            </div>
+        </div>
+        <hr>
+        <!-- 投稿一覧を表示するエリア -->
+        <div id="my-posts-list" class="post-list">
+            <!-- JSでここに投稿が挿入される -->
+            <p>読み込み中...</p>
+        </div>
+        <!-- ページネーションのリンクを表示するエリア -->
+        <nav id="pagination-container" class="pagination"></nav>
+    </main>
+    <!-- 共通フッター -->
+    <footer id="footer-container"></footer>
+    <!-- JSライブラリと、このページ専用のJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../base/header.js"></script>
+    <script src="../js/mypage.js" defer></script>
+    <script src="../../base/util.js"></script>
+    <script src="../../base/escape.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ブロック中のユーザー管理 | スグリコ</title>
+        <link rel="stylesheet" href="../../base/style.css">
+        <!-- mypage.cssを流用するとデザインが整いやすい -->
+        <link rel="stylesheet" href="../css/mypage.css">
+    </head>
+    <body>
+        <!-- 共通ヘッダー -->
+         <header id="header-container"></header>
+
+         <main>
+            <h1>ブロック中のユーザー管理</h1>
+            <p>ブロックを解除したいユーザーの「解除ボタン」を押してください</p>
+            <hr>
+
+            <!-- ブロック中のユーザー一覧を表示するエリア -->
+            <div id="blocked-users-list" class="post-list">
+                <p>読み込み中…</p>
+                <!-- JSでここにユーザーリストが挿入される -->
+            </div>
+         </main>
+
+        <!-- 共通フッター -->
+        <footer id="footer-container"></footer>
+
+        <!-- JSライブラリと、このページ専用のJS -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script src="../../base/header.js"></script>
+        <script src="../../base/escape.js"></script>
+        <script src="../js/block_list.js"></script>
+    </body>
+</html>
