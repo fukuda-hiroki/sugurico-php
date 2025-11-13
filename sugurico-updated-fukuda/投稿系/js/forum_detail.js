@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderPost(post, tags, images, isPremium, isBookmarked, isOwner) {
         const remainingTimeHTML = timeLeft(post.delete_date);
         const timeAgoHTML = timeAgo(post.created_at);
-        const tagsHTML = tags.map(tag => `<a href="../../メイン系/html/search.html?keyword=${encodeURIComponent(tag.tag_dic.tag_name)}&type=tag" class="tag-link">#${escapeHTML(tag.tag_dic.tag_name)}</a>`).join(' ');
+        const tagsHTML = tags.map(tag => `<a href="../../メイン系/html/search.html?terms=${encodeURIComponent(tag.tag_dic.tag_name)}&type=tag" class="tag-link">#${escapeHTML(tag.tag_dic.tag_name)}</a>`).join(' ');
         const imagesHTML = images.map(image => `<div class="post-image-wrapper"><img src="${image.image_url}" alt="投稿画像" class="post-image"></div>`).join('');
         
         let authorHTML = escapeHTML(post.users?.user_name || '不明');

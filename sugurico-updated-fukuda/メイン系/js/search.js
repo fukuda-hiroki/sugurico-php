@@ -21,11 +21,30 @@ document.addEventListener('DOMContentLoaded', () => {
     //  絞り込み検索を実行し、結果を描画するメイン関数
     function initializePage() {
         const urlParams = new URLSearchParams(window.location.search);
-        keywordInput.value = urlParams.get('keyword') || '';
-        authorInput.value = urlParams.get('') || '';
-        tagInput.value = urlParams.get('') || '';
-        periodSelect.value = urlParams.get('') || '';
-        sortSelect.value = urlParams.get('') || '';
+        console.log(urlParams.get('terms'), urlParams.get('type'));
+
+
+        const type = urlParams.get('type');
+        const searchTerms = urlParams.get('terms');
+        keywordInput.value = '';
+        authorInput.value = '';
+        tagInput.value = '';
+        periodSelect.value = '';
+        sortSelect.value = '';
+
+        switch (type) {
+            case 'title':
+                keywordInput.value = searchTerms;
+                break;
+            case 'text':
+                keywordInput.value = searchTerms;
+                break;
+            case 'tag':
+                tagInput.value = searchTerms;
+                break;
+            default:
+                break;
+        }
 
         setupEventListeners();
         performSearch(parseInt(urlParams.get('page')) || 1);
@@ -45,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // ログインユーザー情報を取得する処理を追加
-            const {data: { user }} = await supabaseClient.auth.getUser();
+            const { data: { user } } = await supabaseClient.auth.getUser();
             const currentUserId = user ? user.id : null; // 未ログイン時はnull
 
             //  フォームから現在の検索条件を取得
