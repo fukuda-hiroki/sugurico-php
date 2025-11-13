@@ -165,13 +165,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 submitButton.textContent = '更新中...';
                 await updatePost();
                 alert('投稿を更新しました。');
+                window.location.href = `../../投稿系/html/forum_detail.html?id=${editId}`;
             } else {
                 // --- 新規登録処理 ---
                 submitButton.textContent = '投稿中...';
                 await createPost();
                 alert('投稿が完了しました。');
+                window.location.href = '../../メイン系/html/index.html'
             }
-            window.location.href = '../../メイン系/html/index.html'
+            
         } catch (error) {
             console.error('投稿/更新エラー', error);
             alert(`処理に失敗しました。:{error.message}`);
