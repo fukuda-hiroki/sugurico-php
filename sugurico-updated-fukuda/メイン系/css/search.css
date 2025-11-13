@@ -1,0 +1,252 @@
+/* ===================================
+   検索ページ専用スタイル (search.css)
+   =================================== */
+
+/* base/style.cssのCSS変数を活用して統一感を出す */
+
+.search-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* 検索ヘッダー */
+.search-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+/* トグルボタン */
+.toggle-search-btn,
+#toggle-search-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.toggle-search-btn:hover,
+#toggle-search-button:hover {
+  background: var(--primary-hover-color);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.toggle-search-btn:active,
+#toggle-search-button:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+/* 詳細検索コンテナ */
+.advanced-search-container {
+  background: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  animation: slideDown 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 検索フィールドグリッド */
+.search-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-field,
+.search-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.search-field label,
+.search-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.label-icon {
+  font-size: 1rem;
+}
+
+.search-field input,
+.search-field select,
+.search-item input,
+.search-item select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: all var(--transition-base);
+  background: var(--content-bg-color);
+  box-sizing: border-box;
+}
+
+.search-field input:focus,
+.search-field select:focus,
+.search-item input:focus,
+.search-item select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-field input::placeholder,
+.search-item input::placeholder {
+  color: var(--text-light-color);
+}
+
+/* 検索アクションボタン */
+.search-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.filter-btn,
+#filter-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background: var(--success-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+}
+
+.filter-btn:hover,
+#filter-button:hover {
+  background: #27ae60;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.filter-btn:active,
+#filter-button:active {
+  transform: translateY(0);
+}
+
+/* 検索結果件数 */
+.search-count {
+  margin: 1rem 0 1.5rem;
+  font-size: 1rem;
+  color: var(--text-muted-color);
+  font-weight: 500;
+}
+
+/* ローディングテキスト */
+.loading-text {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted-color);
+  font-size: 1.1rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .search-main {
+    padding: 1rem 0.75rem;
+  }
+
+  .search-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-header h1 {
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .toggle-search-btn,
+  #toggle-search-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .search-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .advanced-search-container {
+    padding: 1rem;
+  }
+
+  .filter-btn,
+  #filter-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .toggle-search-btn,
+  .filter-btn,
+  #toggle-search-button,
+  #filter-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .search-field input,
+  .search-field select,
+  .search-item input,
+  .search-item select {
+    padding: 0.625rem;
+    font-size: 0.9rem;
+  }
+}
