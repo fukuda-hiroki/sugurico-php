@@ -1,97 +1,327 @@
-/* --- プレミアムページの基本レイアウト --- */
-/* mainタグのスタイルは、base/style.cssで定義されているものを流用 */
+/* ================================================================
+   プレミアム会員登録・管理ページ 専用スタイル
+   ================================================================ */
 
-h1, h2 {
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+/* メインコンテンツエリアの設定 */
+main {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 40px;
+    background-color: var(--content-bg-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
 }
 
-/* --- フォームグループ (共通) --- */
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--border-light-color);
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+}
+
+h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 16px;
+}
+
+main>hr {
+    margin: 40px 0;
+    border: none;
+    border-top: 2px solid var(--border-light-color);
+}
+
+/* フォームグループ */
 .form-group {
-    margin-bottom: 25px;
+    margin-bottom: 28px;
 }
+
 .form-group label {
     display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: var(--text-color);
 }
+
 .form-group input[type="text"],
 .form-group input[type="password"],
 .form-group select {
     width: 100%;
-    padding: 10px;
+    padding: 12px 16px;
     font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
     box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* --- メッセージ表示エリア --- */
-.message {
-    padding: 15px;
-    margin: 20px 0;
-    border-radius: 4px;
-    font-weight: bold;
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
-.message.success {
+
+.form-group input::placeholder {
+    color: var(--text-light-color);
+}
+
+/* プレミアム特典リスト */
+.premium-features {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 24px;
+    border-radius: var(--radius-md);
+    margin-bottom: 32px;
+    color: white;
+}
+
+.premium-features h3 {
+    color: white;
+    margin-bottom: 16px;
+    font-size: 20px;
+}
+
+.premium-features ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.premium-features li {
+    padding: 10px 0;
+    padding-left: 28px;
+    position: relative;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.premium-features li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+    font-size: 20px;
+    color: #ffd700;
+}
+
+/* メッセージエリア */
+.message,
+#message-area,
+#auth-message-area,
+#status-message-area,
+#edit-message-area,
+#subscription-status {
+    padding: 14px 18px;
+    margin: 20px 0;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.message.success,
+#message-area.success,
+#subscription-status.success {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
 }
-.message.error {
+
+.message.error,
+#message-area.error,
+#subscription-status.error {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
-.message.info {
+
+.message.info,
+#message-area.info,
+#subscription-status.info {
     background-color: #d1ecf1;
     color: #0c5460;
     border: 1px solid #bee5eb;
 }
 
-/* --- 特典リスト --- */
-.premium-features ul {
-    list-style: '✔ '; /* 先頭にチェックマーク */
-    padding-left: 20px;
-}
-.premium-features li {
-    margin-bottom: 10px;
+/* 現在の契約情報表示（premium_edit.html用） */
+#current-plan-section {
+    background-color: var(--card-bg-color);
+    padding: 24px;
+    border-radius: var(--radius-md);
+    margin-bottom: 32px;
 }
 
-/* --- 現在の契約情報 (editページ用) --- */
 #current-plan-section p {
-    font-size: 1.1em;
-}
-#current-plan-section span {
-    font-weight: bold;
-    margin-left: 10px;
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: var(--text-color);
 }
 
-/* --- ボタン --- */
-.change-button {
-    padding: 12px 25px;
+#current-plan-section span {
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-left: 12px;
+}
+
+/* ボタンスタイル */
+button[type="button"],
+.change-button,
+#auth-button,
+#subscribe-button,
+#update-plan-button,
+#update-card-button {
+    padding: 12px 24px;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 600;
     color: white;
     background-color: var(--primary-color);
     border: none;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: background-color 0.2s;
-}
-.change-button:hover {
-    background-color: var(--primary-hover-color);
-}
-.change-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+    transition: all 0.2s ease;
+    width: 100%;
+    margin-top: 8px;
 }
 
-/* 危険な操作（解約など）のボタン */
-.danger-button {
-    background-color: #dc3545;
+button[type="button"]:hover,
+.change-button:hover {
+    background-color: var(--primary-hover-color);
+    transform: translateY(-1px);
 }
-.danger-button:hover {
-    background-color: #c82333;
+
+button[type="button"]:active,
+.change-button:active {
+    transform: translateY(0);
+}
+
+button[type="button"]:disabled,
+.change-button:disabled {
+    background-color: var(--text-light-color);
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 危険な操作（解約など） */
+.danger-button,
+#cancel-subscription-button {
+    background-color: #dc3545 !important;
+    margin-top: 20px;
+}
+
+.danger-button:hover,
+#cancel-subscription-button:hover {
+    background-color: #c82333 !important;
+}
+
+/* プラン変更・カード更新セクション */
+#edit-section {
+    margin-bottom: 32px;
+}
+
+#edit-section .form-group {
+    background-color: var(--card-bg-color);
+    padding: 20px;
+    border-radius: var(--radius-md);
+    margin-bottom: 20px;
+}
+
+/* 解約セクション */
+#cancel-section {
+    background-color: #fff3cd;
+    padding: 24px;
+    border-radius: var(--radius-md);
+    border: 1px solid #ffeaa7;
+}
+
+#cancel-section h2 {
+    border-bottom: none;
+    margin-bottom: 12px;
+}
+
+#cancel-section p {
+    color: #856404;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* 本人確認・支払いセクションのアニメーション */
+#password-auth-section,
+#payment-section {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* リンク */
+#password-auth-section a {
+    display: inline-block;
+    margin-top: 20px;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+#password-auth-section a:hover {
+    text-decoration: underline;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    main {
+        margin: 10px;
+        padding: 24px 20px;
+        border-radius: var(--radius-md);
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 24px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    .premium-features {
+        padding: 20px;
+    }
+
+    .premium-features li {
+        font-size: 15px;
+    }
+
+    #current-plan-section {
+        padding: 20px;
+    }
+
+    #edit-section .form-group {
+        padding: 16px;
+    }
+
+    button[type="button"],
+    .change-button {
+        padding: 12px 20px;
+        font-size: 15px;
+    }
 }
