@@ -208,7 +208,7 @@
 }
 
 /* 空の投稿リスト */
-.post-list>p {
+.post-list > p {
   text-align: center;
   color: var(--text-muted-color);
   padding: 2rem;

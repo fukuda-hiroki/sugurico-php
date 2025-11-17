@@ -1,14 +1,12 @@
 // search.js
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => { // ★1. async を追加
 
     // --- HTML要素の取得 ---
     const searchTitle = document.getElementById('search-title');
     const searchCount = document.getElementById('search-count');
     const postsListContainer = document.getElementById('posts-list-container');
     const paginationContainer = document.getElementById('pagination-container');
-
-    // 詳細検索フォームの要素
     const toggleSearchButton = document.getElementById('toggle-search-button');
     const advancedSearchForm = document.getElementById('advanced-search-form');
     const filterButton = document.getElementById('filter-button');
@@ -18,68 +16,100 @@ document.addEventListener('DOMContentLoaded', () => {
     const periodSelect = document.getElementById('period-select');
     const sortSelect = document.getElementById('sort-select');
 
-    //  絞り込み検索を実行し、結果を描画するメイン関数
-    function initializePage() {
+    let isPremiumUser = false; // ★2. プレミアム状態を管理する変数を宣言
+
+    /**
+     *  ページの初期化処理
+     */
+    async function initializePage() {
+        // ★3. 最初にログイン状態とプレミアム状態を確認する
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (user) {
+            const { data: premiumRecords } = await supabaseClient
+                .from('premium')
+                .select('status')
+                .eq('id', user.id);
+            
+            const premiumStatus = premiumRecords && premiumRecords[0];
+            isPremiumUser = premiumStatus?.status === 'active';
+        }
+
+        // ★4. あなたのURL引継ぎロジックをプレミアム判定と組み合わせる
         const urlParams = new URLSearchParams(window.location.search);
-        console.log(urlParams.get('terms'), urlParams.get('type'));
-
-
         const type = urlParams.get('type');
         const searchTerms = urlParams.get('terms');
-        keywordInput.value = '';
-        authorInput.value = '';
-        tagInput.value = '';
-        periodSelect.value = '';
-        sortSelect.value = '';
 
-        switch (type) {
-            case 'title':
-                keywordInput.value = searchTerms;
-                break;
-            case 'text':
-                keywordInput.value = searchTerms;
-                break;
-            case 'tag':
-                tagInput.value = searchTerms;
-                break;
-            default:
-                break;
+        if (type === 'tag' && isPremiumUser) { // タグ検索はプレミアム会員のみ
+            tagInput.value = searchTerms || '';
+        } else if (type) { // それ以外のタイプ（title, textなど）は誰でもOK
+            keywordInput.value = searchTerms || '';
         }
 
         setupEventListeners();
         performSearch(parseInt(urlParams.get('page')) || 1);
     }
 
+    /**
+     * ★5. イベントリスナーの設定をプレミアム状態で分岐させる
+     */
     function setupEventListeners() {
-        toggleSearchButton.addEventListener('click', () => {
-            const isHidden = advancedSearchForm.style.display === 'none';
-            advancedSearchForm.style.display = isHidden ? 'block' : 'none';
-            toggleSearchButton.textContent = isHidden ? '詳細検索を閉じる' : '詳細検索';
-        });
-        filterButton.addEventListener('click', () => performSearch(1))
+        if (isPremiumUser) {
+            // プレミアム会員なら、詳細検索を開く機能を有効化
+            toggleSearchButton.style.display = 'flex'; // ボタン自体を表示
+            toggleSearchButton.addEventListener('click', () => {
+                const isHidden = advancedSearchForm.style.display === 'none';
+                advancedSearchForm.style.display = isHidden ? 'block' : 'none';
+                // HTMLに合わせてアイコンとテキストを個別に操作
+                const btnIcon = toggleSearchButton.querySelector('.btn-icon');
+                const btnText = toggleSearchButton.querySelector('.btn-text');
+                if (isHidden) {
+                    btnIcon.textContent = '🔼';
+                    btnText.textContent = '閉じる';
+                } else {
+                    btnIcon.textContent = '🔍';
+                    btnText.textContent = '詳細検索';
+                }
+            });
+        } else {
+            // 通常会員・ログアウト時は、ボタンを非表示
+            toggleSearchButton.style.display = 'none';
+        }
+        
+        // 絞り込みボタンの機能は誰でも使える
+        filterButton.addEventListener('click', () => performSearch(1));
     }
+
+    /**
+     * ★6. 検索の実行もプレミアム状態で分岐させる
+     */
     async function performSearch(page = 1) {
-        postsListContainer.innerHTML = '検索中…';
+        postsListContainer.innerHTML = '<p class="loading-text">検索中...</p>'; // CSSに合わせてクラス名を追加
         paginationContainer.innerHTML = '';
 
         try {
-            // ログインユーザー情報を取得する処理を追加
             const { data: { user } } = await supabaseClient.auth.getUser();
-            const currentUserId = user ? user.id : null; // 未ログイン時はnull
+            const currentUserId = user ? user.id : null;
 
-            //  フォームから現在の検索条件を取得
-            const searchParams = {
+            // 基本の検索パラメータ
+            let searchParams = {
                 current_user_id_param: currentUserId,
                 keyword_param: keywordInput.value.trim(),
-                author_param: authorInput.value.trim(),
-                tag_param: tagInput.value.trim(),
-                period_param: periodSelect.value,
-                sort_order_param: sortSelect.value,
+                author_param: null, // デフォルトはnull
+                tag_param: null,    // デフォルトはnull
+                period_param: 'all',
+                sort_order_param: 'desc',
                 page_param: page,
                 limit_param: 10
             };
 
-            //  RPCでDB関数を呼び出し、総件数とページデータを一度に取得
+            // ★ もしプレミアム会員なら、詳細検索の値をパラメータに追加
+            if (isPremiumUser) {
+                searchParams.author_param = authorInput.value.trim();
+                searchParams.tag_param = tagInput.value.trim();
+                searchParams.period_param = periodSelect.value;
+                searchParams.sort_order_param = sortSelect.value;
+            }
+
             const { data, error, count } = await supabaseClient
                 .rpc('search_public_forums', searchParams, { count: 'exact' });
             if (error) throw error;
@@ -90,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
             searchTitle.textContent = '検索結果';
             searchCount.textContent = `${totalposts}件の投稿が見つかりました。`;
             if (posts && posts.length > 0) {
-                console.log(posts);
                 postsListContainer.innerHTML = posts.map(post => renderPost(post)).join('');
             } else {
                 postsListContainer.innerHTML = '<p>該当する投稿は見つかりませんでした。</p>';
@@ -102,10 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
-
-
-    function renderPost(post) {
+    // (renderPost は変更なし)
+ function renderPost(post) {
         let thumbnailHTML = '';
         if (post.forum_images && post.forum_images.length > 0) {
             thumbnailHTML = `<div class="post-item-thumbnail"><img src="${post.forum_images[0].image_url}" alt="投稿画像"></div>`;
@@ -130,6 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
     }
 
+    /**
+     * ★7. ページネーションのリンク生成を修正
+     */
     function renderPagination(totalItems, currentPage, itemsPerPage) {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         if (totalPages <= 1) {
@@ -137,26 +167,33 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // 現在のURLパラメータを維持しつつ、pageだけを書き換える
+        const urlParams = new URLSearchParams(window.location.search);
         let paginationHTML = '';
-        const baseLink = new URLSearchParams(window.location.search);
+
+        const createPageLink = (page) => {
+            urlParams.set('page', page);
+            return `?${urlParams.toString()}`;
+        };
 
         if (currentPage > 1) {
-            paginationHTML += `<a href="${baseLink}&page=${currentPage - 1}">« 前へ</a>`;
+            paginationHTML += `<a href="${createPageLink(currentPage - 1)}">« 前へ</a>`;
         }
 
         for (let i = 1; i <= totalPages; i++) {
             if (i === currentPage) {
                 paginationHTML += `<span class="current-page">${i}</span>`;
             } else {
-                paginationHTML += `<a href="${baseLink}&page=${i}">${i}</a>`;
+                paginationHTML += `<a href="${createPageLink(i)}">${i}</a>`;
             }
         }
 
         if (currentPage < totalPages) {
-            paginationHTML += `<a href="${baseLink}&page=${currentPage + 1}">次へ »</a>`;
+            paginationHTML += `<a href="${createPageLink(currentPage + 1)}">次へ »</a>`;
         }
 
         paginationContainer.innerHTML = paginationHTML;
     }
+
     initializePage();
 });
