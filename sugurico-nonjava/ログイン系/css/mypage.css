@@ -1,115 +1,90 @@
-/* ================================================================
-   マイページ・ブックマーク・ブロックリスト 共通スタイル
-   ================================================================ */
-
-/* メインコンテンツエリアの上書き設定 */
-body {
-    font-family: var(--font-family-base);
+body{
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     line-height: 1.6;
     margin: 0;
-    padding: 0;
-    background-color: var(--background-color);
-    color: var(--text-color);
+    padding:0;
+    background-color: #e2e2e2;;
+    color: #333;
 }
 
-main {
-    max-width: 900px;
+main{
+    max-width: 800px;
     margin: 20px auto;
-    padding: 30px;
-    background-color: var(--content-bg-color);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-h1,
-h2,
-h3 {
+a{
+    color: #007bFF;
+    text-decoration: none;
+}
+
+a:hover{
+    text-decoration: underline;
+}
+
+h1, h2, h3{
     margin-top: 0;
-    color: var(--text-color);
 }
 
-h1 {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
-h2 {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 16px;
-}
-
-/* マイページのリンク群 */
-main>p {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin: 20px 0;
-    padding: 0;
-}
-
-main>p>a,
-main>p>button {
-    padding: 8px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    background-color: var(--content-bg-color);
-    color: var(--primary-color);
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-main>p>a:hover,
-main>p>button:hover {
-    background-color: var(--card-bg-color);
-    border-color: var(--primary-color);
-    text-decoration: none;
-}
-
-main>hr {
-    margin: 24px 0;
-    border: none;
-    border-top: 1px solid var(--border-light-color);
-}
-
-/* 投稿一覧エリア */
-.post-list {
-    margin-top: 24px;
-}
-
-.post-list>p {
-    text-align: center;
-    color: var(--text-muted-color);
-    padding: 40px 20px;
-}
-
-/* 投稿アイテムカード */
-.post-item {
+header {
+    background-color: #fff;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #eee;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-    border: 1px solid var(--border-light-color);
-    border-radius: var(--radius-md);
-    padding: 20px;
-    margin-bottom: 16px;
-    background-color: var(--content-bg-color);
-    transition: all 0.2s ease;
+    align-items: center;
 }
 
-.post-item:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
 }
 
-/* 投稿のメインコンテンツ */
+header h1 a {
+    color:inherit;
+    text-decoration: none;
+}
+
+header nav  a {
+    margin-left: 15px;
+}
+
+.post-list .post-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    transition: box-shadow 0.2s;
+}
+
+.post-list .post-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-item .post-list a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.post-list h3 {
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.post-list .post-item {
+    display: flex; /* メイン部分とボタンを横並びに */
+    justify-content: space-between; /* 両端に寄せる */
+    align-items: center; /* 上下中央揃え */
+    gap: 15px;
+}
+
 .post-item-main {
-    flex-grow: 1;
-    min-width: 0;
+    flex-grow: 1; /* 残りのスペースをすべて使う */
 }
 
 .post-item-link {
@@ -118,248 +93,107 @@ main>hr {
     display: block;
 }
 
-.post-item h3 {
-    margin: 0 0 10px 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text-color);
-    line-height: 1.4;
-}
-
-.post-item h3:hover {
-    color: var(--primary-color);
-}
-
-.post-item h3 small {
-    font-size: 14px;
-    font-weight: 400;
-    color: var(--text-muted-color);
-    margin-left: 8px;
-}
-
-.post-item p {
-    font-size: 14px;
-    color: var(--text-muted-color);
-    margin: 0 0 10px 0;
-    line-height: 1.6;
-}
-
-.post-item .post-meta {
-    font-size: 13px;
-    color: var(--text-light-color);
-}
-
-/* 投稿アクションボタン */
 .post-item-actions {
     display: flex;
     gap: 10px;
-    flex-shrink: 0;
+    flex-shrink: 0; /* ボタンが縮まないように */
+}
+
+/* --- 詳細検索フォーム --- */
+.advanced-search-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-bottom: 20px;
+
+    /* PC表示 (デフォルト): Flexboxで横1列に */
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* 各検索アイテム */
+.search-item{
+    display: flex;
+    flex-direction: column; /* ラベルと入力欄を縦に並べる */
+}
+
+.search-item label {
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+.search-item input,
+.search-item select {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* キーワード入力欄だけ幅を広げる */
+.search-item-keyword {
+    flex-grow: 1; /* 残りのスペースをすべて使う */
+}
+
+/* ボタンの縦位置を調整 */
+.search-item-button {
+    align-self: flex-end; /* 自分だけ一番下に揃える */
 }
 
 .action-button {
     padding: 8px 16px;
     border: none;
-    border-radius: var(--radius-sm);
+    border-radius: 4px;
     font-size: 14px;
-    font-weight: 500;
     text-decoration: none;
     color: white;
     cursor: pointer;
     text-align: center;
-    transition: all 0.2s ease;
-    white-space: nowrap;
 }
 
 .action-button.edit-button {
-    background-color: var(--primary-color);
+    background-color: #007bff; /* 青 */
 }
-
 .action-button.edit-button:hover {
-    background-color: var(--primary-hover-color);
-    transform: translateY(-1px);
+    background-color: #0056b3;
 }
 
 .action-button.delete-button {
-    background-color: #dc3545;
+    background-color: #dc3545; /* 赤 */
 }
-
 .action-button.delete-button:hover {
     background-color: #c82333;
-    transform: translateY(-1px);
 }
 
-.action-button:active {
-    transform: translateY(0);
-}
+/* スマホ表示 (768px以下) */
 
-/* 詳細検索コンテナ（base/style.cssから継承） */
-.advanced-search-container {
-    padding: 20px;
-    background-color: var(--card-bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    margin: 20px 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: flex-end;
-}
-
-.search-item {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    min-width: 150px;
-}
-
-.search-item label {
-    font-size: 12px;
-    margin-bottom: 6px;
-    color: var(--text-muted-color);
-    font-weight: 600;
-}
-
-.search-item input,
-.search-item select {
-    padding: 10px 12px;
-    font-size: 14px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    width: 100%;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease;
-}
-
-.search-item input:focus,
-.search-item select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-.search-item-keyword {
-    flex-grow: 2;
-}
-
-.search-item-button {
-    flex-grow: 0;
-}
-
-.search-item-button button {
-    width: 100%;
-    padding: 10px 20px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    font-weight: 600;
-    white-space: nowrap;
-    transition: background-color 0.2s ease;
-}
-
-.search-item-button button:hover {
-    background-color: var(--primary-hover-color);
-}
-
-/* ブロックリスト専用スタイル */
-.blocked-user-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    margin-bottom: 12px;
-    border: 1px solid var(--border-light-color);
-    border-radius: var(--radius-md);
-    background-color: var(--content-bg-color);
-    transition: all 0.2s ease;
-}
-
-.blocked-user-item:hover {
-    box-shadow: var(--shadow-sm);
-}
-
-.blocked-user-item .user-info {
-    flex-grow: 1;
-}
-
-.blocked-user-item .user-info strong {
-    font-size: 16px;
-    color: var(--text-color);
-}
-
-.blocked-user-item button {
-    padding: 8px 16px;
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.blocked-user-item button:hover {
-    background-color: #5a6268;
-}
-
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    main {
-        margin: 10px;
-        padding: 20px 15px;
-    }
-
-    h1 {
-        font-size: 24px;
-    }
-
-    h2 {
-        font-size: 20px;
-    }
-
-    main>p {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    main>p>a,
-    main>p>button {
-        width: 100%;
-        text-align: center;
-    }
-
+@media screen and (max-width: 768px) {
     .advanced-search-container {
-        padding: 15px;
+        flex-wrap: wrap;
     }
 
     .search-item {
-        width: 100%;
-        min-width: 100%;
+        width: calc(50% - 10px);
     }
 
-    .post-item {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 16px;
+    .search-item-keyword {
+        width: 100%;
+    }
+
+    .post-list .post-item {
+        flex-direction: column; /* 縦積みに変更 */
+        align-items: flex-start; /* 左揃えに */
     }
 
     .post-item-actions {
         width: 100%;
-        margin-top: 12px;
+        margin-top: 10px;
     }
 
     .action-button {
-        flex: 1;
-    }
-
-    .blocked-user-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
-    .blocked-user-item button {
-        width: 100%;
+        flex-grow: 1; /* ボタンが利用可能なスペースを分け合う */
     }
 }
