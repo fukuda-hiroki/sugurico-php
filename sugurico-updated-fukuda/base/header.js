@@ -65,21 +65,26 @@ async function setupHeaderAndFooter() {
         <div class="header-logo">
             <h1><a href="../../メイン系/html/index.html">スグリコ</a></h1>
         </div>
-        <div class="search-form-container">
-            <form action="../../メイン系/html/search.html" method="get">
-                <input type="text" name="terms" placeholder="キーワード検索...">
-                <select name="type">
-                    <option value="title">タイトル</option>
-                    <option value="text">テキスト</option>
-                    <option value="tag">タグ</option>
-                </select>
-                <button type="submit">検索</button>
-            </form>
-        </div>
 
-        <nav class="header-nav">
-            ${navHTML}
-        </nav>
+        <!-- ▼▼▼ 右側に寄せる要素をグループ化 ▼▼▼ -->
+        <div class="header-right-group">
+            <div class="search-form-container">
+                <form action="../../メイン系/html/search.html" method="get">
+                    <input type="text" name="terms" placeholder="キーワード検索...">
+                    <select name="type">
+                        <option value="title">タイトル</option>
+                        <option value="text">テキスト</option>
+                        <option value="tag">タグ</option>
+                    </select>
+                    <button type="submit">検索</button>
+                </form>
+            </div>
+
+            <nav class="header-nav">
+                ${navHTML}
+            </nav>
+        </div>
+        <!-- ▲▲▲ グループ化ここまで ▲▲▲ -->
     `;
 
     // 生成したHTMLをヘッダーコンテナに挿入

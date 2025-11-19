@@ -108,6 +108,7 @@ main {
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 20px;
   box-shadow: var(--shadow-sm);
   position: sticky;
@@ -126,6 +127,12 @@ main {
   text-decoration: none;
   flex-shrink: 0;
   transition: color var(--transition-base);
+}
+
+.header-right-group{
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .header-logo a:hover {
@@ -649,19 +656,30 @@ main {
   }
 
   #header-container {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: column;      /* ★ 要素を縦に並べる */
+    align-items: stretch;        /* ★ 要素をコンテナの幅いっぱいに伸ばす */
+    justify-content: flex-start; /* ★ 上揃えにする (space-betweenを解除) */
     gap: 12px;
     padding: 1rem;
   }
 
-  .header-nav {
-    order: -1;
-    text-align: right;
+  .header-logo {
+      text-align: center; /* ロゴを中央寄せにする */
+    }
+
+     .header-right-group {
+    flex-direction: column; /* 右側グループ内の要素も縦に並べる */
+    align-items: stretch;   /* 幅を親に合わせる */
+    gap: 12px;
+  }
+
+ .header-nav {
+    order: -1;              /* ★ ナビゲーションメニューを一番上に持ってくる */
+    text-align: right;      /* メニュー内のリンクを右寄せにする */
   }
 
   .search-form-container {
-    max-width: none;
+    width: 100%; /* 検索フォームの幅を100%にする */
   }
 
   .search-form-container form {
