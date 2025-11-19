@@ -189,6 +189,75 @@ main {
   font-weight: 500;
 }
 
+/* --- ヘッダーのドロップダウンメニュー --- */
+
+.header-nav .dropdown {
+  position: relative;
+  /* 子要素の位置の基準点にする */
+  display: inline-block;
+}
+
+.header-nav .dropdown-toggle {
+  cursor: pointer;
+  /* クリックできることを示す */
+  padding: 8px;
+  /* 少し余白を持たせる */
+}
+
+.header-nav .dropdown-menu {
+  display: none;
+  /* 初期状態では非表示 */
+  position: absolute;
+  /* 親要素(.dropdown)を基準に配置 */
+  top: 100%;
+  /* 親要素のすぐ下に表示 */
+  right: 0;
+  /* 右端に揃える */
+  background-color: var(--card-bg-color);
+  min-width: 200px;
+  /* メニューの最小幅 */
+  box-shadow: var(--shadow-lg);
+  /* 影を付けて立体感を出す */
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  z-index: 1000;
+  /* 他の要素より手前に表示 */
+  padding: 0.5rem 0;
+}
+
+.header-nav .dropdown-menu a {
+  color: var(--text-color);
+  padding: 10px 20px;
+  margin-right: 10px;
+  text-decoration: none;
+  display: block;
+  /* リンクをブロック要素にして、幅いっぱいに広げる */
+  text-align: left;
+  /* テキストを左揃えに */
+  border-radius: 10px;
+}
+
+.header-nav .dropdown-menu a:hover{
+  background-color: var(--content-bg-color);
+}
+
+.header-nav .dropdown-menu hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 0.5rem 0;
+}
+#logout-button {
+    /* 他の .dropdown-menu a のスタイルは継承される */
+    color: var(--danger-color, #dc3545); /* 少し危険な操作であることを示す赤色 */
+}
+
+#logout-button:hover {
+    background-color: #f8d7da; /* ホバー時の背景色も赤系統に */
+    color: #721c24; /* ホバー時の文字色を濃くする */
+}
+
+
+
 /* --- ▲▲▲ ヘッダーここまで ▲▲▲ --- */
 
 /* --- ▼▼▼ 詳細検索フォーム ▼▼▼ --- */

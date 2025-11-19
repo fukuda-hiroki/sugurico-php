@@ -39,8 +39,18 @@ async function setupHeaderAndFooter() {
         // 【ログインしている場合のナビゲーション】
         const userName = session.user.user_metadata?.user_name || 'ゲスト';
         navHTML = `
-            <a href="../../ログイン系/html/mypage.html">${escapeHTML(userName)}さん</a>
-            <a href="#" id="logout-button">ログアウト</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle">${escapeHTML(userName)}さん ▼</a>
+                <div class="dropdown-menu">
+                    <a href="../../ログイン系/html/mypage.html">マイページ</a>
+                    <a href="../../ログイン系/html/update.html">登録情報を変更する</a>
+                    <a href="../../メイン系/html/bookmarks.html">ブックマーク一覧</a>
+                    <a href="../../メイン系/html/block_list.html">ブロック中のユーザー管理</a>
+                    <a href="../../ログイン系/html/premium_entry.html">プレミアム機能</a>
+                    <hr>
+                    <a href="#" id="logout-button">ログアウト</a>
+                </div>
+            </div>
         `;
 
     } else {
@@ -92,6 +102,21 @@ async function setupHeaderAndFooter() {
                 window.location.href = '../..//メイン系/html/index.html';
             }
         });
+    }
+
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    if (dropdownToggle) {
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+        const dropdown = dropdownToggle.parentElement;
+
+        dropdown.addEventListener('mouseenter', () => {
+            dropdownMenu.style.display = 'block';
+        });
+        dropdown.addEventListener('mouseleave', () => {
+            dropdownMenu.style.display = 'none';
+        });
+
+
     }
 }
 
@@ -173,7 +198,7 @@ function escapeHTML(str) {
  */
 async function isCurrentUserPremium() {
     // Supabaseクライアントはheader.jsで既に初期化済み
-    
+
     // 1. 現在のログインユーザー情報を取得
     const { data: { user } } = await supabaseClient.auth.getUser();
 
