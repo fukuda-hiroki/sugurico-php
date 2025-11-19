@@ -14,16 +14,18 @@
     <header id="header-container"></header>
     <main>
         <!-- JSでここに「〇〇さんの投稿一覧」と表示 -->
-        <h2 id="mypage-title">
-            あなたの投稿一覧
-        </h2>
-        <p>
+        <h2 id="mypage-title">あなたの投稿一覧</h2>
+        <div class="mypage-actions">
             <a href="update.html">登録情報を変更する</a>
             <a href="bookmarks.html">ブックマーク一覧を見る</a>
             <a href="block_list.html">ブロック中のユーザー管理</a>
-            <button type="button" id="toggle-search-button">詳細検索</button>
+            <button type="button" id="toggle-search-button" class="toggle-search-btn">
+                <span class="btn-icon">🔍</span>
+                <span class="btn-text">詳細検索</span>
+            </button>
             <a href="premium_entry.html">プレミアム機能</a>
-        </p>
+        </div>
+
         <div id="advanced-search-form" class="advanced-search-container" style="display: none;">
             <div class="search-item search-item-keyword">
                 <label for="search-keyword">キーワード:</label>

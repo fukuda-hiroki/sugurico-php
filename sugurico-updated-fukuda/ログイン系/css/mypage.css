@@ -40,48 +40,126 @@ h2 {
   margin-bottom: 16px;
 }
 
-/* マイページのリンク群 */
-main > p {
+/* ▼▼▼ マイページのアクションリンク群 (スタイル改善) ▼▼▼ */
+.mypage-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   margin: 20px 0;
-  padding: 0;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-light-color);
 }
 
-main > p > a,
-main > p > button {
+.mypage-actions a,
+.mypage-actions button {
   padding: 8px 16px;
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  background-color: var(--content-bg-color);
-  color: var(--primary-color);
+  border-radius: var(--radius-full);
+  /* 角を丸くしてモダンに */
+  background-color: var(--card-bg-color);
+  color: var(--text-color);
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  /* ボタン内のアイコン用 */
+  align-items: center;
+  gap: 0.5rem;
 }
 
-main > p > a:hover,
-main > p > button:hover {
-  background-color: var(--card-bg-color);
+.mypage-actions a:hover,
+.mypage-actions button:hover {
+  background-color: var(--primary-color);
   border-color: var(--primary-color);
-  text-decoration: none;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+/* ▲▲▲ スタイル改善ここまで ▲▲▲ */
+
+/* ▼▼▼ 詳細検索フォームのスタイル (search.cssから移植) ▼▼▼ */
+.advanced-search-container {
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  animation: slideDown 0.3s ease;
+  box-shadow: var(--shadow-sm);
+
 }
 
-main > hr {
-  margin: 24px 0;
-  border: none;
-  border-top: 1px solid var(--border-light-color);
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+.search-item{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.search-item label{
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.search-item input,
+.search-item select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  background: var(--content-bg-color);
+  box-sizing: border-box;
+}
+
+.search-item input:focus
+.search-item select:focus{
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+.search-item-button{
+  flex-grow: 0;
+}
+
+.search-item-button{
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background:var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--shadow-sm);
+  cursor: pointer;
+  font-weight: 600;
+}
+/* ▲▲▲ スタイル移植ここまで ▲▲▲ */
 
 /* 投稿一覧エリア */
 .post-list {
   margin-top: 24px;
 }
 
-.post-list > p {
+.post-list>p {
   text-align: center;
   color: var(--text-muted-color);
   padding: 40px 20px;
@@ -318,13 +396,13 @@ main > hr {
     font-size: 20px;
   }
 
-  main > p {
+  main>p {
     flex-direction: column;
     gap: 8px;
   }
 
-  main > p > a,
-  main > p > button {
+  main>p>a,
+  main>p>button {
     width: 100%;
     text-align: center;
   }

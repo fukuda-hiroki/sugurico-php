@@ -65,7 +65,6 @@ async function setupHeaderAndFooter() {
         <div class="header-logo">
             <h1><a href="../../メイン系/html/index.html">スグリコ</a></h1>
         </div>
-
         <div class="search-form-container">
             <form action="../../メイン系/html/search.html" method="get">
                 <input type="text" name="terms" placeholder="キーワード検索...">
