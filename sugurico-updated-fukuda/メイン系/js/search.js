@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
     const tagInput = document.getElementById('tag-input');
     const periodSelect = document.getElementById('period-select');
     const sortSelect = document.getElementById('sort-select');
+    const excludeTagInput = document.getElementById('exclude-tag-input');
 
     let isPremiumUser = false; // ★2. プレミアム状態を管理する変数を宣言
 
@@ -22,36 +23,43 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
      *  ページの初期化処理
      */
     async function initializePage() {
-        // ★3. 最初にログイン状態とプレミアム状態を確認する
         const { data: { user } } = await supabaseClient.auth.getUser();
         if (user) {
             const { data: premiumRecords } = await supabaseClient
                 .from('premium')
                 .select('status')
                 .eq('id', user.id);
-            
+
             const premiumStatus = premiumRecords && premiumRecords[0];
             isPremiumUser = premiumStatus?.status === 'active';
         }
-
-        // ★4. あなたのURL引継ぎロジックをプレミアム判定と組み合わせる
-        const urlParams = new URLSearchParams(window.location.search);
-        const type = urlParams.get('type');
-        const searchTerms = urlParams.get('terms');
-
-        if (type === 'tag' && isPremiumUser) { // タグ検索はプレミアム会員のみ
-            tagInput.value = searchTerms || '';
-        } else if (type) { // それ以外のタイプ（title, textなど）は誰でもOK
-            keywordInput.value = searchTerms || '';
-        }
-
+        setupUIAndForms();
         setupEventListeners();
-        performSearch(parseInt(urlParams.get('page')) || 1);
+        performSearch(parseInt(new URLSearchParams(window.location.search).get('page')) || 1);
     }
+    function setupUIAndForms() {
+        const urlParams = new URLSearchParams(window.location.search);
+        // URLパラメータをフォームに反映
+        
+        const searchType = urlParams.get('type');
 
-    /**
-     * ★5. イベントリスナーの設定をプレミアム状態で分岐させる
-     */
+
+        if (isPremiumUser) {
+            if (searchType === 'tag') {
+                tagInput.value = urlParams.get('terms');
+            } else {
+                keywordInput.value = urlParams.get('terms');
+            }
+            toggleSearchButton.style.display = 'flex';
+            authorInput.value = urlParams.get('author') || '';
+            periodSelect.value = urlParams.get('period') || 'all';
+            sortSelect.value = urlParams.get('sort') || 'desc';
+            if (excludeTagInput) excludeTagInput.parentElement.style.display = 'block';
+        } else {
+            toggleSearchButton.style.display = 'none';
+            if (excludeTagInput) excludeTagInput.parentElement.style.display = 'none';
+        }
+    }
     function setupEventListeners() {
         if (isPremiumUser) {
             // プレミアム会員なら、詳細検索を開く機能を有効化
@@ -74,11 +82,10 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
             // 通常会員・ログアウト時は、ボタンを非表示
             toggleSearchButton.style.display = 'none';
         }
-        
+
         // 絞り込みボタンの機能は誰でも使える
         filterButton.addEventListener('click', () => performSearch(1));
     }
-
     /**
      * ★6. 検索の実行もプレミアム状態で分岐させる
      */
@@ -93,13 +100,15 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
             // 基本の検索パラメータ
             let searchParams = {
                 current_user_id_param: currentUserId,
-                keyword_param: keywordInput.value.trim(),
-                author_param: null, // デフォルトはnull
-                tag_param: null,    // デフォルトはnull
+                keyword_param: keywordInput.value.trim() || null,
+                author_param: null,
+                tag_param: null,
                 period_param: 'all',
                 sort_order_param: 'desc',
                 page_param: page,
-                limit_param: 10
+                limit_param: 10,
+                // ★ exclude_tags_paramを必ず渡す (値がない場合は空の配列)
+                exclude_tags_param: []
             };
 
             // ★ もしプレミアム会員なら、詳細検索の値をパラメータに追加
@@ -108,6 +117,9 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
                 searchParams.tag_param = tagInput.value.trim();
                 searchParams.period_param = periodSelect.value;
                 searchParams.sort_order_param = sortSelect.value;
+                if (excludeTagInput && excludeTagInput.value.trim()) {
+                    searchParams.exclude_tags_param = excludeTagInput.value.trim().split(',').map(tag => tag.trim);
+                }
             }
 
             const { data, error, count } = await supabaseClient
@@ -132,7 +144,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
     }
 
     // (renderPost は変更なし)
- function renderPost(post) {
+    function renderPost(post) {
         let thumbnailHTML = '';
         if (post.forum_images && post.forum_images.length > 0) {
             thumbnailHTML = `<div class="post-item-thumbnail"><img src="${post.forum_images[0].image_url}" alt="投稿画像"></div>`;
