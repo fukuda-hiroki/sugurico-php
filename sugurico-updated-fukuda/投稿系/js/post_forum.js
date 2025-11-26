@@ -407,7 +407,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (dateValue) {
                 const selectedDate = new Date(dateValue);
                 if (selectedDate < new Date()) {
-                    throw new error('公開期限は現在より未来の日時を指定してください。');
+                    throw new Error('公開期限は現在より未来の日時を指定してください。');
                 }
                 return selectedDate.toISOString();
             } else {
