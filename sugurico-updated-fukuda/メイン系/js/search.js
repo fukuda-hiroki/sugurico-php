@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
     function setupUIAndForms() {
         const urlParams = new URLSearchParams(window.location.search);
         // URLパラメータをフォームに反映
-        
+
         const searchType = urlParams.get('type');
 
 
@@ -94,36 +94,36 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
         paginationContainer.innerHTML = '';
 
         try {
-            const { data: { user } } = await supabaseClient.auth.getUser();
+          const { data: { user } } = await supabaseClient.auth.getUser();
             const currentUserId = user ? user.id : null;
 
-            // 基本の検索パラメータ
+            // ★★★ パラメータをDB関数に完全に一致させる ★★★
             let searchParams = {
-                current_user_id_param: currentUserId,
-                keyword_param: keywordInput.value.trim() || null,
-                author_param: null,
-                tag_param: null,
+                current_user_id_param: currentUserId, // ★ ログインユーザーIDを渡す
+                keyword_param: keywordInput.value.trim() || '',
+                author_param: '',
+                tag_param: '',
+                exclude_tags_param: [], // ★ プレミアム機能
                 period_param: 'all',
                 sort_order_param: 'desc',
                 page_param: page,
-                limit_param: 10,
-                // ★ exclude_tags_paramを必ず渡す (値がない場合は空の配列)
-                exclude_tags_param: []
+                limit_param: 10
             };
 
-            // ★ もしプレミアム会員なら、詳細検索の値をパラメータに追加
             if (isPremiumUser) {
-                searchParams.author_param = authorInput.value.trim();
-                searchParams.tag_param = tagInput.value.trim();
+                searchParams.author_param = authorInput.value.trim() || '';
+                searchParams.tag_param = tagInput.value.trim() || '';
                 searchParams.period_param = periodSelect.value;
                 searchParams.sort_order_param = sortSelect.value;
+                
                 if (excludeTagInput && excludeTagInput.value.trim()) {
-                    searchParams.exclude_tags_param = excludeTagInput.value.trim().split(',').map(tag => tag.trim);
+                    searchParams.exclude_tags_param = excludeTagInput.value.trim().split(',').map(tag => tag.trim());
                 }
             }
 
             const { data, error, count } = await supabaseClient
                 .rpc('search_public_forums', searchParams, { count: 'exact' });
+                
             if (error) throw error;
 
             const posts = data;
