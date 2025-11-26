@@ -42,12 +42,19 @@
                 <label for="passwordInput">新しいパスワード</label>
                 <input type="password" name="password" id="passwordInput" placeholder="変更しない場合は空のまま">
             </div>
+            <!-- 後でプレミアムユーザーのみ使えるように改造する -->
             <hr>
             <p>検索設定</p>
             <div class="form-group">
                 <label for="excludeTagsInput">常に除外するタグ</label>
                 <textarea id="excludeTagsInput" rows="3" placeholder="例: ニュース, 政治, ゴシップ"></textarea>
                 <small>検索結果に表示したくないタグをカンマ(,)区切りで入力してください。</small>
+            </div>
+            <div id="current-exclude-tags-container" style="margin-top: 15px;">
+                <strong>現在設定中の除外タグ:</strong>
+                <div id="current-exclude-tags-list" class="tag-list">
+                    <!-- JSでここにタグが挿入される -->
+                </div>
             </div>
             <button type="submit" id="submitButton" class="form-button">更新する</button>
         </form>
@@ -62,6 +69,7 @@
     <!-- JSライブラリと、このページ専用のJS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../../base/header.js" defer></script>
+    <script src="../../base/escape.js" defer></script> 
     <script src="../js/update.js" defer></script>
 </body>
 

@@ -29,12 +29,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             .select('name, user_name, login_id, mail')
             .eq('id', user.id)// AuthのIDを使って検索
             .single();
-            supabaseClient
-            .from('user_exclude_tags')
-            .select('exclude_tags')
-            .eq('user_id', user.id)
-            .maybeSingle()
+
         if (error) throw error;
+
         if (profile) {
             nameInput.value = profile.name;
             usernameInput.value = profile.user_name;
@@ -42,9 +39,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             emailInput.value = profile.mail;
         }
 
-        if (excludeTagsRes.data && excludeTagsRes.data.exclude_tags) {
-            excludeTagsInput.value = excludeTagsRes.data.exclude_tags.join(', ');
+        // 除外タグ情報を取得
+        const { data: excludeTagsData, error: excludeTagsError } = await supabaseClient
+            .from('user_exclude_tags')
+            .select('exclude_tags')
+            .eq('user_id', user.id)
+            .maybeSingle(); // レコードが存在しない場合もあるので maybeSingle を使用
+
+        if (excludeTagsError) throw excludeTagsError;
+
+        const tags = excludeTagsData?.exclude_tags || [];
+
+        // 1. テキストエリアにカンマ区切りの文字列として設定
+        if (tags.length > 0) {
+            excludeTagsInput.value = tags.join(', ');
         }
+
+        // 2. 新しく追加した一覧表示エリアにタグを描画
+        const tagsListContainer = document.getElementById('current-exclude-tags-list');
+        if (tags.length > 0) {
+            // escapeHTML関数で安全にタグを表示
+            tagsListContainer.innerHTML = tags.map(tag => 
+                `<span class="tag-item">${escapeHTML(tag)}</span>`
+            ).join('');
+        } else {
+            tagsListContainer.innerHTML = '<p>現在、除外するタグは設定されていません。</p>';
+        }
+
         
     } catch (error) {
         messageArea.textContent = 'プロフィール情報の取得に失敗しました。';
