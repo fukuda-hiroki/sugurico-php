@@ -44,7 +44,7 @@ async function setupHeaderAndFooter() {
                 <div class="dropdown-menu">
                     <a href="../../ログイン系/html/mypage.html">マイページ</a>
                     <a href="../../ログイン系/html/update.html">登録情報を変更する</a>
-                    <a href="../../メイン系/html/bookmarks.html">ブックマーク一覧</a>
+                    <a href="../../ログイン系/html/bookmarks.html">ブックマーク一覧</a>
                     <a href="../../ログイン系/html/block_list.html">ブロック中のユーザー管理</a>
                     <a href="../../ログイン系/html/premium_entry.html">プレミアム機能</a>
                     <hr>
