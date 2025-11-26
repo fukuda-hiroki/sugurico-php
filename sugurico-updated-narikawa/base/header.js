@@ -40,15 +40,16 @@ async function setupHeaderAndFooter() {
         const userName = session.user.user_metadata?.user_name || 'ゲスト';
         navHTML = `
             <div class="dropdown">
-                <a href="#" class="dropdown-toggle">${userName} ▼</a>
-                <ul class="dropdown-menu">
-                    <li><a href="../../ログイン系/html/mypage.html">投稿一覧</a></li>
-                    <li><a href="../../ログイン系/html/update.html">プロフィール編集</a></li>
-                    <li><a href="../../ログイン系/html/bookmarks.html">ブックマーク一覧を見る</a></li>
-                    <li><a href="../../ログイン系/html/block_list.html">ブロック中のユーザー管理</a></li>
-                    <li><hr></li>
-                    <li><a href="#" id="logout-button">ログアウト</a></li>
-                </ul>
+                <a href="#" class="dropdown-toggle">${escapeHTML(userName)}さん ▼</a>
+                <div class="dropdown-menu">
+                    <a href="../../ログイン系/html/mypage.html">マイページ</a>
+                    <a href="../../ログイン系/html/update.html">登録情報を変更する</a>
+                    <a href="../../メイン系/html/bookmarks.html">ブックマーク一覧</a>
+                    <a href="../../ログイン系/html/block_list.html">ブロック中のユーザー管理</a>
+                    <a href="../../ログイン系/html/premium_entry.html">プレミアム機能</a>
+                    <hr>
+                    <a href="#" id="logout-button">ログアウト</a>
+                </div>
             </div>
         `;
 
@@ -65,21 +66,25 @@ async function setupHeaderAndFooter() {
             <h1><a href="../../メイン系/html/index.html">スグリコ</a></h1>
         </div>
 
-        <div class="search-form-container">
-            <form action="../../メイン系/html/search.html" method="get">
-                <input type="text" name="keyword" placeholder="キーワード検索...">
-                <select name="type">
-                    <option value="title">タイトル</option>
-                    <option value="text">テキスト</option>
-                    <option value="tag">タグ</option>
-                </select>
-                <button type="submit">検索</button>
-            </form>
-        </div>
+        <!-- ▼▼▼ 右側に寄せる要素をグループ化 ▼▼▼ -->
+        <div class="header-right-group">
+            <div class="search-form-container">
+                <form action="../../メイン系/html/search.html" method="get">
+                    <input type="text" name="terms" placeholder="キーワード検索...">
+                    <select name="type">
+                        <option value="title">タイトル</option>
+                        <option value="text">テキスト</option>
+                        <option value="tag">タグ</option>
+                    </select>
+                    <button type="submit">検索</button>
+                </form>
+            </div>
 
-        <nav class="header-nav">
-            ${navHTML}
-        </nav>
+            <nav class="header-nav">
+                ${navHTML}
+            </nav>
+        </div>
+        <!-- ▲▲▲ グループ化ここまで ▲▲▲ -->
     `;
 
     // 生成したHTMLをヘッダーコンテナに挿入
@@ -101,6 +106,21 @@ async function setupHeaderAndFooter() {
                 window.location.href = '../..//メイン系/html/index.html';
             }
         });
+    }
+
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    if (dropdownToggle) {
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+        const dropdown = dropdownToggle.parentElement;
+
+        dropdown.addEventListener('mouseenter', () => {
+            dropdownMenu.style.display = 'block';
+        });
+        dropdown.addEventListener('mouseleave', () => {
+            dropdownMenu.style.display = 'none';
+        });
+
+
     }
 }
 
@@ -182,7 +202,7 @@ function escapeHTML(str) {
  */
 async function isCurrentUserPremium() {
     // Supabaseクライアントはheader.jsで既に初期化済み
-    
+
     // 1. 現在のログインユーザー情報を取得
     const { data: { user } } = await supabaseClient.auth.getUser();
 

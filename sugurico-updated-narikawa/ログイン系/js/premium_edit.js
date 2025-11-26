@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .from('premium')
                 .select('*')
                 .eq('id', currentUser.id)
-                .maybeSingle();
+                .single();
 
             if (error || !data) {
                 alert('まだプレミアム会員ではありません。登録ページに移動します。');

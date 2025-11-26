@@ -70,7 +70,6 @@ async function fetchAndDisplayPosts(containerId, userId = null, excludeUserId = 
             .order('forum_id', { ascending: false })
             .limit(3);
 
-
         if (userId) {
             query = query.eq('user_id_auth', userId);
         }

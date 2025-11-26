@@ -1,90 +1,251 @@
-/* --- 詳細検索フォーム --- */
+/* ===================================
+   検索ページ専用スタイル (search.css)
+   =================================== */
+
+/* base/style.cssのCSS変数を活用して統一感を出す */
+
+.search-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* 検索ヘッダー */
+.search-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+/* トグルボタン */
+.toggle-search-btn,
+#toggle-search-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.toggle-search-btn:hover,
+#toggle-search-button:hover {
+  background: var(--primary-hover-color);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.toggle-search-btn:active,
+#toggle-search-button:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+}
+
+/* 詳細検索コンテナ */
 .advanced-search-container {
-    padding: 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 5px;
-    margin-bottom: 20px;
-
-    /* PC表示 (デフォルト): Flexboxで横1列に */
-    display: flex;
-    gap: 15px;
-    align-items: center;
+  background: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  animation: slideDown 0.3s ease;
+  box-shadow: var(--shadow-sm);
 }
 
-/* 各検索アイテム */
-.search-item{
-    display: flex;
-    flex-direction: column; /* ラベルと入力欄を縦に並べる */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
+/* 検索フィールドグリッド */
+.search-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-field,
+.search-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.search-field label,
 .search-item label {
-    font-size: 12px;
-    margin-bottom: 4px;
-    color: #555;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9rem;
 }
 
+.label-icon {
+  font-size: 1rem;
+}
+
+.search-field input,
+.search-field select,
 .search-item input,
 .search-item select {
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: all var(--transition-base);
+  background: var(--content-bg-color);
+  box-sizing: border-box;
 }
 
-/* キーワード入力欄だけ幅を広げる */
-.search-item-keyword {
-    flex-grow: 1; /* 残りのスペースをすべて使う */
+.search-field input:focus,
+.search-field select:focus,
+.search-item input:focus,
+.search-item select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
-/* --- プレミアム機能のラッパー --- */
-#advanced-search-wrapper {
-    position: relative; /* オーバーレイの位置の基準点 */
+.search-field input::placeholder,
+.search-item input::placeholder {
+  color: var(--text-light-color);
 }
 
-/* プレミアムでない場合のフォームの見た目 */
-.is-not-premium #advanced-search-form {
-    opacity: 0.5; /* 少し半透明にする */
-    pointer-events: none; /* クリックなどの操作を無効化 */
+/* 検索アクションボタン */
+.search-actions {
+  display: flex;
+  justify-content: center;
 }
 
-/* オーバーレイのスタイル */
-#premium-search-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(240, 240, 240, 0.8);
-    display: flex;
+.filter-btn,
+#filter-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 2rem;
+  background: var(--success-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-md);
+}
+
+.filter-btn:hover,
+#filter-button:hover {
+  background: #27ae60;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.filter-btn:active,
+#filter-button:active {
+  transform: translateY(0);
+}
+
+/* 検索結果件数 */
+.search-count {
+  margin: 1rem 0 1.5rem;
+  font-size: 1rem;
+  color: var(--text-muted-color);
+  font-weight: 500;
+}
+
+/* ローディングテキスト */
+.loading-text {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted-color);
+  font-size: 1.1rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  .search-main {
+    padding: 1rem 0.75rem;
+  }
+
+  .search-header {
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    align-items: stretch;
+  }
+
+  .search-header h1 {
+    font-size: 1.5rem;
     text-align: center;
-    border-radius: 5px;
-    z-index: 10;
+  }
+
+  .toggle-search-btn,
+  #toggle-search-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .search-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .advanced-search-container {
+    padding: 1rem;
+  }
+
+  .filter-btn,
+  #filter-button {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
-#premium-search-overlay p {
-    font-weight: bold;
-    margin-bottom: 15px;
-}
+@media (max-width: 480px) {
+  .search-header h1 {
+    font-size: 1.25rem;
+  }
 
-.simple-search-container {
-    display: flex;
-    gap: 15px;
-    align-items: flex-end; /* 要素の下揃え */
-    margin-bottom: 20px;
-    flex-wrap: wrap; /* スマホで折り返す */
-}
+  .toggle-search-btn,
+  .filter-btn,
+  #toggle-search-button,
+  #filter-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
 
-/* キーワード入力欄をできるだけ伸ばす */
-.simple-search-container .search-item-keyword {
-    flex-grow: 1;
-}
-
-/* ボタン類が伸びないようにする */
-.simple-search-container .search-item-button,
-.simple-search-container .search-item-toggle {
-    flex-shrink: 0;
+  .search-field input,
+  .search-field select,
+  .search-item input,
+  .search-item select {
+    padding: 0.625rem;
+    font-size: 0.9rem;
+  }
 }

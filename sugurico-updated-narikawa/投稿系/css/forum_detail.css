@@ -1,179 +1,354 @@
-/* --- forum_detail.php --- */
-/* --- 投稿詳細ページのレイアウト --- */
+/* ================================================================
+   投稿詳細ページ (forum_detail.html) 専用スタイル
+   ================================================================ */
+
+/* base/style.cssのCSS変数を正しく使用 */
+
 main {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px 30px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0, 1);
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 30px;
+  background-color: var(--content-bg-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
 }
 
 .post-detail h1 {
-    font-size: 2em;
-    margin-bottom: 0.5em;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 0.5em;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 16px;
+  color: var(--text-color);
+  line-height: 1.3;
 }
 
 .post-meta {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 20px;
+  font-size: 14px;
+  color: var(--text-muted-color);
+  margin-bottom: 24px;
 }
 
-/* --- 投稿画像 --- */
+.post-meta a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+.post-meta a:hover {
+  color: var(--primary-hover-color);
+  text-decoration: underline;
+}
+
+/* 投稿画像 */
 .post-images-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .post-image-wrapper {
-    width: 150px;
-    height: 150px;
-    overflow: hidden;
-    border-radius: 8px;
+  width: 160px;
+  height: 160px;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.post-image-wrapper:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .post-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+  cursor: pointer;
 }
 
 .post-image:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
-/* --- 投稿本文 --- */
+/* 投稿本文 */
 .post-content {
-    font-size: 1.1em;
-    line-height: 1.7;
-    white-space: pre-wrap;
-    /* 改行とスペースをそのまま表示 */
-    margin-bottom: 20px;
+  font-size: 16px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 32px;
+  color: var(--text-color);
 }
 
-/* --- 投稿タグ --- */
+/* 投稿タグ */
 .post-tags {
-    margin-bottom: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .tag-link {
-    display: inline-block;
-    background-color: #e9ecef;
-    color: #495957;
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 0.9em;
-    margin-right: 8px;
-    text-decoration: none;
-    transition: background-color 0.2s;
+  display: inline-block;
+  background-color: var(--card-bg-color);
+  color: var(--text-color);
+  padding: 6px 14px;
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--transition-base);
+  border: 1px solid var(--border-color);
 }
 
 .tag-link:hover {
-    background-color: #ced4da;
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
-/* --- コメントセクション --- */
+/* アクションボタン */
+.post-owner-actions,
+.bookmark-action,
+.block-action {
+  margin-bottom: 16px;
+}
+
+.action-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all var(--transition-base);
+  margin-right: 10px;
+}
+
+.action-button.edit-button {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.action-button.edit-button:hover {
+  background-color: var(--primary-hover-color);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.action-button.delete-button {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.action-button.delete-button:hover {
+  background-color: #c82333;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+/* コメントセクション */
 .comment-section {
-    margin-top: 30px;
-    border-top: 1px solid #eee;
-    padding-top: 20px;
+  margin-top: 40px;
+  border-top: 2px solid var(--border-color);
+  padding-top: 32px;
 }
 
 .comment-section h2 {
-    font-size: 1.5em;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-color);
 }
 
 /* コメント投稿フォーム */
+#comment-form-container {
+  margin-bottom: 32px;
+}
+
+#comment-form-container p {
+  text-align: center;
+  padding: 20px;
+  background-color: var(--card-bg-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted-color);
+  border: 1px solid var(--border-color);
+}
+
+#comment-form-container a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+#comment-form-container a:hover {
+  text-decoration: underline;
+}
+
 #comment-form textarea {
-    width: 100%;
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    margin-bottom: 10px;
-    resize: vertical;
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  resize: vertical;
+  min-height: 100px;
+  font-family: var(--font-family-base);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+#comment-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 #comment-form button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  padding: 12px 24px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  transition: all var(--transition-base);
 }
 
 #comment-form button:hover {
-    background-color: #0056b3;
+  background-color: var(--primary-hover-color);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 /* コメント一覧 */
 .comment-list {
-    overflow-y: scroll;
-    max-height: 400px;
+  overflow-y: auto;
+  max-height: 500px;
 }
 
 .comment-item {
-    border-bottom: 1px solid #f0f0f0;
-    padding: 15px 0;
+  border-bottom: 1px solid var(--border-light-color);
+  padding: 20px 0;
+  transition: all var(--transition-base);
+}
+
+.comment-item:hover {
+  background-color: var(--card-bg-color);
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
+  border-radius: var(--radius-sm);
 }
 
 .comment-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .comment-item strong {
-    font-weight: bold;
-    color: 333;
+  font-weight: 700;
+  color: var(--text-color);
+  font-size: 15px;
 }
 
 .comment-item p {
-    margin: 5px 0;
+  margin: 10px 0;
+  color: var(--text-color);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .comment-item small {
-    font-size: 0.8em;
-    color: #888;
+  font-size: 13px;
+  color: var(--text-light-color);
 }
 
-.form-button:disabled, .action-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-    opacity: 0.7;
+/* 画像モーダル */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.92);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  cursor: pointer;
+  animation: fadeIn 0.2s ease;
 }
 
-/* --- レスポンシブ設定 (画面幅が768px以下) --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+/* レスポンシブ設定 */
 @media (max-width: 768px) {
+  main {
+    margin: 10px;
+    padding: 20px;
+  }
 
-    /* --- メインコンテンツ --- */
-    main {
-        margin: 10px;
-        padding: 15px;
-    }
+  .post-detail h1 {
+    font-size: 24px;
+    padding-bottom: 12px;
+  }
 
-    .post-detail h1 {
-        font-size: 1.5em;
-        /* タイトルの文字サイズを少し小さく */
-    }
+  .post-content {
+    font-size: 15px;
+  }
 
-    /* --- 投稿画像 --- */
-    .post-images-container {
-        justify-content: center;
-        /* 画像を中央揃えに */
-    }
+  .post-images-container {
+    justify-content: center;
+    gap: 10px;
+  }
 
-    .post-image-wrapper {
-        width: calc(50% - 5px);
-        /* 2カラムで表示されるように調整 */
-        height: auto;
-        aspect-ratio: 1 / 1;
-        /* 正方形を保つ */
-    }
+  .post-image-wrapper {
+    width: calc(50% - 5px);
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .action-button {
+    width: 100%;
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+
+  .comment-section {
+    margin-top: 32px;
+    padding-top: 24px;
+  }
+
+  .comment-list {
+    max-height: 350px;
+  }
+
+  .comment-item {
+    padding: 16px 0;
+  }
 }

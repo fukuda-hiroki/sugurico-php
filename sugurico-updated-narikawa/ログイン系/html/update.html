@@ -7,14 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登録情報変更 | スグリコ</title>
     <link rel="stylesheet" href="../../base/style.css">
-    <link rel="stylesheet" href="../css/update.css">
+    <link rel="stylesheet" href="../css/login.css">
 </head>
 
 <body>
     <!-- 共通ヘッダー -->
     <header id="header-container"></header>
     <main class="form-container">
-        <a href="premium_entry.html" class="button-premium gradient-button">プレミアム機能</a>
         <h1>登録情報変更</h1>
         <div id="message-area" class="message" style="display: none;">
 
@@ -43,17 +42,10 @@
                 <label for="passwordInput">新しいパスワード</label>
                 <input type="password" name="password" id="passwordInput" placeholder="変更しない場合は空のまま">
             </div>
-<!-- プレミアム機能なので後でちゃんとプレミアムユーザーにだけ出来るようにします。 -->
-            <p>検索設定</p>
-            <div class="form-group">
-                <label for="excludeTagsInput">常に除外するタグ</label>
-                <textarea id="excludeTagsInput" rows="3" placeholder="例: ニュース, 政治, ゴシップ"></textarea>
-                <small>検索結果に表示したくないタグをカンマ(,)区切りで入力してください。</small>
-            </div>
-
             <button type="submit" id="submitButton" class="form-button">更新する</button>
         </form>
 
+        <hr>
         <div class="form-group" style="text-align: center;">
             <p style="color: #dc3545;">注意: アカウントを削除すると、全ての投稿とデータが完全に失われ、元に戻すことはできません。</p>
             <button type="button" id="delete-account-button" class="form-button" style="background-color: #dc3545;">アカウントを完全に削除する</button>

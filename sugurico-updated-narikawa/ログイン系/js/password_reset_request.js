@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .select('id')
                 .eq('login_id', loginIdInput.value)
                 .eq('mail', emailInput.value)
-                .maybeSingle();
+                .single();
             if (error || !user) {
                 throw new Error('ログインIDまたはメールアドレスが正しくありません。');
             }
@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
             if (error) {
                 throw error;
+
             }
 
             //  更新成功

@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentUser = user;
 
     async function initializePage() {
-        const { data: profile } = await supabaseClient.from('users').select('premium_flag').eq('id', currentUser.id).maybeSingle();
+        const { data: profile } = await supabaseClient.from('users').select('premium_flag').eq('id', currentUser.id).single();
         isPremiumUser = profile?.premium_flag === true;
         if (isPremiumUser) {
             expireSelect.style.display = 'none';// 通常のセレクトボックスを隠す
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .from('forums')
                 .select('* ,tag(tag_dic(tag_name)), forum_images(image_url)')
                 .eq('forum_id', editId)
-                .maybeSingle();
+                .single();
 
             if (error || !post) throw new Error('投稿が見つからないか、読み込めませんでした');
 
@@ -165,13 +165,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 submitButton.textContent = '更新中...';
                 await updatePost();
                 alert('投稿を更新しました。');
+                window.location.href = `../../投稿系/html/forum_detail.html?id=${editId}`;
             } else {
                 // --- 新規登録処理 ---
                 submitButton.textContent = '投稿中...';
                 await createPost();
                 alert('投稿が完了しました。');
+                window.location.href = '../../メイン系/html/index.html'
             }
-            window.location.href = '../../メイン系/html/index.html'
+            
         } catch (error) {
             console.error('投稿/更新エラー', error);
             alert(`処理に失敗しました。:{error.message}`);
@@ -405,7 +407,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (dateValue) {
                 const selectedDate = new Date(dateValue);
                 if (selectedDate < new Date()) {
-                    throw new error('公開期限は現在より未来の日時を指定してください。');
+                    throw new Error('公開期限は現在より未来の日時を指定してください。');
                 }
                 return selectedDate.toISOString();
             } else {

@@ -1,388 +1,486 @@
+/* ================================================================
+   投稿入力/編集フォーム (forum_input.html) 専用スタイル
+   ================================================================ */
+
+/* base/style.cssのCSS変数を正しく使用し、統一されたスタイルを適用 */
+
 .form-container {
-    max-width: 400px;
-    padding: 40px auto;
-    padding: 30px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 40px;
+  background-color: var(--content-bg-color);
+  border: 1px solid var(--border-light-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  text-align: center;
 }
 
 .form-container h1 {
-    margin-bottom: 25px;
-    font-size: 24px;
-    color: #333;
+  margin-bottom: 32px;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-color);
 }
 
 .form-group {
-    margin-bottom: 20px;
-    text-align: left;
+  margin-bottom: 28px;
+  text-align: left;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-color);
 }
 
-.form-group input[type="text"],
-.form-group input[type="password"],
-.form-group input[type="email"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 16px;
-}
-
-.form-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.form-button:hover {
-    background-color: #0056b3;
-}
-
-.form-footer {
-    margin-top: 25px;
-    font-size: 14px;
-}
-
-.form-footer a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.form-footer a:hover {
-    text-decoration: underline;
-}
-
-.message {
-    padding: 10px;
-    margin-bottom: 4px;
-    text-align: center;
-}
-
-.message.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.message.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6b6;
-}
-
-
-
-
-/* --- 画像プレビュー --- */
-#image-preview-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.image-preview-wrapper {
-    width: 100px;
-    height: 100px;
-    border: 1px solid #ccc;
-    overflow: hidden;
-    position: relative;
-}
-
-.image-preview-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    /* 画像をボックスに合わせて中央で切り抜き */
-    cursor: pointer;
-}
-
-/* --- 画像モーダル --- */
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-}
-
-.modal-image {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
-}
-
-/* --- 投稿フォーム専用のスタイル --- */
-
-/* ログインフォームのデザインを基本として流用 */
-/* もしlogin.cssを読み込まない場合は、その内容をここにコピーしてくる */
-
-/* フォームコンテナの最大幅を少し広げる */
-.form-container {
-    max-width: 600px;
-}
-
-/* フォームの各入力グループ */
-.form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #555;
+.form-group small {
+  font-size: 13px;
+  color: var(--text-muted-color);
+  display: block;
+  margin-top: 6px;
 }
 
 /* input, textarea, select の共通スタイル */
 .form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"],
+.form-group input[type="datetime-local"],
 .form-group textarea,
 .form-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 16px;
-    font-family: inherit;
-    /* bodyのフォントを継承 */
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  font-size: 16px;
+  font-family: var(--font-family-base);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  background-color: var(--content-bg-color);
 }
 
-/* 本文入力欄の高さ */
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: var(--text-light-color);
+}
+
+/* 本文入力欄 */
 .form-group textarea {
-    height: 150px;
-    resize: vertical;
-    /* 縦方向のリサイズのみ許可 */
+  min-height: 200px;
+  resize: vertical;
+  line-height: 1.7;
 }
 
-/* --- 画像プレビュー --- */
+/* チェックボックス */
+.form-group input[type="checkbox"] {
+  width: auto;
+  margin-right: 8px;
+  cursor: pointer;
+  transform: scale(1.2);
+}
+
+.form-group label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* 画像プレビューコンテナ */
 #image-preview-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px dashed #ccc;
-    border-radius: 4px;
-    min-height: 120px;
-    /* 画像がない時もある程度の高さを確保 */
-    align-items: center;
-    justify-content: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 16px;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-sm);
+  min-height: 140px;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: var(--card-bg-color);
+  transition: border-color var(--transition-base);
+}
+
+#image-preview-container:empty::after {
+  content: "プレビューがここに表示されます";
+  color: var(--text-light-color);
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+}
+
+#image-preview-container:has(.image-preview-wrapper) {
+  border-color: var(--primary-color);
+  background-color: var(--content-bg-color);
 }
 
 .image-preview-wrapper {
-    width: 100px;
-    height: 100px;
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+}
+
+.image-preview-wrapper:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .image-preview-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    cursor: pointer;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
 }
 
-/* --- タグ入力 --- */
-#tag-container .tag-input-wrapper {
-    margin-bottom: 5px;
+/* 既存画像の削除ボタン */
+.delete-existing-image-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 26px;
+  height: 26px;
+  background-color: var(--error-color);
+  color: white;
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
 }
 
-#tag-container input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+.delete-existing-image-button:hover {
+  background-color: #c82333;
+  transform: scale(1.15);
+}
+
+/* 画像入力ボタン */
+.image-input-wrapper {
+  margin-bottom: 10px;
+}
+
+.image-input,
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--content-bg-color);
+  cursor: pointer;
+  transition: border-color var(--transition-base);
+  font-size: 14px;
+}
+
+.image-input:hover,
+input[type="file"]:hover {
+  border-color: var(--primary-color);
+}
+
+.image-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
 }
 
 .insert-button,
-.delete-button {
-    padding: 12px;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.delete-button,
+#add-image-button,
+#remove-image-button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  flex: 1;
 }
 
-.insert-button {
-    background-color: #00a2ff;
-    /* 投稿ボタンは緑色に */
-    color: white;
+.insert-button,
+#add-image-button {
+  background-color: var(--primary-color);
+  color: white;
 }
 
-.delete-button {
-    background-color: #ff0000;
-    /* 投稿ボタンは緑色に */
-    color: white;
+.insert-button:hover,
+#add-image-button:hover {
+  background-color: var(--primary-hover-color);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
-/* --- 送信ボタン --- */
-.submit-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #28a745;
-    /* 投稿ボタンは緑色に */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
+.delete-button,
+#remove-image-button {
+  background-color: var(--error-color);
+  color: white;
 }
 
-.submit-button:hover {
-    background-color: #218838;
+.delete-button:hover,
+#remove-image-button:hover {
+  background-color: #c82333;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
-/* --- 投稿フォーム専用のスタイル --- */
-
-/* ログインフォームのデザインを基本として流用 */
-/* もしlogin.cssを読み込まない場合は、その内容をここにコピーしてくる */
-
-/* フォームコンテナの最大幅を少し広げる */
-.form-container {
-    max-width: 600px;
+/* タグ入力コンテナ */
+#tag-container {
+  margin-bottom: 24px;
 }
 
-/* フォームの各入力グループ */
-.form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #555;
-}
-
-/* input, textarea, select の共通スタイル */
-.form-group input[type="text"],
-.form-group textarea,
-.form-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-size: 16px;
-    font-family: inherit;
-    /* bodyのフォントを継承 */
-}
-
-/* 本文入力欄の高さ */
-.form-group textarea {
-    height: 150px;
-    resize: vertical;
-    /* 縦方向のリサイズのみ許可 */
-}
-
-/* --- 画像プレビュー --- */
-#image-preview-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px dashed #ccc;
-    border-radius: 4px;
-    min-height: 120px;
-    /* 画像がない時もある程度の高さを確保 */
-    align-items: center;
-    justify-content: flex-start;
-}
-
-.image-preview-wrapper {
-    width: 100px;
-    height: 100px;
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
-}
-
-.image-preview-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    cursor: pointer;
-}
-
-/* --- タグ入力 --- */
 #tag-container .tag-input-wrapper {
-    margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 #tag-container input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  font-size: 16px;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  background-color: var(--content-bg-color);
 }
 
-/* --- 送信ボタン --- */
-.submit-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #28a745;
-    /* 投稿ボタンは緑色に */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s;
+#tag-container input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
-.submit-button:hover {
-    background-color: #218838;
+.tag-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
 }
 
-.form-button:disabled, .action-button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-    opacity: 0.7;
+#insert-tags,
+#delete-tags {
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  flex: 1;
 }
 
+#insert-tags {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+#insert-tags:hover {
+  background-color: var(--primary-hover-color);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+#delete-tags {
+  background-color: var(--error-color);
+  color: white;
+}
+
+#delete-tags:hover {
+  background-color: #c82333;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+/* 送信ボタン */
+.submit-button,
+.form-button,
+#submitButton {
+  width: 100%;
+  padding: 16px;
+  background-color: var(--success-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  margin-top: 16px;
+}
+
+.submit-button:hover,
+.form-button:hover,
+#submitButton:hover {
+  background-color: #218838;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.submit-button:active,
+.form-button:active,
+#submitButton:active {
+  transform: translateY(0);
+}
+
+.submit-button:disabled,
+.form-button:disabled,
+#submitButton:disabled {
+  background-color: var(--text-light-color);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* メッセージエリア */
+.message,
+#message-area {
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  text-align: center;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.message.success,
+#message-area.success {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
+}
+
+.message.error,
+#message-area.error {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
+}
+
+.message.info {
+  background-color: var(--info-bg);
+  color: var(--info-text);
+  border: 1px solid var(--info-border);
+}
+
+/* プレミアム機能エリア */
+#premium-expire-input-area {
+  margin-top: 12px;
+  padding: 16px;
+  background-color: var(--card-bg-color);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+#current-expiration-info {
+  padding: 12px;
+  background-color: var(--info-bg);
+  color: var(--info-text);
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid var(--info-border);
+}
+
+/* 画像モーダル */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.92);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  cursor: pointer;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-image {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+}
+
+/* レスポンシブ設定 */
 @media (max-width: 768px) {
-    .form-container {
-        margin: 10px;
-        padding: 20px;
-        border: none;
-        /* スマホでは境界線を消してスッキリ見せる */
-        box-shadow: none;
-        /* 影も消す */
-    }
+  .form-container {
+    margin: 10px;
+    padding: 24px 20px;
+    border-radius: var(--radius-md);
+  }
+
+  .form-container h1 {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .form-group textarea {
+    min-height: 160px;
+  }
+
+  #image-preview-container {
+    min-height: 120px;
+    padding: 12px;
+  }
+
+  .image-preview-wrapper {
+    width: 90px;
+    height: 90px;
+  }
+
+  .image-buttons {
+    flex-direction: column;
+  }
+
+  .tag-buttons {
+    flex-direction: column;
+  }
+
+  .insert-button,
+  .delete-button,
+  #add-image-button,
+  #remove-image-button,
+  #insert-tags,
+  #delete-tags {
+    width: 100%;
+  }
+
+  .submit-button,
+  #submitButton {
+    padding: 14px;
+    font-size: 16px;
+  }
 }
