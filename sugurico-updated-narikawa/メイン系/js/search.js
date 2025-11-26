@@ -1,16 +1,12 @@
 // search.js
 
-document.addEventListener('DOMContentLoaded', () => {
-
-    const advancedSearchWrapper = document.getElementById('advanced-search-wrapper');
-    const premiumSearchOverlay = document.getElementById('premium-search-overlay');
+document.addEventListener('DOMContentLoaded', async () => { // ★1. async を追加
 
     // --- HTML要素の取得 ---
     const searchTitle = document.getElementById('search-title');
     const searchCount = document.getElementById('search-count');
     const postsListContainer = document.getElementById('posts-list-container');
     const paginationContainer = document.getElementById('pagination-container');
-    // 詳細検索フォームの要素
     const toggleSearchButton = document.getElementById('toggle-search-button');
     const advancedSearchForm = document.getElementById('advanced-search-form');
     const filterButton = document.getElementById('filter-button');
@@ -19,100 +15,113 @@ document.addEventListener('DOMContentLoaded', () => {
     const tagInput = document.getElementById('tag-input');
     const periodSelect = document.getElementById('period-select');
     const sortSelect = document.getElementById('sort-select');
+    const excludeTagInput = document.getElementById('exclude-tag-input');
 
-    //  絞り込み検索を実行し、結果を描画するメイン関数
+    let isPremiumUser = false; // ★2. プレミアム状態を管理する変数を宣言
+
+    /**
+     *  ページの初期化処理
+     */
     async function initializePage() {
-        const urlParams = new URLSearchParams(window.location.search);
-            keywordInput.value = urlParams.get('keyword') || '';
-            authorInput.value = urlParams.get('author') || '';
-            tagInput.value = urlParams.get('tag') || '';
-            periodSelect.value = urlParams.get('period') || 'all'; // デフォルト値を指定
-            sortSelect.value = urlParams.get('sort') || 'desc';   // デフォルト値を指定
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (user) {
+            const { data: premiumRecords } = await supabaseClient
+                .from('premium')
+                .select('status')
+                .eq('id', user.id);
 
-        // ▼▼▼ プレミアム判定ロジックを追加 ▼▼▼
-        const isPremium = await isCurrentUserPremium();
-        if (isPremium) {
-            premiumSearchOverlay.style.display = 'none';
-        } else {
-            advancedSearchWrapper.classList.add('is-not-premium');
+            const premiumStatus = premiumRecords && premiumRecords[0];
+            isPremiumUser = premiumStatus?.status === 'active';
         }
-        // ▲▲▲ 追加ここまで ▲▲▲
-
-        setupEventListeners(isPremium); // isPremiumの結果を渡す
-        performSearch(parseInt(urlParams.get('page')) || 1);
+        setupUIAndForms();
+        setupEventListeners();
+        performSearch(parseInt(new URLSearchParams(window.location.search).get('page')) || 1);
     }
-
-    function setupEventListeners(isPremium) { // isPremium の判定結果を引数で受け取ります
+    function setupUIAndForms() {
+        const urlParams = new URLSearchParams(window.location.search);
+        // URLパラメータをフォームに反映
         
-        // 「詳細検索」ボタンのクリックイベント
-        toggleSearchButton.addEventListener('click', () => {
-            // まず、詳細検索フォームが現在非表示かどうかを確認します
-            const isHidden = advancedSearchForm.style.display === 'none';
+        const searchType = urlParams.get('type');
 
-            if (isHidden) {
-                // --- これからパネルを開く場合の処理 ---
 
-                // ラッパーとオーバーレイの表示をリセット
-                advancedSearchWrapper.classList.remove('is-not-premium');
-                premiumSearchOverlay.style.display = 'none';
-
-                if (isPremium) {
-                    // 【プレミアム会員の場合】
-                    // 通常通りフォームを表示します
-                    advancedSearchForm.style.display = 'flex';
-                } else {
-                    // 【プレミアム会員でない場合】
-                    // ここで初めて、フォームを操作不可に見せ、オーバーレイを表示します
-                    advancedSearchWrapper.classList.add('is-not-premium');
-                    premiumSearchOverlay.style.display = 'flex';
-                    advancedSearchForm.style.display = 'flex'; // フォームのガワだけ表示
-                }
-                
-                toggleSearchButton.textContent = '詳細検索を閉じる';
-
+        if (isPremiumUser) {
+            if (searchType === 'tag') {
+                tagInput.value = urlParams.get('terms');
             } else {
-                // --- すでに開いているパネルを閉じる場合の処理 ---
-                advancedSearchForm.style.display = 'none';
-                premiumSearchOverlay.style.display = 'none'; // 念のためオーバーレイも非表示に
-                toggleSearchButton.textContent = '詳細検索';
+                keywordInput.value = urlParams.get('terms');
             }
-        });
-
-        // 「検索」または「絞り込み」ボタンのクリックイベント (変更なし)
-        filterButton.addEventListener('click', () => {
-            // 正しい関数である performSearch を呼び出すように修正
-            performSearch(1);
-        });
+            toggleSearchButton.style.display = 'flex';
+            authorInput.value = urlParams.get('author') || '';
+            periodSelect.value = urlParams.get('period') || 'all';
+            sortSelect.value = urlParams.get('sort') || 'desc';
+            if (excludeTagInput) excludeTagInput.parentElement.style.display = 'block';
+        } else {
+            toggleSearchButton.style.display = 'none';
+            if (excludeTagInput) excludeTagInput.parentElement.style.display = 'none';
+        }
     }
+    function setupEventListeners() {
+        if (isPremiumUser) {
+            // プレミアム会員なら、詳細検索を開く機能を有効化
+            toggleSearchButton.style.display = 'flex'; // ボタン自体を表示
+            toggleSearchButton.addEventListener('click', () => {
+                const isHidden = advancedSearchForm.style.display === 'none';
+                advancedSearchForm.style.display = isHidden ? 'block' : 'none';
+                // HTMLに合わせてアイコンとテキストを個別に操作
+                const btnIcon = toggleSearchButton.querySelector('.btn-icon');
+                const btnText = toggleSearchButton.querySelector('.btn-text');
+                if (isHidden) {
+                    btnIcon.textContent = '🔼';
+                    btnText.textContent = '閉じる';
+                } else {
+                    btnIcon.textContent = '🔍';
+                    btnText.textContent = '詳細検索';
+                }
+            });
+        } else {
+            // 通常会員・ログアウト時は、ボタンを非表示
+            toggleSearchButton.style.display = 'none';
+        }
 
+        // 絞り込みボタンの機能は誰でも使える
+        filterButton.addEventListener('click', () => performSearch(1));
+    }
+    /**
+     * ★6. 検索の実行もプレミアム状態で分岐させる
+     */
     async function performSearch(page = 1) {
-        postsListContainer.innerHTML = '検索中…';
+        postsListContainer.innerHTML = '<p class="loading-text">検索中...</p>'; // CSSに合わせてクラス名を追加
         paginationContainer.innerHTML = '';
 
         try {
-            // ログインユーザー情報を取得する処理を追加
-            const {data: { user }} = await supabaseClient.auth.getUser();
-            const currentUserId = user ? user.id : null; // 未ログイン時はnull
-            const excludeTagInput = document.getElementById('exclude-tag-input');
-            const excludeTags = excludeTagInput.value.trim()
-                .split(',') // カンマで分割して配列にする
-                .map(tag => tag.trim()) // 各タグの前後の空白を削除
-                .filter(Boolean); // 空の要素を取り除く
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            const currentUserId = user ? user.id : null;
 
-            //  フォームから現在の検索条件を取得
-            const searchParams = {
+            // 基本の検索パラメータ
+            let searchParams = {
                 current_user_id_param: currentUserId,
-                keyword_param: keywordInput.value.trim(),
-                author_param: authorInput.value.trim(),
-                tag_param: tagInput.value.trim(),
-                period_param: periodSelect.value,
-                sort_order_param: sortSelect.value,
+                keyword_param: keywordInput.value.trim() || null,
+                author_param: null,
+                tag_param: null,
+                period_param: 'all',
+                sort_order_param: 'desc',
                 page_param: page,
                 limit_param: 10,
-                exclude_tags_param: excludeTags
+                // ★ exclude_tags_paramを必ず渡す (値がない場合は空の配列)
+                exclude_tags_param: []
             };
 
-            //  RPCでDB関数を呼び出し、総件数とページデータを一度に取得
+            // ★ もしプレミアム会員なら、詳細検索の値をパラメータに追加
+            if (isPremiumUser) {
+                searchParams.author_param = authorInput.value.trim();
+                searchParams.tag_param = tagInput.value.trim();
+                searchParams.period_param = periodSelect.value;
+                searchParams.sort_order_param = sortSelect.value;
+                if (excludeTagInput && excludeTagInput.value.trim()) {
+                    searchParams.exclude_tags_param = excludeTagInput.value.trim().split(',').map(tag => tag.trim);
+                }
+            }
+
             const { data, error, count } = await supabaseClient
                 .rpc('search_public_forums', searchParams, { count: 'exact' });
             if (error) throw error;
@@ -123,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
             searchTitle.textContent = '検索結果';
             searchCount.textContent = `${totalposts}件の投稿が見つかりました。`;
             if (posts && posts.length > 0) {
-                console.log(posts);
                 postsListContainer.innerHTML = posts.map(post => renderPost(post)).join('');
             } else {
                 postsListContainer.innerHTML = '<p>該当する投稿は見つかりませんでした。</p>';
@@ -135,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
+    // (renderPost は変更なし)
     function renderPost(post) {
         let thumbnailHTML = '';
         if (post.forum_images && post.forum_images.length > 0) {
@@ -161,6 +169,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
     }
 
+    /**
+     * ★7. ページネーションのリンク生成を修正
+     */
     function renderPagination(totalItems, currentPage, itemsPerPage) {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         if (totalPages <= 1) {
@@ -168,26 +179,33 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // 現在のURLパラメータを維持しつつ、pageだけを書き換える
+        const urlParams = new URLSearchParams(window.location.search);
         let paginationHTML = '';
-        const baseLink = new URLSearchParams(window.location.search);
+
+        const createPageLink = (page) => {
+            urlParams.set('page', page);
+            return `?${urlParams.toString()}`;
+        };
 
         if (currentPage > 1) {
-            paginationHTML += `<a href="${baseLink}&page=${currentPage - 1}">« 前へ</a>`;
+            paginationHTML += `<a href="${createPageLink(currentPage - 1)}">« 前へ</a>`;
         }
 
         for (let i = 1; i <= totalPages; i++) {
             if (i === currentPage) {
                 paginationHTML += `<span class="current-page">${i}</span>`;
             } else {
-                paginationHTML += `<a href="${baseLink}&page=${i}">${i}</a>`;
+                paginationHTML += `<a href="${createPageLink(i)}">${i}</a>`;
             }
         }
 
         if (currentPage < totalPages) {
-            paginationHTML += `<a href="${baseLink}&page=${currentPage + 1}">次へ »</a>`;
+            paginationHTML += `<a href="${createPageLink(currentPage + 1)}">次へ »</a>`;
         }
 
         paginationContainer.innerHTML = paginationHTML;
     }
+
     initializePage();
 });
