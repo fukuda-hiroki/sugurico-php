@@ -55,7 +55,7 @@ if (loginForm) {
                     .from('users')
                     .select('mail')
                     .eq('login_id', loginIdentifier)
-                    .single(); //該当するユーザーが複数いる可能性は低い
+                    .maybeSingle(); //該当するユーザーが複数いる可能性は低い
 
                 if (findError || !user) {
                     // ログインIDが見つからなかった
@@ -105,7 +105,7 @@ async function checkAndUpdatePremiumStatus(user) {
             .from('premium')
             .select('status, limit_date, plan')
             .eq('id', user.id)
-            .single();
+            .maybeSingle();
         if (selectError) {
             if (selectError.code === 'PGRST116' || (premium && premium.status === 'canceled')) {
                 return;

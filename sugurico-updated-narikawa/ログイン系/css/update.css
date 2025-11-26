@@ -1,0 +1,33 @@
+.button-premium {
+    display: inline-block; /* ボタンとしての領域を確保 */
+    padding: 10px 24px;    /* 内側の余白 (上下左右) */
+    background-color: #007bff; /* 背景色 (サイトのメインカラー) */
+    color: white;          /* 文字色 */
+    font-weight: bold;     /* 文字を太く */
+    text-decoration: none; /* 下線を消す */
+    border-radius: 5px;    /* 角を丸くする */
+    transition: background-color 0.2s; /* ホバー時の変化を滑らかに */
+}
+
+.button-premium:hover {
+    background-color: #0056b3; /* マウスが乗った時の色 */
+    text-decoration: none; /* 下線を消す */
+}
+
+.gradient-button {
+    display: inline-block;
+    padding: 12px 28px;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 50px;
+    border: none;
+    background: linear-gradient(45deg, #4e54c8, #8f94fb); /* グラデーションの設定 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* 影を付ける */
+    transition: all 0.3s, ease;
+}
+
+.gradient-button {
+    transform: translateY(-2px); /* 少し浮き上がるようにする */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* 影を強調 */
+}

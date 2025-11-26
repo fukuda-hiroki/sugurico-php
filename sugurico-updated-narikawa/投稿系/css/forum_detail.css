@@ -143,6 +143,12 @@ main {
     color: #888;
 }
 
+.form-button:disabled, .action-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
 /* --- レスポンシブ設定 (画面幅が768px以下) --- */
 @media (max-width: 768px) {
 

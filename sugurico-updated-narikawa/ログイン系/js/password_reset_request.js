@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .select('id')
                 .eq('login_id', loginIdInput.value)
                 .eq('mail', emailInput.value)
-                .single();
+                .maybeSingle();
             if (error || !user) {
                 throw new Error('ログインIDまたはメールアドレスが正しくありません。');
             }
@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (passwordInput.value !== confirmPasswordInput.value) {
             showMessage('パスワードが一致しません。', 'error');
+            return;
         }
         if (!verifiedUserId) {
             showMessage('認証情報がありません。最初からやり直してください。', 'error');

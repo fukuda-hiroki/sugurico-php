@@ -4,11 +4,13 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    const advancedSearchWrapper = document.getElementById('advanced-search-wrapper');
+    const premiumSearchOverlay = document.getElementById('premium-search-overlay');
+
     // --- HTML要素の取得 ---
     const mypageTitle = document.getElementById('mypage-title');
     const postsListContainer = document.getElementById('my-posts-list');
     const paginationContainer = document.getElementById('pagination-container');
-
     // 詳細検索フォームの要素
     const toggleSearchButton = document.getElementById('toggle-search-button');
     const advancedSearchForm = document.getElementById('advanced-search-form');
@@ -30,6 +32,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         currentUser = session.user;
 
+        // ▼▼▼ この制御ロジックを追加 ▼▼▼
+        const isPremium = await isCurrentUserPremium();
+        if (isPremium) {
+            // プレミアム会員の場合：通常通り機能させる
+            premiumSearchOverlay.style.display = 'none';
+        } else {
+            // プレミアム会員でない場合：ラッパーにクラスを付けて見た目を変え、オーバーレイを表示
+            advancedSearchWrapper.classList.add('is-not-premium');
+        }
+        // ▲▲▲ 追加ここまで ▲▲▲
+
         const userName = currentUser.user_metadata?.user_name || 'あなた';
         mypageTitle.textContent = `${escapeHTML(userName)}の投稿一覧`;
 
@@ -42,21 +55,49 @@ document.addEventListener('DOMContentLoaded', () => {
         await fetchAndDisplayUserPosts(page);
 
         // --- 4. イベントリスナーを設定 ---
-        setupEventListeners();
+        setupEventListeners(isPremium); 
     }
 
     //  イベントリスナーをまとめて設定する関数
-    function setupEventListeners() {
-        // 詳細検索フォームの表示/非表示トグル
+    function setupEventListeners(isPremium) { // isPremium の判定結果を引数で受け取ります
+        
+        // 「詳細検索」ボタンのクリックイベント
         toggleSearchButton.addEventListener('click', () => {
+            // まず、詳細検索フォームが現在非表示かどうかを確認します
             const isHidden = advancedSearchForm.style.display === 'none';
-            advancedSearchForm.style.display = isHidden ? 'block' : 'none';
-            toggleSearchButton.textContent = isHidden ? '詳細検索を閉じる' : '詳細検索';
+
+            if (isHidden) {
+                // --- これからパネルを開く場合の処理 ---
+
+                // ラッパーとオーバーレイの表示をリセット
+                advancedSearchWrapper.classList.remove('is-not-premium');
+                premiumSearchOverlay.style.display = 'none';
+
+                if (isPremium) {
+                    // 【プレミアム会員の場合】
+                    // 通常通りフォームを表示します
+                    advancedSearchForm.style.display = 'flex';
+                } else {
+                    // 【プレミアム会員でない場合】
+                    // ここで初めて、フォームを操作不可に見せ、オーバーレイを表示します
+                    advancedSearchWrapper.classList.add('is-not-premium');
+                    premiumSearchOverlay.style.display = 'flex';
+                    advancedSearchForm.style.display = 'flex'; // フォームのガワだけ表示
+                }
+                
+                toggleSearchButton.textContent = '詳細検索を閉じる';
+
+            } else {
+                // --- すでに開いているパネルを閉じる場合の処理 ---
+                advancedSearchForm.style.display = 'none';
+                premiumSearchOverlay.style.display = 'none'; // 念のためオーバーレイも非表示に
+                toggleSearchButton.textContent = '詳細検索';
+            }
         });
 
-        // 「絞り込み」ボタンのクリックイベント
+        // 「検索」または「絞り込み」ボタンのクリックイベント (変更なし)
         filterButton.addEventListener('click', () => {
-            fetchAndDisplayUserPosts(1); // 1ページ目から表示      
+            fetchAndDisplayUserPosts(1); // or performSearch(1);
         });
     }
 
@@ -129,13 +170,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderPostHTML(post) {
+        // 自分の投稿なので、編集・削除ボタンを追加
+        const actionsHTML = `
+            <div class="post-item-actions">
+                <a href="../../投稿系/html/forum_input.html?edit_id=${post.forum_id}" class="action-button edit-button">編集</a>
+                <button type="button" class="action-button delete-button" data-post-id="${post.forum_id}">削除</button>
+            </div>
+        `;
+
+        // aタグで全体を囲むのではなく、リンクとアクションを分離する
         return `
-            <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}">
-                <article class="post-item">
-                    <h3>${escapeHTML(post.title)}</h3>
-                    <p>${nl2br(post.text)}</p>
-                </article>
-            </a>
+            <article class="post-item">
+                <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-item-link">
+                    <div class="post-item-main">
+                        <h3>${escapeHTML(post.title)}</h3>
+                        <p>${nl2br(post.text)}</p>
+                    </div>
+                </a>
+                ${actionsHTML}
+            </article>
         `;
     }
 
@@ -176,4 +229,20 @@ document.addEventListener('DOMContentLoaded', () => {
         paginationContainer.innerHTML = paginationHTML;
     }
     initializePage();
+
+    // 削除ボタン用のイベントリスナーを設定
+    postsListContainer.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('delete-button')) {
+            const postId = event.target.dataset.postId;
+            if (confirm('この投稿を本当に削除しますか？')) {
+                const { error } = await supabaseClient.rpc('delete_forum_with_related_data', { forum_id_param: postId });
+                if (error) {
+                    alert('削除に失敗しました。');
+                } else {
+                    alert('削除しました。');
+                    location.reload(); // 簡単にするためリロード
+                }
+            }
+        }
+    });
 });

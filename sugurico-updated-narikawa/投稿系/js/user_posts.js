@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .from('users')
                 .select('user_name')
                 .eq('id', targetUserId)
-                .single();
+                .maybeSingle();
             if (userError || !targetUser) throw new Error('ユーザーが見つかりません。');
             pageTitle.textContent = `${escapeHTML(targetUser.user_name)}さんの投稿一覧`
         } catch (e) {

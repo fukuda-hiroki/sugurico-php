@@ -21,8 +21,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isPremium = await isCurrentUserPremium();
 
     if (!isPremium) {
-        document.querySelector('main').innerHTML = '<h1>アクセス権がありません</h1><p>この機能はプレミアム会員限定です。</p>';
-        return;
+        // プレミアム会員でない場合の表示を、より親切な案内に変更
+        const mainContent = document.querySelector('main');
+        mainContent.innerHTML = `
+            <h1>ブックマークはプレミアム会員限定機能です</h1>
+            <p>
+                気になる投稿を保存して、後からいつでも見返すことができるブックマーク機能は、
+                プレミアム会員へのご登録でご利用いただけます。
+            </p>
+            
+            <div class="premium-features" style="margin: 30px 0; text-align: left;">
+                <h3>プレミアム会員の主な特典</h3>
+                <ul>
+                    <li>非表示までの詳細指定</li>
+                    <li>高度な検索機能</li>
+                    <li>ブロック機能</li>
+                    <li>ブックマーク機能の利用</li>
+                    <li>投稿可能な画像数の増加</li>
+                </ul>
+            </div>
+
+            <a href="premium_entry.html" class="action-button gradient-button" style="display: inline-block; width: auto; padding: 15px 30px;">
+                プレミアム会員登録ページへ
+            </a>
+            <br><br>
+            <a href="../../メイン系/html/index.html" class="top-button">トップページに戻る</a>
+        `;
+        // style属性は、可能であればCSSファイルに記述するのが望ましいです。
+        return; // これ以降の処理は行わない
     }
 
     // --- 2. ページネーションの準備 ---

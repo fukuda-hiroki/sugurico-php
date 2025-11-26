@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentUser = user;
 
     async function initializePage() {
-        const { data: profile } = await supabaseClient.from('users').select('premium_flag').eq('id', currentUser.id).single();
+        const { data: profile } = await supabaseClient.from('users').select('premium_flag').eq('id', currentUser.id).maybeSingle();
         isPremiumUser = profile?.premium_flag === true;
         if (isPremiumUser) {
             expireSelect.style.display = 'none';// 通常のセレクトボックスを隠す
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .from('forums')
                 .select('* ,tag(tag_dic(tag_name)), forum_images(image_url)')
                 .eq('forum_id', editId)
-                .single();
+                .maybeSingle();
 
             if (error || !post) throw new Error('投稿が見つからないか、読み込めませんでした');
 

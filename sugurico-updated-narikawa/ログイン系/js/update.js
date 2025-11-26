@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const passwordInput = document.getElementById('passwordInput');
     const submitButton = document.getElementById('submitButton');
     const messageArea = document.getElementById('message-area');
+    const excludeTagsInput = document.getElementById('excludeTagsInput');
 
     // --- 1. ログイン状態をチェックし、現在のユーザー情報を取得 ---
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
@@ -27,7 +28,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             .from('users')
             .select('name, user_name, login_id, mail')
             .eq('id', user.id)// AuthのIDを使って検索
-            .single();
+            .maybeSingle();
+        supabaseClient
+            .from('user_exclude_tags')
+            .select('exclude_tags')
+            .eq('user_id', user.id)
+            .maybeSingle()
         if (error) throw error;
         if (profile) {
             nameInput.value = profile.name;
@@ -76,6 +82,21 @@ document.addEventListener('DOMContentLoaded', async () => {
                     login_id: loginIdInput.value
                 }
             });
+            // 1. 入力された文字列を配列に変換
+            const newExcludeTags = excludeTagsInput.value.trim()
+                .split(',')
+                .map(tag => tag.trim())
+                .filter(Boolean); // 空の要素は除去
+
+            // 2. upsertを使って、レコードがなければ新規作成、あれば更新する
+            const { error: excludeTagsError } = await supabaseClient
+                .from('user_exclude_tags')
+                .upsert({
+                    user_id: user.id,
+                    exclude_tags: newExcludeTags,
+                    updated_at: new Date().toISOString()
+                });
+            if (excludeTagsError) throw excludeTagsError;
 
             // --- 成功処理 ---
             messageArea.textContent = 'ユーザー情報を更新しました。';

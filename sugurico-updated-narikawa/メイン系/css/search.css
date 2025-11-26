@@ -1,0 +1,90 @@
+/* --- 詳細検索フォーム --- */
+.advanced-search-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-bottom: 20px;
+
+    /* PC表示 (デフォルト): Flexboxで横1列に */
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* 各検索アイテム */
+.search-item{
+    display: flex;
+    flex-direction: column; /* ラベルと入力欄を縦に並べる */
+}
+
+.search-item label {
+    font-size: 12px;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+.search-item input,
+.search-item select {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* キーワード入力欄だけ幅を広げる */
+.search-item-keyword {
+    flex-grow: 1; /* 残りのスペースをすべて使う */
+}
+
+/* --- プレミアム機能のラッパー --- */
+#advanced-search-wrapper {
+    position: relative; /* オーバーレイの位置の基準点 */
+}
+
+/* プレミアムでない場合のフォームの見た目 */
+.is-not-premium #advanced-search-form {
+    opacity: 0.5; /* 少し半透明にする */
+    pointer-events: none; /* クリックなどの操作を無効化 */
+}
+
+/* オーバーレイのスタイル */
+#premium-search-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(240, 240, 240, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+#premium-search-overlay p {
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.simple-search-container {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end; /* 要素の下揃え */
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* スマホで折り返す */
+}
+
+/* キーワード入力欄をできるだけ伸ばす */
+.simple-search-container .search-item-keyword {
+    flex-grow: 1;
+}
+
+/* ボタン類が伸びないようにする */
+.simple-search-container .search-item-button,
+.simple-search-container .search-item-toggle {
+    flex-shrink: 0;
+}

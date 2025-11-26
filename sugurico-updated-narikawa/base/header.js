@@ -39,8 +39,17 @@ async function setupHeaderAndFooter() {
         // 【ログインしている場合のナビゲーション】
         const userName = session.user.user_metadata?.user_name || 'ゲスト';
         navHTML = `
-            <a href="../../ログイン系/html/mypage.html">${escapeHTML(userName)}さん</a>
-            <a href="#" id="logout-button">ログアウト</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle">${userName} ▼</a>
+                <ul class="dropdown-menu">
+                    <li><a href="../../ログイン系/html/mypage.html">投稿一覧</a></li>
+                    <li><a href="../../ログイン系/html/update.html">プロフィール編集</a></li>
+                    <li><a href="../../ログイン系/html/bookmarks.html">ブックマーク一覧を見る</a></li>
+                    <li><a href="../../ログイン系/html/block_list.html">ブロック中のユーザー管理</a></li>
+                    <li><hr></li>
+                    <li><a href="#" id="logout-button">ログアウト</a></li>
+                </ul>
+            </div>
         `;
 
     } else {
@@ -187,7 +196,7 @@ async function isCurrentUserPremium() {
         .from('premium')
         .select('status, limit_date')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
     if (error || !premium) {
         // レコードが存在しない、または取得時にエラーが発生した場合
