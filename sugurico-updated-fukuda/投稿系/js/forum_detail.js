@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .eq('user_id', currentUser.id)
                 .eq('post_id', forumId)
                 .maybeSingle();
-            
+
             if (bookmarkRes) {
                 isBookmarked = true;
             }
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         ]);
 
         if (postRes.error || !postRes.data) throw new Error('投稿が見つからないか、取得に失敗しました。');
-        
+
         const post = postRes.data;
 
         // --- 4. アクセス制御 ---
@@ -85,12 +85,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         const timeAgoHTML = timeAgo(post.created_at);
         const tagsHTML = tags.map(tag => `<a href="../../メイン系/html/search.html?terms=${encodeURIComponent(tag.tag_dic.tag_name)}&type=tag" class="tag-link">#${escapeHTML(tag.tag_dic.tag_name)}</a>`).join(' ');
         const imagesHTML = images.map(image => `<div class="post-image-wrapper"><img src="${image.image_url}" alt="投稿画像" class="post-image"></div>`).join('');
-        
+
         let authorHTML = escapeHTML(post.users?.user_name || '不明');
         if (currentUser && post.user_id_auth !== currentUser.id) {
             authorHTML = `<a href="user_posts.html?id=${post.user_id_auth}">${authorHTML}</a>`;
         }
-        
+
         let ownerButtonsHTML = '';
         if (isOwner) {
             ownerButtonsHTML = `
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <button type="button" id="delete-post-button" class="action-button delete-button">削除</button>
                 </div>`;
         }
-        
+
         let bookmarkButtonHTML = '';
         if (isPremium) {
             const buttonText = isBookmarked ? 'ブックマーク解除' : 'ブックマークに追加';
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <button type="button" id="bookmark-button" class="${buttonClass}" data-bookmarked="${isBookmarked}">${buttonText}</button>
                 </div>`;
         }
-        
+
         let blockButtonHTML = '';
         // ログインしていて、かつ自分の投稿ではない場合にブロックボタンを表示
         if (currentUser && post.user_id_auth !== currentUser.id) {
@@ -132,14 +132,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="post-content">${nl2br(post.text)}</div>
             <div class="post-tags">${tagsHTML}</div>
             ${remainingTimeHTML}`;
-            
+
         // イベントリスナーを設定
         if (isOwner) document.getElementById('delete-post-button').addEventListener('click', () => handleDeletePost(post.forum_id));
         if (isPremium) document.getElementById('bookmark-button').addEventListener('click', handleBookmarkToggle);
-        
+
         if (currentUser && post.user_id_auth !== currentUser.id) {
             document.getElementById('block-user-button').addEventListener('click', handleBlockUser);
         }
+        setupImageModalListeners();
     }
 
     function renderCommentForm() {
@@ -202,7 +203,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert(`投稿の削除に失敗しました: ${error.message}`);
         }
     }
-    
+
     async function handleBookmarkToggle(event) {
         const button = event.target;
         const isCurrentlyBookmarked = button.dataset.bookmarked === 'true';
@@ -264,4 +265,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             alert('ユーザーのブロックに失敗しました。');
         }
     }
+    function setupImageModalListeners() {
+        const imageElements = postContainer.querySelectorAll('.post-image');
+        imageElements.forEach(img => {
+            img.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                showImageModal(img.src);
+            });
+        });
+    }
+
+
+    function showImageModal(imageUrl) {
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop';
+
+        const modalImage = document.createElement('img');
+        modalImage.className = 'modal-image';
+        modalImage.src = imageUrl;
+
+        backdrop.appendChild(modalImage);
+        document.body.appendChild(backdrop);
+
+        backdrop.addEventListener('click', () => {
+            backdrop.remove();
+        });
+    }
 });
+
