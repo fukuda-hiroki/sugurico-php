@@ -125,8 +125,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+ async function handleReactivation() {
+        if (!confirm('プレミアム会員に復帰しますか？現在のプランが継続されます。')) return;
 
+        const { error } = await supabaseClient
+            .from('premium')
+            .update({ status: 'active' }) // statusを'active'に戻す
+            .eq('id', currentUser.id);
 
+        if (error) {
+            showMessage(editMessageArea, '復帰処理に失敗しました。', 'error');
+        } else {
+            showMessage(editMessageArea, 'プレミアム会員に復帰しました！', 'success');
+            // 表示を最新の状態に更新
+            location.reload(); // 簡単にするためリロード
+        }
+    }
+
+    /**
+     * メッセージ表示用のヘルパー関数
+     */
     function showMessage(element, text, type) {
         element.textContent = text;
         element.className = `message ${type}`;

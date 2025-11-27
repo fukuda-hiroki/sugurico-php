@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         passwordAuthSection.style.display = 'none';
         paymentSection.style.display = 'block';
     }
+
     function handleAuthFailure() {
         const failKey = `auth_fails_${currentUser.id}`, lockKey = `auth_lock_${currentUser.id}`;
         const MAX_FAILS = 5;
@@ -89,6 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const unlockTime = new Date(lockUntil).toLocaleString('ja-JP');
         showMessage(authMessageArea, `試行回数の上限に達しました。アカウントはロックされました。再試行可能: ${unlockTime}`, 'error');
     }
+
     function checkLockStatus() {
         const lockKey = `auth_lock_${currentUser.id}`;
         const lockUntil = parseInt(localStorage.getItem(lockKey) || '0');
@@ -112,9 +114,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         // ★ 配列 "premiumRecords" の最初の要素を取得する
         const premiumStatus = premiumRecords && premiumRecords[0];
 
-        // ★★★ "premiumStatus" (オブジェクト) の "status" プロパティをチェック ★★★
-        if (premiumStatus && premiumStatus.status === 'active') {
-            alert('あなたは既にプレミアム会員です。会員情報ページに移動します。');
+        // プレミアム会員('active')、または解約手続き済み('canceled')の場合
+        if (premiumStatus && (premiumStatus.status === 'active' || premiumStatus.status === 'canceled')) {
+            // メッセージを少し分かりやすく変更
+            alert('あなたは既にプレミアム会員、または解約手続き済みです。会員情報ページに移動します。');
             window.location.href = 'premium_edit.html';
         }
     }
