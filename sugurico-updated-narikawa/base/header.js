@@ -224,10 +224,10 @@ async function isCurrentUserPremium() {
     }
 
     // 4. ステータスが 'active' で、かつ有効期限が切れていないかチェック
-    const isActive = premium.status === 'active';
+    const hasValidStatus = premium.status === 'active' || premium.status === 'canceled';
     const isNotExpired = new Date(premium.limit_date) > new Date();
 
-    return isActive && isNotExpired;
+    return hasValidStatus && isNotExpired;
 }
 
 // --- 関数の実行 ---

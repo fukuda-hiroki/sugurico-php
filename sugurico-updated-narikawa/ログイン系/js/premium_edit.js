@@ -44,10 +44,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             currentPremiumData = data;
 
-            console.log(data);
-
             currentPlanEl.textContent = data.plan === 'monthly' ? '月額プラン' : '年間プラン';
+        // ▼▼▼ ステータスに応じて表示を切り替える ▼▼▼
+        if (data.status === 'canceled') {
+            currentStatusEl.textContent = `解約手続き済み (有効期限まで利用可能)`;
+            currentStatusEl.style.color = 'var(--error-color)'; // 文字を赤くするなど
+
+            // プラン変更や解約ボタンを非表示にし、再契約ボタンを表示
+            document.getElementById('edit-section').style.display = 'none';
+            document.getElementById('cancel-section').innerHTML = `
+                <p>現在解約手続き済みです。プレミアム会員に復帰しますか？</p>
+                <button type="button" id="reactivate-button" class="change-button">プレミアム会員に復帰する</button>
+            `;
+            
+            // 再契約ボタンにイベントリスナーを追加
+            document.getElementById('reactivate-button').addEventListener('click', handleReactivation);
+
+        } else { // activeの場合
             currentStatusEl.textContent = '有効';
+            currentStatusEl.style.color = 'var(--success-color)'; // 文字を緑にするなど
+        }
             //data.status === 'active' ? '有効' : '解約済み';
             nextBillingDateEl.textContent = new Date(data.limit_date).toLocaleString('ja-JP');
             planSelect.value = data.plan;
@@ -95,7 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         cancelSubscriptionButton.addEventListener('click', async () => {
-            if (!confirm('本当にプレミアム会員を解約しますか？\nこの操作は元に戻せません。')) return;
+            if (!confirm('本当にプレミアム会員を解約しますか？\n解約後も、現在の有効期限までは引き続き特典をご利用いただけます。')) return;
             const { error } = await supabaseClient
                 .from('premium')
                 .update({ status: 'canceled' })
