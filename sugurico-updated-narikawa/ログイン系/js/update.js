@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const submitButton = document.getElementById('submitButton');
     const messageArea = document.getElementById('message-area');
     const excludeTagsInput = document.getElementById('excludeTagsInput');
+    const excludeTagsSection = document.getElementById('exclude-tags-section');
+
+    // ★ ログインユーザーとプレミアム状態を格納する変数を宣言
+    let currentUser;
+    let isPremium = false;
 
     // --- 1. ログイン状態をチェックし、現在のユーザー情報を取得 ---
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
@@ -20,6 +25,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!user) {
         window.location.href = 'login.html';
         return;
+    }
+    currentUser = user;
+
+    // ★ プレミアム会員かチェック
+    isPremium = await isCurrentUserPremium();
+
+    // ★ プレミアムでなければ除外タグ設定セクションを非表示にする
+    if (!isPremium) {
+        if (excludeTagsSection) {
+            excludeTagsSection.style.display = 'none';
+        }
     }
 
     // --- 2. DBからプロフィール情報を取得してフォームに表示 ---
@@ -40,30 +56,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // 除外タグ情報を取得
-        const { data: excludeTagsData, error: excludeTagsError } = await supabaseClient
-            .from('user_exclude_tags')
-            .select('exclude_tags')
-            .eq('user_id', user.id)
-            .maybeSingle(); // レコードが存在しない場合もあるので maybeSingle を使用
+        if (isPremium) {
+            const { data: excludeTagsData, error: excludeTagsError } = await supabaseClient
+                .from('user_exclude_tags')
+                .select('exclude_tags')
+                .eq('user_id', user.id)
+                .maybeSingle(); // レコードが存在しない場合もあるので maybeSingle を使用
 
-        if (excludeTagsError) throw excludeTagsError;
+            if (excludeTagsError) throw excludeTagsError;
 
-        const tags = excludeTagsData?.exclude_tags || [];
+            const tags = excludeTagsData?.exclude_tags || [];
 
-        // 1. テキストエリアにカンマ区切りの文字列として設定
-        if (tags.length > 0) {
-            excludeTagsInput.value = tags.join(', ');
-        }
+            // 1. テキストエリアにカンマ区切りの文字列として設定
+            if (tags.length > 0) {
+                excludeTagsInput.value = tags.join(', ');
+            }
 
-        // 2. 新しく追加した一覧表示エリアにタグを描画
-        const tagsListContainer = document.getElementById('current-exclude-tags-list');
-        if (tags.length > 0) {
-            // escapeHTML関数で安全にタグを表示
-            tagsListContainer.innerHTML = tags.map(tag => 
-                `<span class="tag-item">${escapeHTML(tag)}</span>`
-            ).join('');
-        } else {
-            tagsListContainer.innerHTML = '<p>現在、除外するタグは設定されていません。</p>';
+            // 2. 新しく追加した一覧表示エリアにタグを描画
+            const tagsListContainer = document.getElementById('current-exclude-tags-list');
+            if (tags.length > 0) {
+                // escapeHTML関数で安全にタグを表示
+                tagsListContainer.innerHTML = tags.map(tag => 
+                    `<span class="tag-item">${escapeHTML(tag)}</span>`
+                ).join('');
+            } else {
+                tagsListContainer.innerHTML = '<p>現在、除外するタグは設定されていません。</p>';
+            }
         }
 
         
@@ -109,21 +127,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
 
-            // 1. 入力された文字列を配列に変換
-            const newExcludeTags = excludeTagsInput.value.trim()
-                .split(',')
-                .map(tag => tag.trim())
-                .filter(Boolean); // 空の要素は除去
+            if (isPremium) {
+                // 1. 入力された文字列を配列に変換
+                const newExcludeTags = excludeTagsInput.value.trim()
+                    .split(',')
+                    .map(tag => tag.trim())
+                    .filter(Boolean);
 
-            // 2. upsertを使って、レコードがなければ新規作成、あれば更新する
-            const { error: excludeTagsError } = await supabaseClient
-                .from('user_exclude_tags')
-                .upsert({
-                    user_id: user.id,
-                    exclude_tags: newExcludeTags,
-                    updated_at: new Date().toISOString()
-                });
-            if (excludeTagsError) throw excludeTagsError;
+                // 2. upsertを使って、レコードがなければ新規作成、あれば更新する
+                const { error: excludeTagsError } = await supabaseClient
+                    .from('user_exclude_tags')
+                    .upsert({
+                        user_id: currentUser.id,
+                        exclude_tags: newExcludeTags,
+                        updated_at: new Date().toISOString()
+                    });
+                if (excludeTagsError) throw excludeTagsError;
+            }
 
             // --- 成功処理 ---
             messageArea.textContent = 'ユーザー情報を更新しました。';
