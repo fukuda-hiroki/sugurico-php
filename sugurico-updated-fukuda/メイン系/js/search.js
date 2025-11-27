@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
 
         return `
                     <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-link">
-                        <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}">
+                        <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}" style="min-width:96%">
                             
                             <div class="post-item-content">
                             <h3>${escapeHTML(post.title)} <small style="color:gray;">${timeAgoString}</small> </h3>
