@@ -40,44 +40,6 @@ h2 {
   margin-bottom: 16px;
 }
 
-/* ▼▼▼ マイページのアクションリンク群 (スタイル改善) ▼▼▼ */
-.mypage-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 20px 0;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border-light-color);
-}
-
-.mypage-actions a,
-.mypage-actions button {
-  padding: 8px 16px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-full);
-  /* 角を丸くしてモダンに */
-  background-color: var(--card-bg-color);
-  color: var(--text-color);
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  /* ボタン内のアイコン用 */
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.mypage-actions a:hover,
-.mypage-actions button:hover {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
-}
-/* ▲▲▲ スタイル改善ここまで ▲▲▲ */
 
 /* ▼▼▼ 詳細検索フォームのスタイル (search.cssから移植) ▼▼▼ */
 .advanced-search-container {
@@ -107,7 +69,7 @@ h2 {
   }
 }
 
-.search-item{
+.search-item {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -115,7 +77,7 @@ h2 {
   min-width: 150px;
 }
 
-.search-item label{
+.search-item label {
   font-weight: 600;
   color: var(--text-color);
   font-size: 0.9rem;
@@ -132,26 +94,27 @@ h2 {
   box-sizing: border-box;
 }
 
-.search-item input:focus
-.search-item select:focus{
+.search-item input:focus .search-item select:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
-.search-item-button{
+
+.search-item-button {
   flex-grow: 0;
 }
 
-.search-item-button{
+.search-item-button {
   width: 100%;
   padding: 0.75rem 1.5rem;
-  background:var(--primary-color);
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: var(--shadow-sm);
   cursor: pointer;
   font-weight: 600;
 }
+
 /* ▲▲▲ スタイル移植ここまで ▲▲▲ */
 
 /* 投稿一覧エリア */
@@ -379,6 +342,102 @@ h2 {
 
 .blocked-user-item button:hover {
   background-color: #5a6268;
+}
+
+.mypage-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 16px;
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-light-color);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text-color);
+
+  text-align: center;
+  /* JSアニメーション用の初期状態 */
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.action-card .action-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.action-card .action-text {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* JSで追加されるアニメーション用クラス */
+.action-card.is-visible{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- ▼▼▼ 自分の投稿から検索セクションのスタイル ▼▼▼ --- */
+.search-section{
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 1px solid var(--border-light-color);
+}
+
+.search-section-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-section-header h3{
+  margin: 0;
+  font-size: 20px;
+}
+
+/* トグルボタン */
+.toggle-search-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.toggle-search-btn:hover{
+  background: var(--primary-hover-color);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.toggle-search-btn:active{
+  transform: translateY(0);
 }
 
 /* レスポンシブ対応 */

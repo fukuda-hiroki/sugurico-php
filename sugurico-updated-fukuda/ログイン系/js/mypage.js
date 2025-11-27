@@ -35,17 +35,24 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         periodSelect.value = urlParams.get('period') || 'all';
         sortSelect.value = urlParams.get('sort') || 'desc';
         tagSelect.value = urlParams.get('tag') || '';
-        
+
         await fetchAndDisplayUserPosts(parseInt(urlParams.get('page')) || 1);
 
         setupEventListeners();
+
+        const actionCards = document.querySelectorAll('.action-card');
+        actionCards.forEach((card, index) =>{
+            setTimeout(() =>{
+                card.classList.add('is-visible');
+            }, index * 100);
+        });
     }
 
     function setupEventListeners() {
         toggleSearchButton.addEventListener('click', () => {
             const isHidden = advancedSearchForm.style.display === 'none';
             advancedSearchForm.style.display = isHidden ? 'block' : 'none';
-            
+
             // ボタンの表示をsearch.htmlと統一
             const btnIcon = toggleSearchButton.querySelector('.btn-icon');
             const btnText = toggleSearchButton.querySelector('.btn-text');
@@ -60,7 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
 
         filterButton.addEventListener('click', () => {
             updateURL(); // URLを更新してから検索
-            fetchAndDisplayUserPosts(1);      
+            fetchAndDisplayUserPosts(1);
         });
     }
 
@@ -103,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
             }, { count: 'exact' });
 
             if (error) throw error;
-            
+
             const posts = data;
             const totalPosts = count ?? 0;
 
@@ -130,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         `;
     }
 
-function renderPagination(totalItems, currentPage, itemsPerPage) {
+    function renderPagination(totalItems, currentPage, itemsPerPage) {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         if (totalPages <= 1) {
             paginationContainer.innerHTML = '';
@@ -166,7 +173,7 @@ function renderPagination(totalItems, currentPage, itemsPerPage) {
 
         paginationContainer.innerHTML = paginationHTML;
     }
-    
+
     // URLを現在のフォーム内容で更新する関数 (search.jsから移植)
     function updateURL() {
         const urlParams = new URLSearchParams();
