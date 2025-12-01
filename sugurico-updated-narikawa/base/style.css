@@ -391,7 +391,7 @@ main {
 .post-link {
   text-decoration: none;
   color: inherit;
-  display: flex;
+  display: grid;
   gap: 16px;
   align-items: flex-start;
 }
@@ -667,7 +667,7 @@ main {
       text-align: center; /* ロゴを中央寄せにする */
     }
 
-     .header-right-group {
+    .header-right-group {
     flex-direction: column; /* 右側グループ内の要素も縦に並べる */
     align-items: stretch;   /* 幅を親に合わせる */
     gap: 12px;
