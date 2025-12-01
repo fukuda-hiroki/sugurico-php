@@ -1,137 +1,154 @@
 // image_preview.js
 'use strict';
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // 必要な要素をページから取得
-    const dropZone = document.getElementById('image-drop-zone');
-    const imageInput = document.getElementById('image-input');
-    const selectButton = document.getElementById('select-image-button');
-    const previewContainer = document.getElementById('image-preview-container');
-    const maxImagesCountSpan = document.getElementById('max-images-count');
+// 外部からアクセス可能なImageUploaderオブジェクトを作成
+const ImageUploader = {
+    // --- 内部状態を管理する変数 ---
+    _maxImages: 3,
+    _existingImages: [], // {id, url} の配列
+    _newFiles: [],       // Fileオブジェクトの配列
+    _imagesToDelete: [], // 削除対象の画像IDの配列
 
-    // 必要な要素がなければ処理を中断
-    if (!dropZone || !imageInput || !selectButton || !previewContainer) {
-        return;
-    }
-
-    // プレミアム状態に応じて最大枚数を設定
-    const isPremium = await isCurrentUserPremium(); 
-    const maxImages = isPremium ? 6 : 3;
-    maxImagesCountSpan.textContent = maxImages;
-
-    // 選択されたファイルを管理するための配列
-    let selectedFiles = [];
-
-    // --- イベントリスナーの設定 ---
-
-    // 「ファイルを選択」ボタンがクリックされたら、隠れているinputをクリック
-    selectButton.addEventListener('click', () => imageInput.click());
-
-    // ファイルが選択されたら処理を実行
-    imageInput.addEventListener('change', () => {
-        handleFiles(imageInput.files);
-    });
-
-    // --- ドラッグ＆ドロップのイベント設定 ---
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault(); // ブラウザのデフォルト動作を無効化
-        dropZone.classList.add('drag-over');
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('drag-over');
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-        handleFiles(e.dataTransfer.files); // ドロップされたファイルを取得
-    });
+    // --- HTML要素 ---
+    _elements: {},
 
     /**
-     * ファイルが選択された（またはドロップされた）ときのメイン処理
-     * @param {FileList} files - ユーザーが選択したファイルのリスト
+     * 初期化処理
      */
-    function handleFiles(files) {
+    init: async function() {
+        this._elements = {
+            dropZone: document.getElementById('image-drop-zone'),
+            imageInput: document.getElementById('image-input'),
+            selectButton: document.getElementById('select-image-button'),
+            previewContainer: document.getElementById('image-preview-container'),
+            maxCountSpan: document.getElementById('max-images-count'),
+        };
+
+        if (!this._elements.dropZone) return; // ページに必要な要素がなければ中断
+
+        const isPremium = await isCurrentUserPremium();
+        this._maxImages = isPremium ? 6 : 3;
+        this._elements.maxCountSpan.textContent = this._maxImages;
+
+        this._setupEventListeners();
+    },
+
+    /**
+     * 編集時に既存の画像リストをセットする
+     * @param {Array} images - [{image_id, image_url}, ...]
+     */
+    setExistingImages: function(images) {
+        this._existingImages = images.map(img => ({ id: img.image_id, url: img.image_url }));
+        this._renderPreviews();
+    },
+
+    /**
+     * 削除対象の画像IDリストを取得する
+     * @returns {Array} - [id1, id2, ...]
+     */
+    getImagesToDelete: function() {
+        return this._imagesToDelete;
+    },
+    
+    /**
+     * 新しく追加されたファイルリストを取得する
+     * @returns {Array} - [File, File, ...]
+     */
+    getNewFiles: function() {
+        return this._newFiles;
+    },
+
+    /**
+     * イベントリスナーを設定
+     */
+    _setupEventListeners: function() {
+        const { dropZone, imageInput, selectButton } = this._elements;
+        selectButton.addEventListener('click', () => imageInput.click());
+        imageInput.addEventListener('change', () => this._handleFiles(imageInput.files));
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            this._handleFiles(e.dataTransfer.files);
+        });
+    },
+
+    /**
+     * ファイル選択・ドロップ時の処理
+     */
+    _handleFiles: function(files) {
         for (const file of files) {
-            // 上限チェック
-            if (selectedFiles.length >= maxImages) {
-                alert(`画像は最大${maxImages}枚までです。`);
+            const currentCount = this._existingImages.length + this._newFiles.length;
+            if (currentCount >= this._maxImages) {
+                alert(`画像は最大${this._maxImages}枚までです。`);
                 break;
             }
-            // ファイル形式チェック
             if (!file.type.startsWith('image/')) continue;
-            // 重複チェック (同じ名前のファイルは追加しない)
-            if (selectedFiles.some(f => f.name === file.name)) continue;
-            
-            selectedFiles.push(file);
+            if (this._newFiles.some(f => f.name === file.name)) continue;
+            this._newFiles.push(file);
         }
-        renderPreviews();
-    }
+        this._renderPreviews();
+    },
 
     /**
-     * プレビューを描画する関数
+     * プレビューを再描画する
      */
-    function renderPreviews() {
-        previewContainer.innerHTML = ''; // プレビューを一度クリア
+    _renderPreviews: function() {
+        const { previewContainer } = this._elements;
+        previewContainer.innerHTML = '';
 
-        selectedFiles.forEach((file, index) => {
+        // 1. 既存画像のプレビューを描画
+        this._existingImages.forEach(image => {
+            this._createPreviewElement(image.url, image.id, 'existing');
+        });
+
+        // 2. 新規画像のプレビューを描画
+        this._newFiles.forEach((file, index) => {
             const reader = new FileReader();
-            
             reader.onload = (e) => {
-                // プレビュー用のHTML要素を作成
-                const wrapper = document.createElement('div');
-                wrapper.className = 'image-preview-wrapper';
-                
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = file.name;
-
-                const removeBtn = document.createElement('button');
-                removeBtn.type = 'button';
-                removeBtn.className = 'remove-preview-button';
-                removeBtn.textContent = '×';
-                // ★ ボタンに、削除対象のファイルのインデックスを保存
-                removeBtn.dataset.index = index;
-
-                removeBtn.addEventListener('click', (event) => {
-                    const indexToRemove = parseInt(event.target.dataset.index, 10);
-                    // ファイル管理配列から指定のファイルを削除
-                    selectedFiles.splice(indexToRemove, 1);
-                    // プレビューを再描画
-                    renderPreviews();
-                });
-                
-                wrapper.appendChild(img);
-                wrapper.appendChild(removeBtn);
-                previewContainer.appendChild(wrapper);
+                this._createPreviewElement(e.target.result, index, 'new');
             };
-            
             reader.readAsDataURL(file);
         });
-        
-        // ★ フォーム送信で使えるように、最新のファイルリストをinput要素にセットし直す
-        const dataTransfer = new DataTransfer();
-        selectedFiles.forEach(file => dataTransfer.items.add(file));
-        imageInput.files = dataTransfer.files;
-    }
+    },
 
     /**
-     * 画像を拡大表示するモーダルを作成・表示
-     * @param {string} src - 表示する画像のソースURL
+     * 個別のプレビュー要素を生成して追加する
      */
-    function showModal(src) {
-        const modalBackdrop = document.createElement('div');
-        modalBackdrop.className = 'modal-backdrop';
+    _createPreviewElement: function(src, identifier, type) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `image-preview-wrapper ${type === 'existing' ? 'existing' : ''}`;
+        
+        const img = document.createElement('img');
+        img.src = src;
 
-        const modalImage = document.createElement('img');
-        modalImage.src = src;
-        modalImage.className = 'modal-image';
-
-        modalBackdrop.appendChild(modalImage);
-        document.body.appendChild(modalBackdrop);
-        modalBackdrop.addEventListener('click', () => {
-            modalBackdrop.remove();
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'remove-preview-button';
+        removeBtn.textContent = '×';
+        
+        removeBtn.addEventListener('click', () => {
+            if (type === 'existing') {
+                // 既存画像を削除する場合
+                this._imagesToDelete.push(identifier); // 削除リストにIDを追加
+                this._existingImages = this._existingImages.filter(img => img.id !== identifier);
+            } else {
+                // 新規画像を削除する場合
+                this._newFiles.splice(identifier, 1); // 配列からファイルを削除
+            }
+            this._renderPreviews(); // プレビューを再描画
         });
+        
+        wrapper.appendChild(img);
+        wrapper.appendChild(removeBtn);
+        this._elements.previewContainer.appendChild(wrapper);
     }
-});
+};
+
+// ページの読み込み完了時に初期化
+document.addEventListener('DOMContentLoaded', () => ImageUploader.init());

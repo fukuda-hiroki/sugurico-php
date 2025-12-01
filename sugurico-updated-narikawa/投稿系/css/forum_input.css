@@ -503,6 +503,10 @@ input[type="file"]:hover {
     background-color: #c82333;
 }
 
+.image-preview-wrapper.existing {
+    border: 2px solid var(--primary-color);
+}
+
 /* レスポンシブ設定 */
 @media (max-width: 768px) {
   .form-container {

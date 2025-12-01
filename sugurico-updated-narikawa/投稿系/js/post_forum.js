@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const { data: post, error } = await supabaseClient
                 .from('forums')
-                .select('* ,tag(tag_dic(tag_name)), forum_images(image_url)')
+                .select('*, tag(tag_dic(tag_name)), forum_images(image_id, image_url)')
                 .eq('forum_id', editId)
                 .single();
 
@@ -134,15 +134,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const perviewContainer = document.getElementById('image-preview-container');
 
             if (post.forum_images && post.forum_images.length > 0) {
-                // 既存の画像はプレビューだけ表示し、新しいファイル選択はさせないのが一般的
-                perviewContainer.innerHTML = post.forum_images.map(image => `
-                    
-                    <div class="image-preview-wrapper existing-image">
-                                            <img src="${image.image_url}" alt="既存の画像">
-                                            <button type="button" class="delete-existing-image-button" data-image-id="${image.image_id}">×</button>
-                                        </div>
-                    `).join('');
-                // (既存画像の削除ボタンにイベントリスナーを設定する処理も必要)
+                ImageUploader.setExistingImages(post.forum_images);
             }
 
 
@@ -237,36 +229,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             await saveTags(editId, tags);
         }
 
-        // --- 3. 画像を更新 (一度すべて削除してから、再度追加) ---
-        // 3-a. 既存の画像情報をDBから取得
+        // --- 3. 画像の差分更新 ---
+        const imagesToDelete = ImageUploader.getImagesToDelete();
+        const newFilesToAdd = ImageUploader.getNewFiles();
 
-        const { data: existingImages, error: fetchImageError } = await supabaseClient
-            .from('forum_images')
-            .select('image_url')
-            .eq('post_id', editId);
-        if (fetchImageError) throw fetchImageError;
+        // 3-a. 削除対象の画像をDBとStorageから削除
+        if (imagesToDelete.length > 0) {
+            // まず削除対象の画像URLをDBから取得
+            const { data: imagesData, error: fetchError } = await supabaseClient
+                .from('forum_images')
+                .select('image_url')
+                .in('image_id', imagesToDelete);
+            if (fetchError) throw fetchError;
 
-        // 3-b. 既存の画像をStorageから削除
-        if (existingImages && existingImages.length > 0) {
-            const filesToRemove = existingImages.map(img => {
-                // publicUrlからpathを抽出 (例: .../post-images/userid/filename.jpg -> userid/filename.jpg)
-                const path = img.image_url.split('/post-images/')[1];
-                return path;
-            });
-            await supabaseClient.storage.from('post-images').remove(filesToRemove);
+            // Storageからファイルを削除
+            const filesToRemove = imagesData.map(img => img.image_url.split('/post-images/')[1]);
+            if (filesToRemove.length > 0) {
+                await supabaseClient.storage.from('post-images').remove(filesToRemove);
+            }
+            
+            // DBからレコードを削除
+            await supabaseClient.from('forum_images').delete().in('image_id', imagesToDelete);
         }
-        // 3-c. 既存の画像のDBレコードを削除 (Storage削除後に行う)
-        await supabaseClient
-            .from('forum_images')
-            .delete()
-            .eq('post_id', editId);
 
-        // 3-d. フォームから新しい画像を取得してアップロード＆保存 (createPostと同じロジック)
-        const imageInput = document.getElementById('image-input');
-        const filesToUpload = Array.from(imageInput.files);
-
-        if (filesToUpload.length > 0) {
-            const imageUrls = await uploadImages(filesToUpload);
+        // 3-b. 新しく追加された画像をアップロード＆DBに保存
+        if (newFilesToAdd.length > 0) {
+            const imageUrls = await uploadImages(newFilesToAdd);
             await saveImageUrls(editId, imageUrls);
         }
 
