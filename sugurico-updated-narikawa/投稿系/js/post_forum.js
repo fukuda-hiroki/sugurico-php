@@ -185,8 +185,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 新規投稿を作成する関数
     async function createPost() {
-        const imageInputs = imageInputContainer.querySelectorAll('.image-input');
-        const filesToUpload = Array.from(imageInputs).map(input => input.files[0]).filter(Boolean);
+        const imageInput = document.getElementById('image-input');
+        const filesToUpload = Array.from(imageInput.files);
         const imageUrls = await uploadImages(filesToUpload);
 
         const { data: [savedForum], error: forumError } = await supabaseClient
@@ -262,10 +262,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             .eq('post_id', editId);
 
         // 3-d. フォームから新しい画像を取得してアップロード＆保存 (createPostと同じロジック)
-        const imageInputs = imageInputContainer.querySelectorAll('.image-input');
-        const filesToUpload = Array.from(imageInputs).map(
-            input => input.files[0]
-        ).filter(Boolean);
+        const imageInput = document.getElementById('image-input');
+        const filesToUpload = Array.from(imageInput.files);
+
         if (filesToUpload.length > 0) {
             const imageUrls = await uploadImages(filesToUpload);
             await saveImageUrls(editId, imageUrls);
