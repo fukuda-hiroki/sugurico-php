@@ -111,21 +111,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
 
-            // 2. タグの表示      
+            // 2. タグの表示
             const tagContainer = document.getElementById('tag-container');// 2025年10月27日　not defined
             const initialTagInput = tagContainer.querySelector('.tag-input-wrapper');
             if (post.tag && post.tag.length > 0) {
-                // 最初の入力欄に1つ目のタグを設定
-                initialTagInput.querySelector('input').value = post.tag[0].tag_dic.tag_name;
-
-                // 2つ目以降のタグの入力欄を動的に追加
-                for (let i = 1; i < post.tag.length; i++) {
-                    addTagInput(post.tag[i].tag_dic.tag_name);
-                }
-
-                if (typeof showButtons === 'function') {
-                    showButtons();
-                }
+                const tagNames = post.tag.map(t => t.tag_dic.tag_name);
+                // TagEditorモジュールに既存タグの配列を渡す
+                TagEditor.setTags(tagNames);
             }
 
             // 3. 画像のプレビュー表示
@@ -192,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (forumError) throw forumError;
 
         const tagInputs = document.querySelectorAll('#tag-container .tag-input');
-        const tags = [...new Set(Array.from(tagInputs).map(input => input.value.trim()).filter(Boolean))];
+        const tags = TagEditor.getTags();
         if (tags.length > 0) await saveTags(savedForum.forum_id, tags);
         if (imageUrls.length > 0) await saveImageUrls(savedForum.forum_id, imageUrls)
     }
@@ -220,11 +212,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const tagInputs = document.querySelectorAll('#tag-container .tag-input');
         console.log(tagInputs.value);
-        const tags = [
-            ...new Set(
-                Array.from(tagInputs).map(input => input.value.trim()).filter(Boolean)
-            )
-        ];
+        const tags = TagEditor.getTags();
+        
         if (tags.length > 0) {
             await saveTags(editId, tags);
         }

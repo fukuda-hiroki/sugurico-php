@@ -74,12 +74,9 @@
             <div class="form-group">
                 <label>タグ (最大10個まで)</label>
                 <div id="tag-container">
-                    <div class="tag-input-wrapper">
-                        <input type="text" name="tags[]" class="tag-input" placeholder="タグを入力">
-                    </div>
-                    <div class="tag-buttons">
-                        <button type="button" id="insert-tags" class="insert-button">追加</button>
-                        <button type="button" id="delete-tags" class="delete-button">削除</button>
+                    <div id="tags-input-ui-wrapper" class="tags-input-container">
+                        <!-- 選択されたタグがJSでここに表示される -->
+                        <input type="text" id="tag-text-input" placeholder="タグを入力してEnter">
                     </div>
                 </div>
             </div>
