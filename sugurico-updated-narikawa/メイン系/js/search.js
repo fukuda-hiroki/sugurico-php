@@ -23,16 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
      *  ページの初期化処理
      */
     async function initializePage() {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (user) {
-            const { data: premiumRecords } = await supabaseClient
-                .from('premium')
-                .select('status')
-                .eq('id', user.id);
-
-            const premiumStatus = premiumRecords && premiumRecords[0];
-            isPremiumUser = premiumStatus?.status === 'active';
-        }
+        isPremiumUser = await isCurrentUserPremium(); // ★3. 現在のユーザーのプレミアム状態を取得
         setupUIAndForms();
         setupEventListeners();
         performSearch(parseInt(new URLSearchParams(window.location.search).get('page')) || 1);
@@ -106,29 +97,49 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
         try {
             const { data: { user } } = await supabaseClient.auth.getUser();
             const currentUserId = user ? user.id : null;
+            
+            // ▼▼▼ ここからが新しいロジック ▼▼▼
+            // --------------------------------------------------------------------
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchType = urlParams.get('type');
+            const searchTerms = urlParams.get('terms') || '';
 
-            // 基本の検索パラメータ
+            // 基本の検索パラメータを準備
             let searchParams = {
                 current_user_id_param: currentUserId,
-                keyword_param: keywordInput.value.trim() || null,
-                author_param: null,
+                keyword_param: null, // いったん両方nullで初期化
                 tag_param: null,
+                author_param: null,
                 period_param: 'all',
                 sort_order_param: 'desc',
                 page_param: page,
                 limit_param: 10,
-                // ★ exclude_tags_paramを必ず渡す (値がない場合は空の配列)
                 exclude_tags_param: []
             };
 
-            // ★ もしプレミアム会員なら、詳細検索の値をパラメータに追加
+            // ★ステップ1: URLの種別に応じて、基本的な検索パラメータを設定（全ユーザー共通）
+            if (searchType === 'tag') {
+                // タグ検索の場合
+                searchParams.tag_param = searchTerms.trim();
+            } else {
+                // それ以外の検索（タイトル検索など）の場合
+                searchParams.keyword_param = keywordInput.value.trim();
+            }
+
+            // ★ステップ2: もしプレミアム会員なら、詳細検索の条件を追加で上書きする
             if (isPremiumUser) {
                 searchParams.author_param = authorInput.value.trim();
-                searchParams.tag_param = tagInput.value.trim();
                 searchParams.period_param = periodSelect.value;
                 searchParams.sort_order_param = sortSelect.value;
+                
+                // 詳細検索フォームのタグ入力が優先されるようにする
+                if (tagInput.value.trim()) {
+                    searchParams.tag_param = tagInput.value.trim();
+                }
+                
                 if (excludeTagInput && excludeTagInput.value.trim()) {
-                    searchParams.exclude_tags_param = excludeTagInput.value.trim().split(',').map(tag => tag.trim);
+                    // .map(tag => tag.trim) は .map(tag => tag.trim()) の間違いだったため修正
+                    searchParams.exclude_tags_param = excludeTagInput.value.trim().split(',').map(tag => tag.trim());
                 }
             }
 

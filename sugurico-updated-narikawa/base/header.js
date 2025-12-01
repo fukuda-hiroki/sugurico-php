@@ -72,8 +72,7 @@ async function setupHeaderAndFooter() {
                 <form action="../../メイン系/html/search.html" method="get">
                     <input type="text" name="terms" placeholder="キーワード検索...">
                     <select name="type">
-                        <option value="title">タイトル</option>
-                        <option value="text">テキスト</option>
+                        <option value="title">キーワード</option>
                         <option value="tag">タグ</option>
                     </select>
                     <button type="submit">検索</button>
