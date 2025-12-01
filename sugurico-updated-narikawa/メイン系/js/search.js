@@ -39,10 +39,20 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
     }
     function setupUIAndForms() {
         const urlParams = new URLSearchParams(window.location.search);
-        // URLパラメータをフォームに反映
-        
         const searchType = urlParams.get('type');
+        const searchTerms = urlParams.get('terms') || ''; // URLから検索キーワードを取得
 
+        // ★ プレミアム判定の外で、基本的なキーワードを先にフォームにセットする
+        // これにより、一般ユーザーでもヘッダーからの検索が機能するようになる
+        if (searchType === 'tag') {
+            // タグ検索はプレミアム機能と見なすため、isPremiumUserがtrueの場合のみセット
+            if (isPremiumUser) {
+                tagInput.value = searchTerms;
+            }
+        } else {
+            // タグ検索以外（タイトル検索など）は、誰でも利用できる
+            keywordInput.value = searchTerms;
+        }
 
         if (isPremiumUser) {
             if (searchType === 'tag') {
