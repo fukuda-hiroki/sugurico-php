@@ -300,8 +300,9 @@ main {
 }
 
 .modal-image {
-  max-width: 90%;
-  max-height: 90%;
+  width: 50%;
+  max-width: 500px;
+  height: auto;
   object-fit: contain;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
