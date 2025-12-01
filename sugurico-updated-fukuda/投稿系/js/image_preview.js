@@ -1,140 +1,167 @@
-// image_preview.js
 'use strict';
 
-// DOMContentLoadedのコールバックを「async」関数に変更します
-document.addEventListener('DOMContentLoaded', async () => {
-    const imageInputContainer = document.getElementById('image-input-container');
-    const addButton = document.getElementById('add-image-button');
-    const removeButton = document.getElementById('remove-image-button');
-    const previewContainer = document.getElementById('image-preview-container');
+// --- ファイルスコープの変数 ---
+const imageInputContainer = document.getElementById('image-input-container');
+const addButton = document.getElementById('add-image-button');
+const removeButton = document.getElementById('remove-image-button');
+const previewContainer = document.getElementById('image-preview-container');
+
+let maxImages = 3;
+let existingImages = []; // {id, url} の配列
+let existingImagesToDelete = []; // 削除対象のID配列
+let newImageObjectUrls = []; // 新規追加画像のプレビュー用URL
+
+// --- グローバルAPI (post_forum.jsからの窓口) ---
+window.imageManager = {
+  init: initialize,
+  getImagesToDelete: () => existingImagesToDelete,
+};
+
+/**
+ * 外部(post_forum.js)から呼び出される初期化関数
+ * @param {boolean} isPremium - プレミアム会員か
+ * @param {Array} initialImages - 編集時の初期画像リスト [{id, url}]
+ */
+function initialize(isPremium, initialImages = []) {
     const maxImagesCountSpan = document.getElementById('max-images-count');
+    
+    maxImages = isPremium ? 6 : 3;
+    if (maxImagesCountSpan) maxImagesCountSpan.textContent = maxImages;
+    
+    existingImages = initialImages;
+    existingImagesToDelete = []; // 初期化時にリセット
 
-    // もし必要な要素がなければ処理を中断
-    if (!imageInputContainer ||
-        !addButton ||
-        !removeButton ||
-        !previewContainer) {
-        return;
-    }
+    if (imageInputContainer) {
+        imageInputContainer.innerHTML = ''; // 既存のinputを一旦すべて削除
+        const availableSlots = maxImages - existingImages.length;
+        const slotsToCreate = Math.max(1, availableSlots); // 最低1つは作る
 
-    // supabaseClientが読み込まれているか確認
-    if (typeof supabaseClient === 'undefined') {
-        console.error('Supabase client is not available. Make sure header.js is loaded.');
-        return;
-    }
-
-    // ★ 共通関数を呼び出すように変更
-    let currentObjectUrls = [];
-
-    // ★ 共通関数を呼び出すように変更
-    const isPremium = await isCurrentUserPremium(); 
-    const maxImages = isPremium ? 6 : 3;
-    maxImagesCountSpan.textContent = maxImages;
-
-    // [追加]ボタンのクリックイベント
-    addButton.addEventListener('click', () => {
-        const currentInputs = imageInputContainer.querySelectorAll('.image-input');
-        const lastInput = currentInputs[currentInputs.length - 1];
-        // 最後の入力欄にファイルが選択されているかチェック
-        if (lastInput.files.length === 0) {
-            alert('最後の画像を選択してから追加してください。');
-            lastInput.click(); // ファイル選択ダイアログを開く
-            return;
+        for (let i = 0; i < slotsToCreate; i++) {
+            addFileInput();
         }
-        if (currentInputs.length < maxImages) {
-            addImageInput();
+    }
+    
+    updateAllPreviews(); // プレビューを初期描画
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (!imageInputContainer || !addButton || !removeButton || !previewContainer) return;
+
+    // --- イベントリスナー ---
+    addButton.addEventListener('click', () => {
+        const existingImageCount = existingImages.length - existingImagesToDelete.length;
+        const newImageCount = imageInputContainer.querySelectorAll('.image-input').length;
+        if (existingImageCount + newImageCount < maxImages) {
+            addFileInput();
         } else {
             alert(`画像は最大${maxImages}枚までです。`);
         }
     });
 
-    // [削除]ボタンのクリックイベント
     removeButton.addEventListener('click', () => {
         const wrappers = imageInputContainer.querySelectorAll('.image-input-wrapper');
         if (wrappers.length > 1) {
             wrappers[wrappers.length - 1].remove();
-            updateAllPreviews();// 削除後にプレビュー全体を更新
+            updateAllPreviews();
         }
     });
 
-    // 動的に追加される要素に対応するため、親要素にイベントリスナーを設定（イベント移譲）
     imageInputContainer.addEventListener('change', (event) => {
         if (event.target.classList.contains('image-input')) {
             updateAllPreviews();
         }
     });
+    
+    previewContainer.addEventListener('click', (event) => {
+        const clickedElement = event.target;
 
-    // --- 関数群 ---
+        if (clickedElement.classList.contains('delete-existing-image-button')) {
+            event.preventDefault();
+            event.stopPropagation();
 
-    /**
-     * 新しい画像入力欄を追加する
-     */
-    function addImageInput() {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'image-input-wrapper';
+            const imageId = parseInt(clickedElement.dataset.imageId);
+            if (!imageId || existingImagesToDelete.includes(imageId)) return;
 
-        const newInput = document.createElement('input');
-        newInput.type = 'file';
-        newInput.name = 'images[]';
-        newInput.className = 'image-input';
-        newInput.accept = 'image/*';
-
-        wrapper.appendChild(newInput);
-        imageInputContainer.appendChild(wrapper);
-    }
-
-    /**
-     * すべての入力欄をチェックし、プレビューを再描画する
-     */
-    function updateAllPreviews() {
-        // ★ 古いblob URLをすべて無効化してメモリを解放
-        currentObjectUrls.forEach(url => URL.revokeObjectURL(url));
-        currentObjectUrls = [];// 配列をリセット
-
-        previewContainer.innerHTML = '';
-        const allInputs = imageInputContainer.querySelectorAll('.image-input');
-
-        allInputs.forEach(input => {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                if (!file.type.startsWith('image/')) return;
-
-                const previewWrapper = document.createElement('div');
-                previewWrapper.className = 'image-preview-wrapper';
-
-                const img = document.createElement('img');
-                const objectUrl = URL.createObjectURL(file);
-
-                // ★ 新しく生成したURLを管理配列に追加
-                currentObjectUrls.push(objectUrl);
-
-                img.src = objectUrl;
-                img.alt = '画像プレビュー';
-                img.addEventListener('click', () => { showModal(objectUrl); });
-
-                previewWrapper.appendChild(img);
-                previewContainer.appendChild(previewWrapper);
-
+            existingImagesToDelete.push(imageId);
+            
+            const existingImageCount = existingImages.length - existingImagesToDelete.length;
+            const newImageCount = imageInputContainer.querySelectorAll('.image-input').length;
+            if (existingImageCount + newImageCount < maxImages) {
+                addFileInput();
             }
-        });
-    }
-
-    /**
-     * 画像を拡大表示するモーダルを作成・表示
-     * @param {string} src - 表示する画像のソースURL
-     */
-    function showModal(src) {
-        const modalBackdrop = document.createElement('div');
-        modalBackdrop.className = 'modal-backdrop';
-
-        const modalImage = document.createElement('img');
-        modalImage.src = src;
-        modalImage.className = 'modal-image';
-
-        modalBackdrop.appendChild(modalImage);
-        document.body.appendChild(modalBackdrop);
-        modalBackdrop.addEventListener('click', () => {
-            modalBackdrop.remove();
-        });
-    }
+            
+            updateAllPreviews();
+        } else if (clickedElement.tagName === 'IMG') {
+            showModal(clickedElement.src);
+        }
+    });
 });
+
+/**
+ * 新しいファイル入力欄を動的に追加する
+ */
+function addFileInput() {
+    if (!imageInputContainer) return;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'image-input-wrapper';
+    const newInput = document.createElement('input');
+    newInput.type = 'file';
+    newInput.name = 'images[]';
+    newInput.className = 'image-input';
+    newInput.accept = 'image/*';
+    wrapper.appendChild(newInput);
+    imageInputContainer.appendChild(wrapper);
+}
+
+/**
+ * プレビュー全体を再描画する関数
+ */
+function updateAllPreviews() {
+    if (!previewContainer) return;
+
+    newImageObjectUrls.forEach(url => URL.revokeObjectURL(url));
+    newImageObjectUrls = [];
+    previewContainer.innerHTML = '';
+
+    existingImages.forEach(image => {
+        if (!existingImagesToDelete.includes(image.id)) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'image-preview-wrapper existing-image';
+            wrapper.innerHTML = `
+                <img src="${image.url}" alt="既存の画像">
+                <button type="button" class="delete-existing-image-button" data-image-id="${image.id}">×</button>
+            `;
+            previewContainer.appendChild(wrapper);
+        }
+    });
+
+    const allInputs = document.querySelectorAll('#image-input-container .image-input');
+    allInputs.forEach(input => {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const objectUrl = URL.createObjectURL(file);
+            newImageObjectUrls.push(objectUrl);
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'image-preview-wrapper';
+            wrapper.innerHTML = `<img src="${objectUrl}" alt="新規画像プレビュー">`;
+            previewContainer.appendChild(wrapper);
+        }
+    });
+}
+
+/**
+ * 画像を拡大表示するモーダルを作成・表示
+ */
+function showModal(src) {
+    const modalBackdrop = document.createElement('div');
+    modalBackdrop.className = 'modal-backdrop';
+    const modalImage = document.createElement('img');
+    modalImage.src = src;
+    modalImage.className = 'modal-image';
+    modalBackdrop.appendChild(modalImage);
+    document.body.appendChild(modalBackdrop);
+    modalBackdrop.addEventListener('click', () => {
+        modalBackdrop.remove();
+    });
+}
