@@ -46,16 +46,17 @@
             <div class="form-group" id="exclude-tags-section"></div>
                 <hr>
                 <p>検索設定</p>
-                <div class="form-group">
+                <div class="form-group" id="exclude-tags-section">
                     <label for="excludeTagsInput">常に除外するタグ</label>
-                    <input type="text" name="tag" id="excludeTagsInput" placeholder="例: ニュース, 政治, ゴシップ"></input>
-                    <small>検索結果に表示したくないタグをカンマ(,)区切りで入力してください。</small>
-                </div>
-                <div id="current-exclude-tags-container" style="margin-top: 15px;">
-                    <strong>現在設定中の除外タグ:</strong>
-                    <div id="current-exclude-tags-list" class="tag-list">
-                        <!-- JSでここにタグが挿入される -->
+                    
+                    <!-- ▼▼▼ ここからが新しい構造 ▼▼▼ -->
+                    <div id="exclude-tags-input-container" class="tags-input-container">
+                        <!-- 選択されたタグがここに表示される -->
+                        <input type="text" id="exclude-tag-text-input" placeholder="タグを入力してEnter">
                     </div>
+                    <!-- ▲▲▲ 新しい構造ここまで ▲▲▲ -->
+
+                    <small>検索結果に表示したくないタグを入力し、Enterキーで追加してください。</small>
                 </div>
             </div>
             <button type="submit" id="submitButton" class="form-button">更新する</button>
