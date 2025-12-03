@@ -50,9 +50,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             pageTitle.textContent = '新しい記録を投稿';
             submitButton.textContent = '投稿する';
-            if (window.imageManager) {
-                window.imageManager.init(isPremiumUser, []);
-            }
+            if (window.imageManager) window.imageManager.init(isPremiumUser, []);
+
+            if (window.tagManager) window.tagManager.init([]);// 新規作成時は空のタグで初期化
         }
 
         setupEventListeners();
@@ -108,16 +108,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
-            if (post.tag && post.tag.length > 0 && typeof addTagInput === 'function') {
-                const firstTagInput = document.querySelector('#tag-container .tag-input');
-                if (firstTagInput) firstTagInput.value = post.tag[0].tag_dic.tag_name;
-
-                for (let i = 1; i < post.tag.length; i++) {
-                    addTagInput(post.tag[i].tag_dic.tag_name);
-                }
-                if (typeof showButtons === 'function') {
-                    showButtons();
-                }
+            if (window.tagManager) {
+                const tagNames = post.tag ? post.tag.map(t => t.tag_dic.tag_name) : [];
+                window.tagManager.init(tagNames);
             }
 
             if (window.imageManager) {

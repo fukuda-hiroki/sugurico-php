@@ -64,28 +64,19 @@
                         <input type="file" name="images[]" class="image-input" accept="image/*">
                     </div>
                 </div>
-                <!-- 操作ボタン -->
-                <!-- <div class="image-buttons" style="margin-top: 10px;">
-                    <button type="button" id="add-image-button" class="insert-button">画像を追加</button>
-                    <button type="button" id="remove-image-button" class="delete-button">最後の画像を削除</button>
-                </div>-->
                 <!-- 画像プレビューを表示するエリア -->
                 <div id="image-preview-container"></div>
             </div>
 
 
             <!-- タグ -->
-            <div class="form-group">
+             <div class="form-group">
                 <label>タグ (最大10個まで)</label>
-                <div id="tag-container">
-                    <div class="tag-input-wrapper">
-                        <input type="text" name="tags[]" class="tag-input" placeholder="タグを入力">
-                    </div>
-                    <div class="tag-buttons">
-                        <button type="button" id="insert-tags" class="insert-button">追加</button>
-                        <button type="button" id="delete-tags" class="delete-button">削除</button>
-                    </div>
+                <!-- ▼▼▼ このコンテナを置き換え ▼▼▼ -->
+                <div id="tag-container" class="modern-tag-container">
+                    <!-- JSがここにタグ入力欄を動的に生成します -->
                 </div>
+                <!-- ▲▲▲ 置き換えここまで ▲▲▲ -->
             </div>
             <button type="submit" id="submitButton" class="submit-button">投稿する</button>
         </form>
@@ -97,7 +88,7 @@
     <script src="../../base/header.js" defer></script>
     <script src="../js/image_preview.js" defer></script><!-- 画像プレビュー用JS -->
     <script src="../js/tag_form_supabase.js" defer></script><!-- タグ入力用JS -->
-    <script src="../js/post_forum.js" defer></script><!-- このページのメインJS -->
+    <script src="../js/post_forum.js"></script><!-- このページのメインJS -->
 </body>
 
 </html>

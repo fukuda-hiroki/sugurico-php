@@ -240,70 +240,48 @@ input[type="file"]:hover {
   transform: translateY(-1px);
 }
 
-/* タグ入力コンテナ */
-#tag-container {
-  margin-bottom: 24px;
-}
-
-#tag-container .tag-input-wrapper {
-  margin-bottom: 10px;
-}
-
-#tag-container input[type="text"] {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  box-sizing: border-box;
-  font-size: 16px;
-  transition: border-color var(--transition-base), box-shadow var(--transition-base);
-  background-color: var(--content-bg-color);
-}
-
-#tag-container input[type="text"]:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-}
-
-.tag-buttons {
+/* --- タグ入力 (新しいUI) --- */
+.modern-tag-container {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  margin-top: 12px;
 }
 
-#insert-tags,
-#delete-tags {
-  padding: 10px 18px;
+.tag-input-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.tag-input-wrapper input.tag-input {
+  padding-right: 40px; 
+}
+
+.delete-tag-button {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  background: none;
   border: none;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 14px;
+  color: var(--text-light-color);
+  border-radius: 50%;
   cursor: pointer;
+  font-size: 24px;
+  line-height: 1;
   transition: all var(--transition-base);
-  flex: 1;
+  opacity: 0;
 }
-
-#insert-tags {
-  background-color: var(--primary-color);
-  color: white;
+.tag-input-wrapper:hover .delete-tag-button,
+.tag-input-wrapper input:focus + .delete-tag-button,
+.tag-input-wrapper input:not(:placeholder-shown) + .delete-tag-button {
+    opacity: 1;
 }
-
-#insert-tags:hover {
-  background-color: var(--primary-hover-color);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
-}
-
-#delete-tags {
-  background-color: var(--error-color);
-  color: white;
-}
-
-#delete-tags:hover {
-  background-color: #c82333;
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
+.delete-tag-button:hover {
+  background-color: var(--card-hover-bg-color);
+  color: var(--error-color);
 }
 
 /* 送信ボタン */
