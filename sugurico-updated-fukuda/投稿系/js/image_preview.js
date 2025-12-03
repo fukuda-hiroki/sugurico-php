@@ -2,8 +2,8 @@
 
 // --- ファイルスコープの変数 ---
 const imageInputContainer = document.getElementById('image-input-container');
-const addButton = document.getElementById('add-image-button');
-const removeButton = document.getElementById('remove-image-button');
+//const addButton = document.getElementById('add-image-button');
+//const removeButton = document.getElementById('remove-image-button');
 const previewContainer = document.getElementById('image-preview-container');
 
 let maxImages = 3;
@@ -47,34 +47,16 @@ function initialize(isPremium, initialImages = []) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (!imageInputContainer || !addButton || !removeButton || !previewContainer) return;
-
-    // --- イベントリスナー ---
-    addButton.addEventListener('click', () => {
-        const existingImageCount = existingImages.length - existingImagesToDelete.length;
-        const newImageCount = imageInputContainer.querySelectorAll('.image-input').length;
-        if (existingImageCount + newImageCount < maxImages) {
-            addFileInput();
-        } else {
-            alert(`画像は最大${maxImages}枚までです。`);
-        }
-    });
-
-    removeButton.addEventListener('click', () => {
-        const wrappers = imageInputContainer.querySelectorAll('.image-input-wrapper');
-        if (wrappers.length > 1) {
-            wrappers[wrappers.length - 1].remove();
-            updateAllPreviews();
-        }
-    });
+    if (!imageInputContainer || !previewContainer) return;
 
     imageInputContainer.addEventListener('change', (event) => {
         if (event.target.classList.contains('image-input')) {
             updateAllPreviews();
         }
     });
-
+    console.log("previewcontainer ランニング");
     previewContainer.addEventListener('click', (event) => {
+
         const clickedElement = event.target;
 
         if (clickedElement.classList.contains('delete-existing-image-button')) {
