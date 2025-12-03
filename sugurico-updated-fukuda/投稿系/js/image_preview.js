@@ -2,8 +2,6 @@
 
 // --- ファイルスコープの変数 ---
 const imageInputContainer = document.getElementById('image-input-container');
-const addButton = document.getElementById('add-image-button');
-const removeButton = document.getElementById('remove-image-button');
 const previewContainer = document.getElementById('image-preview-container');
 
 let maxImages = 3;
@@ -47,10 +45,10 @@ function initialize(isPremium, initialImages = []) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (!imageInputContainer || !addButton || !removeButton || !previewContainer) return;
+    if (!imageInputContainer || !previewContainer) return;
 
     // --- イベントリスナー ---
-    addButton.addEventListener('click', () => {
+    /*addButton.addEventListener('click', () => {
         const existingImageCount = existingImages.length - existingImagesToDelete.length;
         const newImageCount = imageInputContainer.querySelectorAll('.image-input').length;
         if (existingImageCount + newImageCount < maxImages) {
@@ -66,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             wrappers[wrappers.length - 1].remove();
             updateAllPreviews();
         }
-    });
+    });*/
 
     imageInputContainer.addEventListener('change', (event) => {
         if (event.target.classList.contains('image-input')) {
@@ -104,15 +102,44 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 function addFileInput() {
     if (!imageInputContainer) return;
-    const wrapper = document.createElement('div');
-    wrapper.className = 'image-input-wrapper';
+    
+    // ★ 全体を囲むlabel要素を作成
+    const wrapperLabel = document.createElement('label');
+    wrapperLabel.className = 'image-input-wrapper custom-file-input';
+
+    // アイコン
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'file-icon';
+    iconSpan.textContent = '📁'; // アイコン絵文字
+
+    // ファイル名表示
+    const fileNameSpan = document.createElement('span');
+    fileNameSpan.className = 'file-name';
+    fileNameSpan.textContent = 'クリックして画像を選択';
+
+    // input本体 (非表示)
     const newInput = document.createElement('input');
     newInput.type = 'file';
+    newInput.className = 'image-input'; // class名は維持
     newInput.name = 'images[]';
-    newInput.className = 'image-input';
     newInput.accept = 'image/*';
-    wrapper.appendChild(newInput);
-    imageInputContainer.appendChild(wrapper);
+
+    newInput.addEventListener('change', () => {
+        if (newInput.files && newInput.files.length > 0) {
+            fileNameSpan.textContent = newInput.files[0].name;
+            wrapperLabel.classList.add('is-selected');
+        } else {
+            fileNameSpan.textContent = 'クリックして画像を選択';
+            wrapperLabel.classList.remove('is-selected');
+        }
+    });
+    
+    // 全ての要素をlabelの中に追加
+    wrapperLabel.appendChild(newInput); // ★ inputを最初に追加
+    wrapperLabel.appendChild(iconSpan);
+    wrapperLabel.appendChild(fileNameSpan);
+
+    imageInputContainer.appendChild(wrapperLabel);
 }
 
 /**

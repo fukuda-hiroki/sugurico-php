@@ -430,6 +430,69 @@ input[type="file"]:hover {
   box-shadow: var(--shadow-lg);
 }
 
+/* --- ▼▼▼ カスタムファイル入力欄 (新デザイン) ▼▼▼ --- */
+.custom-file-input {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px; /* 少し高さを出す */
+    border: 2px dashed var(--border-color); /* 破線に変更 */
+    border-radius: var(--radius-sm);
+    background-color: var(--card-bg-color);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    position: relative; /* inputを重ねるため */
+    overflow: hidden; /* inputがはみ出ないように */
+}
+
+/* ホバー時のインタラクション */
+.custom-file-input:hover {
+    border-color: var(--primary-color);
+    background-color: var(--content-bg-color);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ★★★ input本体を透明にして、label全体に重ねる ★★★ */
+.custom-file-input input[type="file"].image-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10; /* 他の要素より手前に */
+}
+
+.file-icon {
+    font-size: 1.2rem;
+    color: var(--text-muted-color);
+    transition: color var(--transition-base);
+}
+
+.file-name {
+    font-size: 15px;
+    color: var(--text-muted-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color var(--transition-base);
+}
+
+/* ファイル選択後のスタイル */
+.custom-file-input.is-selected {
+    border-style: solid; /* 破線から実線に */
+    border-color: var(--primary-color);
+    background-color: var(--content-bg-color);
+}
+.custom-file-input.is-selected .file-icon {
+    color: var(--primary-color);
+}
+.custom-file-input.is-selected .file-name {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
 /* レスポンシブ設定 */
 @media (max-width: 768px) {
   .form-container {
