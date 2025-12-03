@@ -35,10 +35,12 @@ function initialize(isPremium, initialImages = []) {
         imageInputContainer.innerHTML = ''; // 既存のinputを一旦すべて削除
         const availableSlots = maxImages - existingImages.length;
         const slotsToCreate = Math.max(1, availableSlots); // 最低1つは作る
-
-        for (let i = 0; i < slotsToCreate; i++) {
+if (availableSlots > 0) {
+    for (let i = 0; i < slotsToCreate; i++) {
             addFileInput();
         }
+}
+        
     }
     
     updateAllPreviews(); // プレビューを初期描画
