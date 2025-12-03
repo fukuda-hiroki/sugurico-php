@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const imageInputContainer = document.getElementById('image-input-container');
     const submitButton = document.getElementById('submitButton');
     const messageArea = document.getElementById('message-area');
-    
+
     // --- ページ全体で使う変数 ---
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit_id');
     const isEditMode = !!editId;
-    
+
     let currentUser;
     let isPremiumUser = false;
 
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 window.imageManager.init(isPremiumUser, []);
             }
         }
-        
+
         setupEventListeners();
     }
 
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (expirationDate <= now) {
                     if (isPremiumUser) {
                         isPrivateCheckbox.checked = true;
-                        if(premiumExpireInput) premiumExpireInput.disabled = true;
+                        if (premiumExpireInput) premiumExpireInput.disabled = true;
                     } else {
                         expireSelect.value = 'private';
                     }
@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (post.tag && post.tag.length > 0 && typeof addTagInput === 'function') {
                 const firstTagInput = document.querySelector('#tag-container .tag-input');
-                if(firstTagInput) firstTagInput.value = post.tag[0].tag_dic.tag_name;
+                if (firstTagInput) firstTagInput.value = post.tag[0].tag_dic.tag_name;
 
                 for (let i = 1; i < post.tag.length; i++) {
                     addTagInput(post.tag[i].tag_dic.tag_name);
@@ -191,24 +191,24 @@ document.addEventListener('DOMContentLoaded', async () => {
             text: textInput.value,
             delete_date: calculateDeleteDate()
         }).eq('forum_id', editId);
-        
+
         await supabaseClient.from('tag').delete().eq('forum_id', editId);
         const tagInputs = document.querySelectorAll('#tag-container .tag-input');
         const tags = [...new Set(Array.from(tagInputs).map(input => input.value.trim()).filter(Boolean))];
         if (tags.length > 0) await saveTags(editId, tags);
-        
+
         const imagesToDeleteIds = window.imageManager ? window.imageManager.getImagesToDelete() : [];
         if (imagesToDeleteIds.length > 0) {
             const { data: imagesToDelete, error: fetchError } = await supabaseClient.from('forum_images').select('image_url').in('image_id', imagesToDeleteIds);
-            if(fetchError) throw fetchError;
-            
-            if(imagesToDelete.length > 0) {
+            if (fetchError) throw fetchError;
+
+            if (imagesToDelete.length > 0) {
                 const filesToRemove = imagesToDelete.map(img => img.image_url.split('/post-images/')[1]);
                 if (filesToRemove.length > 0) await supabaseClient.storage.from('post-images').remove(filesToRemove);
             }
             await supabaseClient.from('forum_images').delete().in('image_id', imagesToDeleteIds);
         }
-        
+
         const imageInputs = imageInputContainer.querySelectorAll('.image-input');
         const filesToUpload = Array.from(imageInputs).map(input => input.files[0]).filter(Boolean);
         if (filesToUpload.length > 0) {
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (insertError) throw insertError;
             insertedTags.forEach(tag => existingTagsMap.set(tag.tag_name, tag.tag_id));
         }
-        
+
         const tagIdsToLink = tagNames.map(name => existingTagsMap.get(name));
         const linksToInsert = tagIdsToLink.map(tagId => ({ forum_id: forumId, tag_id: tagId }));
         const { error: linkError } = await supabaseClient.from('tag').insert(linksToInsert);

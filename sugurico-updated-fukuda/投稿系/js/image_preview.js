@@ -13,8 +13,8 @@ let newImageObjectUrls = []; // 新規追加画像のプレビュー用URL
 
 // --- グローバルAPI (post_forum.jsからの窓口) ---
 window.imageManager = {
-  init: initialize,
-  getImagesToDelete: () => existingImagesToDelete,
+    init: initialize,
+    getImagesToDelete: () => existingImagesToDelete,
 };
 
 /**
@@ -24,10 +24,10 @@ window.imageManager = {
  */
 function initialize(isPremium, initialImages = []) {
     const maxImagesCountSpan = document.getElementById('max-images-count');
-    
+
     maxImages = isPremium ? 6 : 3;
     if (maxImagesCountSpan) maxImagesCountSpan.textContent = maxImages;
-    
+
     existingImages = initialImages;
     existingImagesToDelete = []; // 初期化時にリセット
 
@@ -35,14 +35,14 @@ function initialize(isPremium, initialImages = []) {
         imageInputContainer.innerHTML = ''; // 既存のinputを一旦すべて削除
         const availableSlots = maxImages - existingImages.length;
         const slotsToCreate = Math.max(1, availableSlots); // 最低1つは作る
-if (availableSlots > 0) {
-    for (let i = 0; i < slotsToCreate; i++) {
-            addFileInput();
+        if (availableSlots > 0) {
+            for (let i = 0; i < slotsToCreate; i++) {
+                addFileInput();
+            }
         }
-}
-        
+
     }
-    
+
     updateAllPreviews(); // プレビューを初期描画
 }
 
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateAllPreviews();
         }
     });
-    
+
     previewContainer.addEventListener('click', (event) => {
         const clickedElement = event.target;
 
@@ -85,13 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!imageId || existingImagesToDelete.includes(imageId)) return;
 
             existingImagesToDelete.push(imageId);
-            
+
             const existingImageCount = existingImages.length - existingImagesToDelete.length;
             const newImageCount = imageInputContainer.querySelectorAll('.image-input').length;
             if (existingImageCount + newImageCount < maxImages) {
                 addFileInput();
             }
-            
+
             updateAllPreviews();
         } else if (clickedElement.tagName === 'IMG') {
             showModal(clickedElement.src);
