@@ -27,20 +27,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit_id');
     const isEditMode = !!editId;
-    let currentUser;// --- ログインチェック ---
+    let currentUser; // --- ログインチェック ---
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) {
-        alert('この操作にはログインが必要です');//早急に対処せよ　2025年10月23日　福田
+        alert('この操作にはログインが必要です');
         window.location.href = '../../ログイン系/html/login.html';
     }
     currentUser = user;
 
     async function initializePage() {
-        const { data: profile } = await supabaseClient.from('users').select('premium_flag').eq('id', currentUser.id).single();
-        isPremiumUser = profile?.premium_flag === true;
+
+        isPremiumUser = await isCurrentUserPremium();
+
         if (isPremiumUser) {
-            expireSelect.style.display = 'none';// 通常のセレクトボックスを隠す
-            premiumExpireArea.style.display = 'block';// プレミアム用の入力欄を表示
+            expireSelect.style.display = 'none'; // 通常のセレクトボックスを隠す
+            premiumExpireArea.style.display = 'block'; // プレミアム用の入力欄を表示
             isPrivateCheckbox.addEventListener('change', () => {
                 premiumExpireInput.disabled = isPrivateCheckbox.checked;
             });
@@ -133,7 +134,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('編集データの読み込みエラー:', error);
             alert('データの読み込みに失敗しました。メインページに戻ります。');
-            //           window.location.href = '../../メイン系/html/index.html';
+            // window.location.href = '../../メイン系/html/index.html';
         }
 
     }
@@ -141,6 +142,40 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function handleFormSubmit(event) {
         event.preventDefault();
+
+        try {
+            // ★ isPremiumUser変数が正しい値になっているため、このチェックが正しく機能する
+            const maxImages = isPremiumUser ? 6 : 3;
+            
+            // 新規投稿と編集時で現在の画像数の計算方法を分ける
+            let totalImageCount = 0;
+            if (isEditMode) {
+                const newFilesCount = ImageUploader.getNewFiles().length;
+                const existingImagesCount = ImageUploader._existingImages.length;
+                totalImageCount = newFilesCount + existingImagesCount;
+            } else {
+                // 新規投稿時は ImageUploader がまだ使われていない想定
+                const imageInput = document.getElementById('image-input');
+                if (imageInput) {
+                    totalImageCount = imageInput.files.length;
+                } else { // 古いUIのフォールバック
+                    const imageInputs = imageInputContainer.querySelectorAll('.image-input');
+                    totalImageCount = Array.from(imageInputs).map(input => input.files[0]).filter(Boolean).length;
+                }
+            }
+
+            if (totalImageCount > maxImages) {
+                throw new Error(`画像は最大${maxImages}枚までです。不要な画像を削除してください。`);
+            }
+            if (!titleInput.value.trim()) {
+                throw new Error('タイトルを入力してください。');
+            }
+        } catch (error) {
+            // バリデーションエラーをユーザーに表示
+            alert(error.message);
+            return; // 処理を完全に中断
+        }
+        
         submitButton.disabled = true;
 
         try {
@@ -159,8 +194,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             
         } catch (error) {
-            console.error('投稿/更新エラー', error);
-            alert(`処理に失敗しました。:{error.message}`);
+           console.error('投稿/更新エラー', error);
+            // ★ エラーメッセージの表示方法を修正
+            alert(`処理に失敗しました: ${error.message}`);
         } finally {
             submitButton.disabled = false;
             submitButton.textContent = isEditMode ? '更新する' : '投稿する';
@@ -285,10 +321,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     /**
-         * タグ情報をDBに保存する関数
-         * @param {number} forumId - 紐付ける投稿のID
-         * @param {string[]} tagNames - タグ名の文字列の配列
-         */
+     * タグ情報をDBに保存する関数
+     * @param {number} forumId - 紐付ける投稿のID
+     * @param {string[]} tagNames - タグ名の文字列の配列
+     */
     async function saveTags(forumId, tagNames) {
         // --- 1. まず、既存のタグをDBからまとめて取得 ---
         const {

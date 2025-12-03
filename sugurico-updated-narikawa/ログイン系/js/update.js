@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const usernameInput = document.getElementById('usernameInput');
     const loginIdInput = document.getElementById('loginIdInput');
     const emailInput = document.getElementById('emailInput');
-    const passwordInput = document.getElementById('passwordInput');
     const submitButton = document.getElementById('submitButton');
     const messageArea = document.getElementById('message-area');
     
@@ -66,7 +65,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (isPremium && tagsContainer && tagTextInput) {
         // コンテナ自体をクリックしたら、入力欄にフォーカス
         tagsContainer.addEventListener('click', () => tagTextInput.focus());
-
         tagTextInput.addEventListener('keydown', (e) => {
             // Enterキーまたはカンマキーが押されたとき
             if (e.key === 'Enter' || e.key === ',') {

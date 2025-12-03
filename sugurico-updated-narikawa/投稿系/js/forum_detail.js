@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     throw error;
                 }
             } else {
-                alert(`ユーザー「${targetUserName}」をブロックしました。\nページを再読み込みすると反映されます。`);
+                alert(`ユーザー「${targetUserName}」をブロックしました。\n以降、このユーザーの投稿は表示されなくなります。`);
                 button.textContent = 'ブロック済み';
                 button.disabled = true;
             }

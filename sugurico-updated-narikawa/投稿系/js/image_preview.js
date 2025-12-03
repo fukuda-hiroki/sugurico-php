@@ -8,7 +8,6 @@ const ImageUploader = {
     _existingImages: [], // {id, url} の配列
     _newFiles: [],       // Fileオブジェクトの配列
     _imagesToDelete: [], // 削除対象の画像IDの配列
-
     // --- HTML要素 ---
     _elements: {},
 
@@ -63,36 +62,52 @@ const ImageUploader = {
      */
     _setupEventListeners: function() {
         const { dropZone, imageInput, selectButton } = this._elements;
+
         selectButton.addEventListener('click', () => imageInput.click());
-        imageInput.addEventListener('change', () => this._handleFiles(imageInput.files));
+
+        imageInput.addEventListener('change', () => this._handleFiles(imageInput.files, 'overwrite'));
         
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropZone.classList.add('drag-over');
         });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropZone.classList.remove('drag-over');
-            this._handleFiles(e.dataTransfer.files);
+            this._handleFiles(e.dataTransfer.files, 'append');
         });
     },
 
     /**
      * ファイル選択・ドロップ時の処理
+     * @param {FileList} files - ユーザーが選択したファイルのリスト
+     * @param {string} mode - 'append' (追加) または 'overwrite' (上書き)
      */
-    _handleFiles: function(files) {
+    _handleFiles: function(files, mode = 'append') {
+        // ▼▼▼ ここからロジックを大幅に修正 ▼▼▼
+        // --------------------------------------------------------------------
+        // 「上書き」モードの場合、既存の新規ファイルリストをクリアする
+        if (mode === 'overwrite') {
+            this._newFiles = [];
+        }
+
         for (const file of files) {
+            // 現在の合計枚数を計算
             const currentCount = this._existingImages.length + this._newFiles.length;
             if (currentCount >= this._maxImages) {
                 alert(`画像は最大${this._maxImages}枚までです。`);
-                break;
+                break; // ループを抜ける
             }
             if (!file.type.startsWith('image/')) continue;
+            
+            // 重複チェック（新規ファイルリスト内でのみ）
             if (this._newFiles.some(f => f.name === file.name)) continue;
+
             this._newFiles.push(file);
         }
-        this._renderPreviews();
+        this._renderPreviews(); // 最後にプレビューを更新
     },
 
     /**
@@ -115,6 +130,12 @@ const ImageUploader = {
             };
             reader.readAsDataURL(file);
         });
+        
+        // ★ 最後に、現在の_newFiles配列の状態を実際の<input>要素に反映させる
+        // これにより、post_forum.jsが常に正しいファイルリストを参照できるようになる
+        const dataTransfer = new DataTransfer();
+        this._newFiles.forEach(file => dataTransfer.items.add(file));
+        this._elements.imageInput.files = dataTransfer.files;
     },
 
     /**
