@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (isOwner) {
             ownerButtonsHTML = `
                 <div class="post-owner-actions">
-                    <a href="forum_input.html?edit_id=${post.forum_id}" class="action-button edit-button">編集</a>
+                    <a href="forum_input.html?edit_id=${post.forum_id}"><button class="action-button edit-button">編集</button></a>
                     <button type="button" id="delete-post-button" class="action-button delete-button">削除</button>
                 </div>`;
         }
