@@ -413,6 +413,12 @@ h2 {
   font-size: 20px;
 }
 
+
+.my_forum-thumbnail
+{
+  max-width: 100px;
+height: auto;
+}
 /* トグルボタン */
 .toggle-search-btn {
   display: flex;

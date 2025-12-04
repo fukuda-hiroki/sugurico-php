@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         setupEventListeners();
 
         const actionCards = document.querySelectorAll('.action-card');
-        actionCards.forEach((card, index) =>{
-            setTimeout(() =>{
+        actionCards.forEach((card, index) => {
+            setTimeout(() => {
                 card.classList.add('is-visible');
             }, index * 100);
         });
@@ -68,6 +68,32 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         filterButton.addEventListener('click', () => {
             updateURL(); // URLを更新してから検索
             fetchAndDisplayUserPosts(1);
+        });
+        // ★ イベント移譲を使って、動的に生成される削除ボタンに対応
+        postsListContainer.addEventListener('click', (event) => {
+            const actionButton = event.target.closest('.action-button');
+
+            if (actionButton && actionButton.classList.contains('delete-button')) {
+                const postId = actionButton.dataset.postId;
+                handleDeletePost(postId);
+                return;
+            }
+            if (actionButton && actionButton.classList.contains('edit-button')) {
+                return;
+            }
+            const postItem = event.target.closest('.post-item');
+            if (postItem && postItem.dataset.href) {
+                window.location.href = postItem.dataset.href;
+            }
+        });
+
+        postsListContainer.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                const postItem = event.target.closest('.post-item');
+                if (postItem && postItem.dataset.href) {
+                    window.location.href = postItem.dataset.href;
+                }
+            }
         });
     }
 
@@ -110,7 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
             }, { count: 'exact' });
 
             if (error) throw error;
-
+            console.log(data);
             const posts = data;
             const totalPosts = count ?? 0;
 
@@ -127,14 +153,70 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
     }
 
     function renderPostHTML(post) {
+        // --- search.jsのrenderPost関数とほぼ同じロジック ---
+
+        let thumbnailHTML = '';
+        // ★ データベース関数から返される 'first_image_url' をチェック
+        if (post.first_image_url) {
+            thumbnailHTML = `
+                <div class="post-item-thumbnail">
+                    <img src="${post.first_image_url}" alt="投稿画像" class="my_forum-thumbnail">
+                </div>
+            `;
+        }
+
+        // util.jsの関数が読み込まれていることを確認
+        const remainingTime = typeof timeLeft === 'function' ? timeLeft(post.delete_date) : '';
+        const timeAgoString = typeof timeAgo === 'function' ? timeAgo(post.created_at) : '';
+
+        // 本文を短くする
+        const shortText = post.text && post.text.length > 50
+            ? escapeHTML(post.text.substring(0, 50)) + '...'
+            : escapeHTML(post.text || '');
+
         return `
-            <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}">
-                <article class="post-item">
-                    <h3>${escapeHTML(post.title)}</h3>
-                    <p>${nl2br(post.text)}</p>
-                </article>
-            </a>
+            <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}" 
+                     data-href="../../投稿系/html/forum_detail.html?id=${post.forum_id}"
+                     role="link" 
+                     tabindex="0">
+                
+                <div class="post-item-main">
+                    <h3>${escapeHTML(post.title)} <small>${timeAgoString}</small></h3>
+                    <p>${shortText}</p>
+                    <div class="post-meta">
+                        <small>投稿者: ${escapeHTML(post.user_name)}</small>
+                        <small style="color:gray;">${remainingTime}</small>
+                    </div>
+                </div>
+                ${thumbnailHTML}
+
+                <div class="post-item-actions">
+                    <a href="../../投稿系/html/forum_input.html?edit_id=${post.forum_id}" class="action-button edit-button">編集</a>
+                    <button type="button" class="action-button delete-button" data-post-id="${post.forum_id}">削除</button>
+                </div>
+            </article>
         `;
+    }
+
+    async function handleDeletePost(postIdToDelete) {
+        if (!confirm('この投稿を本当に削除しますか？\nこの操作は元に戻せません。')) return;
+
+        try {
+            // forum_detail.js と同じRPCを呼び出す
+            const { error } = await supabaseClient.rpc('delete_forum_with_related_data', {
+                forum_id_param: parseInt(postIdToDelete)
+            });
+
+            if (error) throw error;
+
+            alert('投稿を削除しました。');
+            // ページを再読み込みして、一覧を更新
+            window.location.reload();
+
+        } catch (error) {
+            console.error('削除エラー:', error);
+            alert(`投稿の削除に失敗しました: ${error.message}`);
+        }
     }
 
     function renderPagination(totalItems, currentPage, itemsPerPage) {
