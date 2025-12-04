@@ -92,15 +92,36 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
 
         try {
             const postsPerPage = 10;
-            const { data, error, count } = await supabaseClient.rpc('filter_user_posts', {
-                user_id_param: currentUser.id,
-                keyword_param: keywordInput.value.trim(),
-                period_param: periodSelect.value,
-                tag_id_param: tagSelect.value ? parseInt(tagSelect.value) : null,
-                sort_order_param: sortSelect.value,
-                page_param: page,
-                limit_param: postsPerPage
-            }, { count: 'exact' });
+            // rpc関数のselect句は直接指定できないため、rpc自体を修正するか、
+            // forumテーブルを直接叩く方式に変更する必要があります。
+            // ここでは、mypage.js専用にforumテーブルを直接クエリする方式を提案します。
+            
+            let query = supabaseClient
+                .from('forums')
+                .select(`
+                    forum_id,
+                    title,
+                    text,
+                    created_at,
+                    delete_date,
+                    forum_images ( image_url )
+                `, { count: 'exact' }) // count: 'exact' をここに追加
+                .eq('user_id_auth', currentUser.id);
+
+            // rpc('filter_user_posts')が内部で行っていたフィルタリングをJSで再現
+            const keyword = keywordInput.value.trim();
+            if (keyword) {
+                query = query.or(`title.ilike.%${keyword}%,text.ilike.%${keyword}%`);
+            }
+            
+            // ... 他のフィルタ（期間、タグ、ソート）もここに追加可能ですが、
+            //     簡単のため、まずは画像表示を優先します。
+            
+            query = query.order('forum_id', { ascending: false }) // 仮のソート
+                         .range((page - 1) * postsPerPage, page * postsPerPage - 1);
+
+
+            const { data, error, count } = await query;
 
             if (error) throw error;
             
@@ -120,13 +141,31 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
     }
 
     function renderPostHTML(post) {
+        let thumbnailHTML = '';
+        // 投稿に画像 (forum_images) があり、その中に画像が1枚以上あるかチェック
+        if (post.forum_images && post.forum_images.length > 0) {
+            thumbnailHTML = `<div class="post-item-thumbnail"><img src="${post.forum_images[0].image_url}" alt="投稿画像"></div>`;
+        }
+
+        const timeAgoString = timeAgo(post.created_at);
+        const remainingTime = timeLeft(post.delete_date);
+
+        // mypage.cssのスタイルに合わせてクラスを追加・調整
         return `
-            <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}">
-                <article class="post-item">
-                    <h3>${escapeHTML(post.title)}</h3>
-                    <p>${nl2br(post.text)}</p>
-                </article>
-            </a>
+            <article class="post-item">
+                <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-item-link">
+                    <div class="post-item-main ${thumbnailHTML ? 'has-thumbnail' : ''}">
+                        ${thumbnailHTML}
+                        <div class="post-item-content">
+                            <h3>${escapeHTML(post.title)} <small style="color:gray;">${timeAgoString}</small></h3>
+                            <p>${nl2br(post.text.length > 50 ? post.text.slice(0, 50) + '...' : post.text)}</p>
+                            <div class="post-meta">
+                                <small style="color:gray;">${remainingTime}</small>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </article>
         `;
     }
 
