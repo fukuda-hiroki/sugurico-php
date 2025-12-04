@@ -12,42 +12,44 @@
 
 <body>
     <header id="header-container"></header>
-    <main class="form-container">
-        <h1>ログイン</h1>
+    <div class="main-wrapper">
+        <main class="form-container">
+            <h1>ログイン</h1>
 
-        <!-- エラー/成功メッセージを表示するための領域 -->
+            <!-- エラー/成功メッセージを表示するための領域 -->
 
-        <div id="message-area" style="display: none;"></div>
+            <div id="message-area" style="display: none;"></div>
 
-        <!-- フォームにはidを付け、actionは不要 -->
-        <form id="login-form">
-            <div class="form-group">
-                <label for="emailInput">メールアドレスまたはログインID</label>
+            <!-- フォームにはidを付け、actionは不要 -->
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="emailInput">メールアドレスまたはログインID</label>
 
-                <!-- ★Supabaseはメールアドレスでログインするのが基本 -->
-                <input type="text" name="email" id="emailInput" required>
-            </div>
-            <div class="form-group">
-                <label for="passwordInput">パスワード</label>
-                <div style="display: flex; ;">
-                    <input type="password" name="password" id="passwordInput" required>
-                    <div id="eye-box" style="display: flex;">
-                        <img src="../../base/eye-solid-full.svg" alt="" class="toggle-eye" style="display: block;"
-                            id="open-eye">
-                        <img src="../../base/eye-slash-solid-full.svg" alt="" class="toggle-eye" style="display: none;"
-                            id="close-eye">
-                    </div>
+                    <!-- ★Supabaseはメールアドレスでログインするのが基本 -->
+                    <input type="text" name="email" id="emailInput" required>
                 </div>
+                <div class="form-group">
+                    <label for="passwordInput">パスワード</label>
+                    <div style="display: flex; ;">
+                        <input type="password" name="password" id="passwordInput" required>
+                        <div id="eye-box" style="display: flex;">
+                            <img src="../../base/eye-solid-full.svg" alt="" class="toggle-eye" style="display: block;"
+                                id="open-eye">
+                            <img src="../../base/eye-slash-solid-full.svg" alt="" class="toggle-eye"
+                                style="display: none;" id="close-eye">
+                        </div>
+                    </div>
 
+                </div>
+                <button type="submit" id="loginButton" class="form-button">ログイン</button>
+            </form>
+            <!-- ... フォームの下あたり ... -->
+            <div class="form-footer">
+                <a href="register.html">新規登録はこちら</a>
+                <a href="password_reset_request.html">パスワードを忘れた方はこちら</a>
             </div>
-            <button type="submit" id="loginButton" class="form-button">ログイン</button>
-        </form>
-        <!-- ... フォームの下あたり ... -->
-        <div class="form-footer">
-            <a href="register.html">新規登録はこちら</a>
-            <a href="password_reset_request.html">パスワードを忘れた方はこちら</a>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <!-- 共通フッター -->
     <footer id="footer-container"></footer>

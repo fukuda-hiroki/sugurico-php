@@ -60,7 +60,13 @@
 }
 
 /* --- bodyと基本タイポグラフィ --- */
+html{height: 100%;}
 body {
+
+    min-height: 100%; /* bodyの最小の高さを画面の高さに合わせる */
+  display: flex;         /* Flexboxレイアウトを有効にする */
+  flex-direction: column;/* 子要素を縦に並べる */
+
   font-family: var(--font-family-base);
   line-height: 1.6;
   margin: 0;
@@ -87,8 +93,12 @@ h3 {
   line-height: 1.3;
 }
 
+.main-wrapper{flex-grow: 1; width: 100%;}
+
 /* --- メインコンテンツのコンテナ --- */
 main {
+  
+
   max-width: 800px;
   margin: 20px auto;
   padding: 20px 30px;

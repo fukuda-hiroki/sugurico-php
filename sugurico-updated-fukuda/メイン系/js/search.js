@@ -42,14 +42,14 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
         // URLパラメータをフォームに反映
 
         const searchType = urlParams.get('type');
-
+        if (searchType === 'tag') {
+            tagInput.value = urlParams.get('terms');
+        } else {
+            keywordInput.value = urlParams.get('terms');
+        }
 
         if (isPremiumUser) {
-            if (searchType === 'tag') {
-                tagInput.value = urlParams.get('terms');
-            } else {
-                keywordInput.value = urlParams.get('terms');
-            }
+
             toggleSearchButton.style.display = 'flex';
             authorInput.value = urlParams.get('author') || '';
             periodSelect.value = urlParams.get('period') || 'all';
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
         paginationContainer.innerHTML = '';
 
         try {
-          const { data: { user } } = await supabaseClient.auth.getUser();
+            const { data: { user } } = await supabaseClient.auth.getUser();
             const currentUserId = user ? user.id : null;
 
             // ★★★ パラメータをDB関数に完全に一致させる ★★★
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
                 searchParams.tag_param = tagInput.value.trim() || '';
                 searchParams.period_param = periodSelect.value;
                 searchParams.sort_order_param = sortSelect.value;
-                
+
                 if (excludeTagInput && excludeTagInput.value.trim()) {
                     searchParams.exclude_tags_param = excludeTagInput.value.trim().split(',').map(tag => tag.trim());
                 }
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
 
             const { data, error, count } = await supabaseClient
                 .rpc('search_public_forums', searchParams, { count: 'exact' });
-                
+
             if (error) throw error;
 
             const posts = data;

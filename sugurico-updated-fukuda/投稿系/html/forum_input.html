@@ -13,74 +13,76 @@
 <body>
     <!-- 共通ヘッダー -->
     <header id="header-container"></header>
-    <main class="form-container">
-        <h1>新しい記録を投稿</h1>
-        <div id="message-area" class="message" style="display: none;"></div>
+    <div class="main-wrapper">
+        <main class="form-container">
+            <h1>新しい記録を投稿</h1>
+            <div id="message-area" class="message" style="display: none;"></div>
 
-        <form id="post-form">
-            <!-- タイトル -->
-            <div class="form-group">
-                <label for="titleInput">タイトル</label>
-                <input type="text" id="titleInput" required>
-            </div>
-            <!-- 本文 -->
-            <div class="form-group">
-                <label for="textInput">本文</label>
-                <textarea id="textInput" rows="10"></textarea>
-            </div>
-            <!-- 公開期限 -->
-            <div class="form-group">
-                <label for="expireSelect">公開期限</label>
-                <small id="current-expiration-info" style="display: none; color: gray;"></small>
-                <select id="expireSelect">
-                    <option value="private">非公開</option>
-                    <option value="1day">1日後</option>
-                    <option value="2days">2日後</option>
-                    <option value="3days">3日後</option>
-                    <option value="4days">4日後</option>
-                    <option value="5days">5日後</option>
-                    <option value="6days">6日後</option>
-                    <option value="7days">7日後</option>
-                    <option value="permanent" selected>無期限</option>
-                </select>
-                <!-- プレミアム機能は後でJSで表示制御 -->
-
-                <div id="premium-expire-input-area" style="display: none;">
-                    <input type="datetime-local" id="premiumExpireInput"><label for="isPrivateCheckbox">非公開にする<input
-                            type="checkbox" id="isPrivateCheckbox"></label>
-
+            <form id="post-form">
+                <!-- タイトル -->
+                <div class="form-group">
+                    <label for="titleInput">タイトル</label>
+                    <input type="text" id="titleInput" required>
                 </div>
-                <p style="font-size: 0.8em; color: gray; margin-top: 5px;">
-                    分単位で日時を指定できます。空欄の場合は「無期限」になります。
-                </p>
-            </div>
-            <!-- 画像添付 -->
-            <div class="form-group">
-                <label>画像 (最大<span id="max-images-count">3</span>枚まで)</label>
+                <!-- 本文 -->
+                <div class="form-group">
+                    <label for="textInput">本文</label>
+                    <textarea id="textInput" rows="10"></textarea>
+                </div>
+                <!-- 公開期限 -->
+                <div class="form-group">
+                    <label for="expireSelect">公開期限</label>
+                    <small id="current-expiration-info" style="display: none; color: gray;"></small>
+                    <select id="expireSelect">
+                        <option value="private">非公開</option>
+                        <option value="1day">1日後</option>
+                        <option value="2days">2日後</option>
+                        <option value="3days">3日後</option>
+                        <option value="4days">4日後</option>
+                        <option value="5days">5日後</option>
+                        <option value="6days">6日後</option>
+                        <option value="7days">7日後</option>
+                        <option value="permanent" selected>無期限</option>
+                    </select>
+                    <!-- プレミアム機能は後でJSで表示制御 -->
 
-                <!-- 画像入力欄を管理するコンテナ -->
-                <div id="image-input-container">
-                    <div class="image-input-wrapper">
-                        <input type="file" name="images[]" class="image-input" accept="image/*">
+                    <div id="premium-expire-input-area" style="display: none;">
+                        <input type="datetime-local" id="premiumExpireInput"><label for="isPrivateCheckbox">非公開にする<input
+                                type="checkbox" id="isPrivateCheckbox"></label>
+
                     </div>
+                    <p style="font-size: 0.8em; color: gray; margin-top: 5px;">
+                        分単位で日時を指定できます。空欄の場合は「無期限」になります。
+                    </p>
                 </div>
-                <!-- 画像プレビューを表示するエリア -->
-                <div id="image-preview-container"></div>
-            </div>
+                <!-- 画像添付 -->
+                <div class="form-group">
+                    <label>画像 (最大<span id="max-images-count">3</span>枚まで)</label>
+
+                    <!-- 画像入力欄を管理するコンテナ -->
+                    <div id="image-input-container">
+                        <div class="image-input-wrapper">
+                            <input type="file" name="images[]" class="image-input" accept="image/*">
+                        </div>
+                    </div>
+                    <!-- 画像プレビューを表示するエリア -->
+                    <div id="image-preview-container"></div>
+                </div>
 
 
-            <!-- タグ -->
-             <div class="form-group">
-                <label>タグ (最大10個まで)</label>
-                <!-- ▼▼▼ このコンテナを置き換え ▼▼▼ -->
-                <div id="tag-container" class="modern-tag-container">
-                    <!-- JSがここにタグ入力欄を動的に生成します -->
+                <!-- タグ -->
+                <div class="form-group">
+                    <label>タグ (最大10個まで)</label>
+                    <!-- ▼▼▼ このコンテナを置き換え ▼▼▼ -->
+                    <div id="tag-container" class="modern-tag-container">
+                        <!-- JSがここにタグ入力欄を動的に生成します -->
+                    </div>
+                    <!-- ▲▲▲ 置き換えここまで ▲▲▲ -->
                 </div>
-                <!-- ▲▲▲ 置き換えここまで ▲▲▲ -->
-            </div>
-            <button type="submit" id="submitButton" class="submit-button">投稿する</button>
-        </form>
-    </main>
+                <button type="submit" id="submitButton" class="submit-button">投稿する</button>
+            </form>
+        </main>
+    </div>
     <!-- 共通フッター -->
     <footer id="footer-container"></footer>
     <!-- JSライブラリと、このページ専用のJS -->
