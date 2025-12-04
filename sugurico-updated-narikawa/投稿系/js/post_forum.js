@@ -27,20 +27,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit_id');
     const isEditMode = !!editId;
-    let currentUser;// --- ログインチェック ---
+    let currentUser; // --- ログインチェック ---
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) {
-        alert('この操作にはログインが必要です');//早急に対処せよ　2025年10月23日　福田
+        alert('この操作にはログインが必要です');
         window.location.href = '../../ログイン系/html/login.html';
     }
     currentUser = user;
 
     async function initializePage() {
-        const { data: profile } = await supabaseClient.from('users').select('premium_flag').eq('id', currentUser.id).single();
-        isPremiumUser = profile?.premium_flag === true;
+
+        isPremiumUser = await isCurrentUserPremium();
+
         if (isPremiumUser) {
-            expireSelect.style.display = 'none';// 通常のセレクトボックスを隠す
-            premiumExpireArea.style.display = 'block';// プレミアム用の入力欄を表示
+            expireSelect.style.display = 'none'; // 通常のセレクトボックスを隠す
+            premiumExpireArea.style.display = 'block'; // プレミアム用の入力欄を表示
             isPrivateCheckbox.addEventListener('change', () => {
                 premiumExpireInput.disabled = isPrivateCheckbox.checked;
             });
@@ -62,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             const { data: post, error } = await supabaseClient
                 .from('forums')
-                .select('* ,tag(tag_dic(tag_name)), forum_images(image_url)')
+                .select('*, tag(tag_dic(tag_name)), forum_images(image_id, image_url)')
                 .eq('forum_id', editId)
                 .single();
 
@@ -111,21 +112,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
 
-            // 2. タグの表示      
+            // 2. タグの表示
             const tagContainer = document.getElementById('tag-container');// 2025年10月27日　not defined
             const initialTagInput = tagContainer.querySelector('.tag-input-wrapper');
             if (post.tag && post.tag.length > 0) {
-                // 最初の入力欄に1つ目のタグを設定
-                initialTagInput.querySelector('input').value = post.tag[0].tag_dic.tag_name;
-
-                // 2つ目以降のタグの入力欄を動的に追加
-                for (let i = 1; i < post.tag.length; i++) {
-                    addTagInput(post.tag[i].tag_dic.tag_name);
-                }
-
-                if (typeof showButtons === 'function') {
-                    showButtons();
-                }
+                const tagNames = post.tag.map(t => t.tag_dic.tag_name);
+                // TagEditorモジュールに既存タグの配列を渡す
+                TagEditor.setTags(tagNames);
             }
 
             // 3. 画像のプレビュー表示
@@ -134,22 +127,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             const perviewContainer = document.getElementById('image-preview-container');
 
             if (post.forum_images && post.forum_images.length > 0) {
-                // 既存の画像はプレビューだけ表示し、新しいファイル選択はさせないのが一般的
-                perviewContainer.innerHTML = post.forum_images.map(image => `
-                    
-                    <div class="image-preview-wrapper existing-image">
-                                            <img src="${image.image_url}" alt="既存の画像">
-                                            <button type="button" class="delete-existing-image-button" data-image-id="${image.image_id}">×</button>
-                                        </div>
-                    `).join('');
-                // (既存画像の削除ボタンにイベントリスナーを設定する処理も必要)
+                ImageUploader.setExistingImages(post.forum_images);
             }
 
 
         } catch (error) {
             console.error('編集データの読み込みエラー:', error);
             alert('データの読み込みに失敗しました。メインページに戻ります。');
-            //           window.location.href = '../../メイン系/html/index.html';
+            // window.location.href = '../../メイン系/html/index.html';
         }
 
     }
@@ -157,6 +142,40 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     async function handleFormSubmit(event) {
         event.preventDefault();
+
+        try {
+            // ★ isPremiumUser変数が正しい値になっているため、このチェックが正しく機能する
+            const maxImages = isPremiumUser ? 6 : 3;
+            
+            // 新規投稿と編集時で現在の画像数の計算方法を分ける
+            let totalImageCount = 0;
+            if (isEditMode) {
+                const newFilesCount = ImageUploader.getNewFiles().length;
+                const existingImagesCount = ImageUploader._existingImages.length;
+                totalImageCount = newFilesCount + existingImagesCount;
+            } else {
+                // 新規投稿時は ImageUploader がまだ使われていない想定
+                const imageInput = document.getElementById('image-input');
+                if (imageInput) {
+                    totalImageCount = imageInput.files.length;
+                } else { // 古いUIのフォールバック
+                    const imageInputs = imageInputContainer.querySelectorAll('.image-input');
+                    totalImageCount = Array.from(imageInputs).map(input => input.files[0]).filter(Boolean).length;
+                }
+            }
+
+            if (totalImageCount > maxImages) {
+                throw new Error(`画像は最大${maxImages}枚までです。不要な画像を削除してください。`);
+            }
+            if (!titleInput.value.trim()) {
+                throw new Error('タイトルを入力してください。');
+            }
+        } catch (error) {
+            // バリデーションエラーをユーザーに表示
+            alert(error.message);
+            return; // 処理を完全に中断
+        }
+        
         submitButton.disabled = true;
 
         try {
@@ -165,16 +184,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 submitButton.textContent = '更新中...';
                 await updatePost();
                 alert('投稿を更新しました。');
+                window.location.href = `../../投稿系/html/forum_detail.html?id=${editId}`;
             } else {
                 // --- 新規登録処理 ---
                 submitButton.textContent = '投稿中...';
                 await createPost();
                 alert('投稿が完了しました。');
+                window.location.href = '../../メイン系/html/index.html'
             }
-            window.location.href = '../../メイン系/html/index.html'
+            
         } catch (error) {
-            console.error('投稿/更新エラー', error);
-            alert(`処理に失敗しました。:{error.message}`);
+           console.error('投稿/更新エラー', error);
+            // ★ エラーメッセージの表示方法を修正
+            alert(`処理に失敗しました: ${error.message}`);
         } finally {
             submitButton.disabled = false;
             submitButton.textContent = isEditMode ? '更新する' : '投稿する';
@@ -183,8 +205,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 新規投稿を作成する関数
     async function createPost() {
-        const imageInputs = imageInputContainer.querySelectorAll('.image-input');
-        const filesToUpload = Array.from(imageInputs).map(input => input.files[0]).filter(Boolean);
+        const imageInput = document.getElementById('image-input');
+        const filesToUpload = Array.from(imageInput.files);
         const imageUrls = await uploadImages(filesToUpload);
 
         const { data: [savedForum], error: forumError } = await supabaseClient
@@ -198,7 +220,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (forumError) throw forumError;
 
         const tagInputs = document.querySelectorAll('#tag-container .tag-input');
-        const tags = [...new Set(Array.from(tagInputs).map(input => input.value.trim()).filter(Boolean))];
+        const tags = TagEditor.getTags();
         if (tags.length > 0) await saveTags(savedForum.forum_id, tags);
         if (imageUrls.length > 0) await saveImageUrls(savedForum.forum_id, imageUrls)
     }
@@ -226,46 +248,38 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const tagInputs = document.querySelectorAll('#tag-container .tag-input');
         console.log(tagInputs.value);
-        const tags = [
-            ...new Set(
-                Array.from(tagInputs).map(input => input.value.trim()).filter(Boolean)
-            )
-        ];
+        const tags = TagEditor.getTags();
+        
         if (tags.length > 0) {
             await saveTags(editId, tags);
         }
 
-        // --- 3. 画像を更新 (一度すべて削除してから、再度追加) ---
-        // 3-a. 既存の画像情報をDBから取得
+        // --- 3. 画像の差分更新 ---
+        const imagesToDelete = ImageUploader.getImagesToDelete();
+        const newFilesToAdd = ImageUploader.getNewFiles();
 
-        const { data: existingImages, error: fetchImageError } = await supabaseClient
-            .from('forum_images')
-            .select('image_url')
-            .eq('post_id', editId);
-        if (fetchImageError) throw fetchImageError;
+        // 3-a. 削除対象の画像をDBとStorageから削除
+        if (imagesToDelete.length > 0) {
+            // まず削除対象の画像URLをDBから取得
+            const { data: imagesData, error: fetchError } = await supabaseClient
+                .from('forum_images')
+                .select('image_url')
+                .in('image_id', imagesToDelete);
+            if (fetchError) throw fetchError;
 
-        // 3-b. 既存の画像をStorageから削除
-        if (existingImages && existingImages.length > 0) {
-            const filesToRemove = existingImages.map(img => {
-                // publicUrlからpathを抽出 (例: .../post-images/userid/filename.jpg -> userid/filename.jpg)
-                const path = img.image_url.split('/post-images/')[1];
-                return path;
-            });
-            await supabaseClient.storage.from('post-images').remove(filesToRemove);
+            // Storageからファイルを削除
+            const filesToRemove = imagesData.map(img => img.image_url.split('/post-images/')[1]);
+            if (filesToRemove.length > 0) {
+                await supabaseClient.storage.from('post-images').remove(filesToRemove);
+            }
+            
+            // DBからレコードを削除
+            await supabaseClient.from('forum_images').delete().in('image_id', imagesToDelete);
         }
-        // 3-c. 既存の画像のDBレコードを削除 (Storage削除後に行う)
-        await supabaseClient
-            .from('forum_images')
-            .delete()
-            .eq('post_id', editId);
 
-        // 3-d. フォームから新しい画像を取得してアップロード＆保存 (createPostと同じロジック)
-        const imageInputs = imageInputContainer.querySelectorAll('.image-input');
-        const filesToUpload = Array.from(imageInputs).map(
-            input => input.files[0]
-        ).filter(Boolean);
-        if (filesToUpload.length > 0) {
-            const imageUrls = await uploadImages(filesToUpload);
+        // 3-b. 新しく追加された画像をアップロード＆DBに保存
+        if (newFilesToAdd.length > 0) {
+            const imageUrls = await uploadImages(newFilesToAdd);
             await saveImageUrls(editId, imageUrls);
         }
 
@@ -307,10 +321,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     /**
-         * タグ情報をDBに保存する関数
-         * @param {number} forumId - 紐付ける投稿のID
-         * @param {string[]} tagNames - タグ名の文字列の配列
-         */
+     * タグ情報をDBに保存する関数
+     * @param {number} forumId - 紐付ける投稿のID
+     * @param {string[]} tagNames - タグ名の文字列の配列
+     */
     async function saveTags(forumId, tagNames) {
         // --- 1. まず、既存のタグをDBからまとめて取得 ---
         const {
@@ -405,7 +419,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (dateValue) {
                 const selectedDate = new Date(dateValue);
                 if (selectedDate < new Date()) {
-                    throw new error('公開期限は現在より未来の日時を指定してください。');
+                    throw new Error('公開期限は現在より未来の日時を指定してください。');
                 }
                 return selectedDate.toISOString();
             } else {

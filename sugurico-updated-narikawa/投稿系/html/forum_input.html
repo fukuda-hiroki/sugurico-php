@@ -57,17 +57,14 @@
             <div class="form-group">
                 <label>画像 (最大<span id="max-images-count">3</span>枚まで)</label>
 
-                <!-- 画像入力欄を管理するコンテナ -->
-                <div id="image-input-container">
-                    <div class="image-input-wrapper">
-                        <input type="file" name="images[]" class="image-input" accept="image/*">
-                    </div>
+                <!-- ドラッグ&ドロップとファイル選択のトリガーとなるエリア -->
+                 <div id="image-drop-zone">
+                    <p>ここに画像をドラッグ＆ドロップ<br>または</p>
+                    <button type="button" id="select-image-button" class="form-button">ファイルを選択</button>
+                    <!-- 実際にファイル情報を持つinput要素は非表示にする -->
+                    <input type="file" id="image-input" multiple accept="image/*" style="display: none;">
                 </div>
-                <!-- 操作ボタン -->
-                <div class="image-buttons" style="margin-top: 10px;">
-                    <button type="button" id="add-image-button" class="insert-button">画像を追加</button>
-                    <button type="button" id="remove-image-button" class="delete-button">最後の画像を削除</button>
-                </div>
+
                 <!-- 画像プレビューを表示するエリア -->
                 <div id="image-preview-container"></div>
             </div>
@@ -77,12 +74,9 @@
             <div class="form-group">
                 <label>タグ (最大10個まで)</label>
                 <div id="tag-container">
-                    <div class="tag-input-wrapper">
-                        <input type="text" name="tags[]" class="tag-input" placeholder="タグを入力">
-                    </div>
-                    <div class="tag-buttons">
-                        <button type="button" id="insert-tags" class="insert-button">追加</button>
-                        <button type="button" id="delete-tags" class="delete-button">削除</button>
+                    <div id="tags-input-ui-wrapper" class="tags-input-container">
+                        <!-- 選択されたタグがJSでここに表示される -->
+                        <input type="text" id="tag-text-input" placeholder="タグを入力してEnter">
                     </div>
                 </div>
             </div>

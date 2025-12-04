@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (passwordInput.value !== confirmPasswordInput.value) {
             showMessage('パスワードが一致しません。', 'error');
+            return;
         }
         if (!verifiedUserId) {
             showMessage('認証情報がありません。最初からやり直してください。', 'error');
@@ -67,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 );
             if (error) {
                 throw error;
+
             }
 
             //  更新成功

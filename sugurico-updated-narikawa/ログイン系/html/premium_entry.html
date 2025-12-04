@@ -15,33 +15,23 @@
 
     <main>
         <h1>プレミアム会員登録</h1>
-
-        <!-- ▼▼▼ 本人確認エリア ▼▼▼ -->
-        <div id="password-auth-section">
-            <h2>ステップ1: ご本人様確認</h2>
-            <p>セキュリティのため、現在のパスワードを入力してください。</p>
-            <div id="auth-message-area" class="message" style="display: none;"></div>
-
-            <div class="form-group">
-                <input type="password" id="password-input" placeholder="パスワード" required>
-                <button type="button" id="auth-button">認証する</button>
-            </div>
-            <a href="mypage.html">マイページに戻る</a>
-        </div>
-
-        <!-- ▼▼▼ 支払い情報エリア (最初は非表示) ▼▼▼ -->
-        <div id="payment-section" style="display: none;">
-            <h2>ステップ2: プラン選択とお支払い</h2>
+        
+        <!-- ▼▼▼ 構造をここに集約 ▼▼▼ -->
+        <div id="subscription-section">
+            
+            <!-- 1. メリットを最初に提示 -->
             <div class="premium-features">
-                <h3>プレミアム特典</h3>
+                <h3>プレミアム特典で、さらに快適な体験を</h3>
                 <ul>
-                    <li>広告非表示</li>
-                    <li>投稿の編集履歴閲覧</li>
-                    <li>限定タグの利用</li>
+                    <li>投稿可能な画像数の増加</li>
+                    <li>公開期限を撤廃</li>
+                    <li>ブックマーク機能の無制限利用</li>
+                    <li>詳細な検索の除外タグの設定</li>
                     <li>優先サポート</li>
                 </ul>
             </div>
 
+            <!-- 2. プランを選択させる -->
             <div class="form-group">
                 <label for="plan-select">プランを選択</label>
                 <select id="plan-select">
@@ -50,17 +40,30 @@
                 </select>
             </div>
 
+            <!-- 3. 支払い情報を入力させる -->
             <div class="form-group">
-                <label>カード情報を入力 (シミュレーション)</label>
-                <input type="text" id="card-number" placeholder="カード番号">
-                <input type="text" id="expiry-date" placeholder="有効期限 (MM/YY)">
-                <input type="text" id="cardholder-name" placeholder="カード名義人">
-                <input type="text" id="cvc" placeholder="セキュリティコード (CVC)">
+                <label>お支払い情報 (シミュレーション)</label>
+                <input type="text" id="card-number" placeholder="カード番号" required>
+                <input type="text" id="expiry-date" placeholder="有効期限 (MM/YY)" required>
+                <input type="text" id="cardholder-name" placeholder="カード名義人" required>
+                <input type="text" id="cvc" placeholder="セキュリティコード (CVC)" required>
+            </div>
+            
+            <!-- 4. 最後にセキュリティ確認としてパスワードを要求 -->
+            <div class="form-group">
+                <label for="password-input">ご本人様確認のため、パスワードを再入力してください</label>
+                <input type="password" id="password-input" placeholder="現在のパスワード" required>
             </div>
 
-            <button type="button" id="subscribe-button">この内容で登録する</button>
+            <!-- メッセージエリア -->
             <div id="subscription-status" class="message" style="display: none;"></div>
+
+            <!-- 5. 全て入力したら登録ボタン -->
+            <button type="button" id="subscribe-button">この内容で登録する</button>
+
+            <a href="mypage.html" style="display: block; text-align: center; margin-top: 20px;">マイページに戻る</a>
         </div>
+        <!-- ▲▲▲ 構造の集約ここまで ▲▲▲ -->
     </main>
 
     <!-- 共通フッター -->

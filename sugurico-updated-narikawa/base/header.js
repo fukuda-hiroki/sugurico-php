@@ -39,8 +39,18 @@ async function setupHeaderAndFooter() {
         // 【ログインしている場合のナビゲーション】
         const userName = session.user.user_metadata?.user_name || 'ゲスト';
         navHTML = `
-            <a href="../../ログイン系/html/mypage.html">${escapeHTML(userName)}さん</a>
-            <a href="#" id="logout-button">ログアウト</a>
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle">${escapeHTML(userName)}さん ▼</a>
+                <div class="dropdown-menu">
+                    <a href="../../ログイン系/html/mypage.html">マイページ</a>
+                    <a href="../../ログイン系/html/update.html">登録情報を変更する</a>
+                    <a href="../../ログイン系/html/bookmarks.html">ブックマーク一覧</a>
+                    <a href="../../ログイン系/html/block_list.html">ブロック中のユーザー管理</a>
+                    <a href="../../ログイン系/html/premium_entry.html">プレミアム機能</a>
+                    <hr>
+                    <a href="#" id="logout-button">ログアウト</a>
+                </div>
+            </div>
         `;
 
     } else {
@@ -58,19 +68,23 @@ async function setupHeaderAndFooter() {
 
         <div class="search-form-container">
             <form action="../../メイン系/html/search.html" method="get">
-                <input type="text" name="keyword" placeholder="キーワード検索...">
+                <input type="text" name="terms" placeholder="キーワード検索...">
                 <select name="type">
-                    <option value="title">タイトル</option>
-                    <option value="text">テキスト</option>
+                    <option value="title">キーワード</option>
                     <option value="tag">タグ</option>
                 </select>
                 <button type="submit">検索</button>
             </form>
         </div>
 
-        <nav class="header-nav">
-            ${navHTML}
-        </nav>
+        <!-- ▼▼▼ 右側に寄せる要素をグループ化 ▼▼▼ -->
+        <div class="header-right-group">
+
+            <nav class="header-nav">
+                ${navHTML}
+            </nav>
+        </div>
+        <!-- ▲▲▲ グループ化ここまで ▲▲▲ -->
     `;
 
     // 生成したHTMLをヘッダーコンテナに挿入
@@ -92,6 +106,21 @@ async function setupHeaderAndFooter() {
                 window.location.href = '../..//メイン系/html/index.html';
             }
         });
+    }
+
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    if (dropdownToggle) {
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+        const dropdown = dropdownToggle.parentElement;
+
+        dropdown.addEventListener('mouseenter', () => {
+            dropdownMenu.style.display = 'block';
+        });
+        dropdown.addEventListener('mouseleave', () => {
+            dropdownMenu.style.display = 'none';
+        });
+
+
     }
 }
 
@@ -173,7 +202,7 @@ function escapeHTML(str) {
  */
 async function isCurrentUserPremium() {
     // Supabaseクライアントはheader.jsで既に初期化済み
-    
+
     // 1. 現在のログインユーザー情報を取得
     const { data: { user } } = await supabaseClient.auth.getUser();
 
@@ -187,7 +216,7 @@ async function isCurrentUserPremium() {
         .from('premium')
         .select('status, limit_date')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
 
     if (error || !premium) {
         // レコードが存在しない、または取得時にエラーが発生した場合
@@ -195,10 +224,10 @@ async function isCurrentUserPremium() {
     }
 
     // 4. ステータスが 'active' で、かつ有効期限が切れていないかチェック
-    const isActive = premium.status === 'active';
+    const hasValidStatus = premium.status === 'active' || premium.status === 'canceled';
     const isNotExpired = new Date(premium.limit_date) > new Date();
 
-    return isActive && isNotExpired;
+    return hasValidStatus && isNotExpired;
 }
 
 // --- 関数の実行 ---

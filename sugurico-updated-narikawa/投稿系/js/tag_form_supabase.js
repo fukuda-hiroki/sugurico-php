@@ -1,101 +1,115 @@
-//tag_form_supabase.js
+// tag_form_supabase.js
 'use strict';
 
-const tagContainer = document.getElementById('tag-container');
-const insertButton = document.getElementById('insert-tags');
-const deleteButton = document.getElementById('delete-tags');
-const maxTags = 10;
-// 新しいタグ入力欄を追加する関数
+// ★ 外部からアクセス可能なTagEditorオブジェクトを作成
+const TagEditor = {
+    // --- 内部状態 ---
+    _tags: [], // タグ名の配列
+    _maxTags: 10,
 
-function addTagInput(value = '') {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'tag-input-wrapper';
+    // --- HTML要素 ---
+    _elements: {},
+    
+    /**
+     * 初期化処理
+     */
+    init: function() {
+        this._elements = {
+            container: document.getElementById('tags-input-ui-wrapper'),
+            input: document.getElementById('tag-text-input')
+        };
+        
+        if (!this._elements.container) return; // ページに必要な要素がなければ中断
+        
+        this._setupEventListeners();
+    },
 
-    const newInput = document.createElement('input');
-    newInput.value = value;
-    newInput.type = 'text';
-    newInput.name = 'tags[]';
-    newInput.placeholder = 'タグを入力';
-    newInput.className = 'tag-input';
+    /**
+     * 編集時に既存のタグリストをセットする
+     * @param {Array} tagNames - ['タグ1', 'タグ2', ...]
+     */
+    setTags: function(tagNames) {
+        this._tags = [...tagNames];
+        this._render();
+    },
 
-    wrapper.appendChild(newInput);
+    /**
+     * 現在のタグリストを取得する
+     * @returns {Array} - ['タグ1', 'タグ2', ...]
+     */
+    getTags: function() {
+        return this._tags;
+    },
+    
+    /**
+     * イベントリスナーを設定
+     */
+    _setupEventListeners: function() {
+        const { container, input } = this._elements;
 
-    const buttonContainer = tagContainer.querySelector('.tag-buttons');
-    tagContainer.insertBefore(wrapper, buttonContainer);
+        container.addEventListener('click', () => input.focus());
 
-    newInput.focus();
-
-}
-function showButtons() {
-
-    const wrappers = tagContainer.querySelectorAll('.tag-input-wrapper');
-    insertButton.style.display = 'inline';
-    deleteButton.style.display = 'inline';
-
-    if (wrappers.length === 1) {
-        deleteButton.style.display = 'none';
-    }
-    if (wrappers.length === maxTags) {
-        insertButton.style.display = 'none';
-    }
-}
-document.addEventListener('DOMContentLoaded', () => {
-
-
-    if (!tagContainer || !insertButton || !deleteButton) {
-        return;
-    }
-
-
-
-    showButtons();
-
-    // --- [追加]ボタンのクリックイベント ---
-    insertButton.addEventListener('click', (event) => {
-        event.preventDefault();
-
-        const wrappers = tagContainer.querySelectorAll('.tag-input-wrapper');
-        const lastInput = wrappers[wrappers.length - 1].querySelector('input');
-
-        // 直前の入力欄が空でないか
-        if (lastInput.value.trim() === '') {
-            alert('最後のタグ入力欄を埋めてから追加してください。');
-            lastInput.focus();
-            return; // 処理を中断
-        }
-
-        addTagInput();
-        showButtons();
-    });
-
-    // --- [削除]ボタンのクリックイベント ---
-    deleteButton.addEventListener('click', (event) => {
-        event.preventDefault();
-
-        const wrappers = tagContainer.querySelectorAll('.tag-input-wrapper');
-
-        // ▼▼▼ 確認ダイアログを追加 ▼▼▼
-        // 入力欄が1つより多く存在する場合
-        if (wrappers.length > 1) {
-            const lastWrapper = wrappers[wrappers.length - 1];
-            const lastInput = lastWrapper.querySelector('input');
-
-            // 最後の入力欄に何か入力されている場合は、確認メッセージを出す
-            if (lastInput.value.trim() !== '') {
-                if (confirm('最後のタグ「' + lastInput.value + '」を削除しますか？')) {
-                    lastWrapper.remove();
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                const newTag = input.value.trim();
+                if (newTag) {
+                    this._add(newTag);
                 }
-            } else {
-                // 空の場合は、確認なしで削除
-                lastWrapper.remove();
             }
+            if (e.key === 'Backspace' && input.value === '') {
+                if (this._tags.length > 0) {
+                    this._remove(this._tags.length - 1);
+                }
+            }
+        });
+    },
+
+    /**
+     * タグのUIを描画する
+     */
+    _render: function() {
+        const { container, input } = this._elements;
+        container.querySelectorAll('.tag-item').forEach(el => el.remove());
+        
+        this._tags.forEach((tag, index) => {
+            const tagElement = document.createElement('span');
+            tagElement.className = 'tag-item';
+            tagElement.textContent = tag;
+
+            const removeBtn = document.createElement('span');
+            removeBtn.className = 'tag-remove-btn';
+            removeBtn.textContent = '×';
+            removeBtn.onclick = () => this._remove(index);
+
+            tagElement.appendChild(removeBtn);
+            container.insertBefore(tagElement, input);
+        });
+    },
+
+    /**
+     * タグを追加する
+     */
+    _add: function(tagName) {
+        if (this._tags.length >= this._maxTags) {
+            alert(`タグは最大${this._maxTags}個までです。`);
+            return;
         }
-        showButtons();
-    });
+        if (!this._tags.includes(tagName)) {
+            this._tags.push(tagName);
+            this._render();
+        }
+        this._elements.input.value = '';
+    },
 
+    /**
+     * タグを削除する
+     */
+    _remove: function(index) {
+        this._tags.splice(index, 1);
+        this._render();
+    }
+};
 
-
-
-
-
-});
+// ページの読み込み完了時に初期化
+document.addEventListener('DOMContentLoaded', () => TagEditor.init());

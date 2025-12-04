@@ -1,14 +1,12 @@
 // search.js
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => { // ★1. async を追加
 
     // --- HTML要素の取得 ---
     const searchTitle = document.getElementById('search-title');
     const searchCount = document.getElementById('search-count');
     const postsListContainer = document.getElementById('posts-list-container');
     const paginationContainer = document.getElementById('pagination-container');
-
-    // 詳細検索フォームの要素
     const toggleSearchButton = document.getElementById('toggle-search-button');
     const advancedSearchForm = document.getElementById('advanced-search-form');
     const filterButton = document.getElementById('filter-button');
@@ -17,50 +15,134 @@ document.addEventListener('DOMContentLoaded', () => {
     const tagInput = document.getElementById('tag-input');
     const periodSelect = document.getElementById('period-select');
     const sortSelect = document.getElementById('sort-select');
+    const excludeTagInput = document.getElementById('exclude-tag-input');
 
-    //  絞り込み検索を実行し、結果を描画するメイン関数
-    function initializePage() {
-        const urlParams = new URLSearchParams(window.location.search);
-        keywordInput.value = urlParams.get('keyword') || '';
-        authorInput.value = urlParams.get('') || '';
-        tagInput.value = urlParams.get('') || '';
-        periodSelect.value = urlParams.get('') || '';
-        sortSelect.value = urlParams.get('') || '';
+    let isPremiumUser = false; // ★2. プレミアム状態を管理する変数を宣言
 
+    /**
+     *  ページの初期化処理
+     */
+    async function initializePage() {
+        isPremiumUser = await isCurrentUserPremium(); // ★3. 現在のユーザーのプレミアム状態を取得
+        setupUIAndForms();
         setupEventListeners();
-        performSearch(parseInt(urlParams.get('page')) || 1);
+        performSearch(parseInt(new URLSearchParams(window.location.search).get('page')) || 1);
     }
+    function setupUIAndForms() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchType = urlParams.get('type');
+        const searchTerms = urlParams.get('terms') || ''; // URLから検索キーワードを取得
 
-    function setupEventListeners() {
-        toggleSearchButton.addEventListener('click', () => {
-            const isHidden = advancedSearchForm.style.display === 'none';
-            advancedSearchForm.style.display = isHidden ? 'block' : 'none';
-            toggleSearchButton.textContent = isHidden ? '詳細検索を閉じる' : '詳細検索';
-        });
-        filterButton.addEventListener('click', () => performSearch(1))
+        // ★ プレミアム判定の外で、基本的なキーワードを先にフォームにセットする
+        // これにより、一般ユーザーでもヘッダーからの検索が機能するようになる
+        if (searchType === 'tag') {
+            // タグ検索はプレミアム機能と見なすため、isPremiumUserがtrueの場合のみセット
+            if (isPremiumUser) {
+                tagInput.value = searchTerms;
+            }
+        } else {
+            // タグ検索以外（タイトル検索など）は、誰でも利用できる
+            keywordInput.value = searchTerms;
+        }
+
+        if (isPremiumUser) {
+            if (searchType === 'tag') {
+                tagInput.value = urlParams.get('terms');
+            } else {
+                keywordInput.value = urlParams.get('terms');
+            }
+            toggleSearchButton.style.display = 'flex';
+            authorInput.value = urlParams.get('author') || '';
+            periodSelect.value = urlParams.get('period') || 'all';
+            sortSelect.value = urlParams.get('sort') || 'desc';
+            if (excludeTagInput) excludeTagInput.parentElement.style.display = 'block';
+        } else {
+            toggleSearchButton.style.display = 'none';
+            if (excludeTagInput) excludeTagInput.parentElement.style.display = 'none';
+        }
     }
+    function setupEventListeners() {
+        if (isPremiumUser) {
+            // プレミアム会員なら、詳細検索を開く機能を有効化
+            toggleSearchButton.style.display = 'flex'; // ボタン自体を表示
+            toggleSearchButton.addEventListener('click', () => {
+                const isHidden = advancedSearchForm.style.display === 'none';
+                advancedSearchForm.style.display = isHidden ? 'block' : 'none';
+                // HTMLに合わせてアイコンとテキストを個別に操作
+                const btnIcon = toggleSearchButton.querySelector('.btn-icon');
+                const btnText = toggleSearchButton.querySelector('.btn-text');
+                if (isHidden) {
+                    btnIcon.textContent = '🔼';
+                    btnText.textContent = '閉じる';
+                } else {
+                    btnIcon.textContent = '🔍';
+                    btnText.textContent = '詳細検索';
+                }
+            });
+        } else {
+            // 通常会員・ログアウト時は、ボタンを非表示
+            toggleSearchButton.style.display = 'none';
+        }
+
+        // 絞り込みボタンの機能は誰でも使える
+        filterButton.addEventListener('click', () => performSearch(1));
+    }
+    /**
+     * ★6. 検索の実行もプレミアム状態で分岐させる
+     */
     async function performSearch(page = 1) {
-        postsListContainer.innerHTML = '検索中…';
+        postsListContainer.innerHTML = '<p class="loading-text">検索中...</p>'; // CSSに合わせてクラス名を追加
         paginationContainer.innerHTML = '';
 
         try {
-            // ログインユーザー情報を取得する処理を追加
-            const {data: { user }} = await supabaseClient.auth.getUser();
-            const currentUserId = user ? user.id : null; // 未ログイン時はnull
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            const currentUserId = user ? user.id : null;
+            
+            // ▼▼▼ ここからが新しいロジック ▼▼▼
+            // --------------------------------------------------------------------
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchType = urlParams.get('type');
+            const searchTerms = urlParams.get('terms') || '';
 
-            //  フォームから現在の検索条件を取得
-            const searchParams = {
+            // 基本の検索パラメータを準備
+            let searchParams = {
                 current_user_id_param: currentUserId,
-                keyword_param: keywordInput.value.trim(),
-                author_param: authorInput.value.trim(),
-                tag_param: tagInput.value.trim(),
-                period_param: periodSelect.value,
-                sort_order_param: sortSelect.value,
+                keyword_param: null, // いったん両方nullで初期化
+                tag_param: null,
+                author_param: null,
+                period_param: 'all',
+                sort_order_param: 'desc',
                 page_param: page,
-                limit_param: 10
+                limit_param: 10,
+                exclude_tags_param: []
             };
 
-            //  RPCでDB関数を呼び出し、総件数とページデータを一度に取得
+            // ★ステップ1: URLの種別に応じて、基本的な検索パラメータを設定（全ユーザー共通）
+            if (searchType === 'tag') {
+                // タグ検索の場合
+                searchParams.tag_param = searchTerms.trim();
+            } else {
+                // それ以外の検索（タイトル検索など）の場合
+                searchParams.keyword_param = keywordInput.value.trim();
+            }
+
+            // ★ステップ2: もしプレミアム会員なら、詳細検索の条件を追加で上書きする
+            if (isPremiumUser) {
+                searchParams.author_param = authorInput.value.trim();
+                searchParams.period_param = periodSelect.value;
+                searchParams.sort_order_param = sortSelect.value;
+                
+                // 詳細検索フォームのタグ入力が優先されるようにする
+                if (tagInput.value.trim()) {
+                    searchParams.tag_param = tagInput.value.trim();
+                }
+                
+                if (excludeTagInput && excludeTagInput.value.trim()) {
+                    // .map(tag => tag.trim) は .map(tag => tag.trim()) の間違いだったため修正
+                    searchParams.exclude_tags_param = excludeTagInput.value.trim().split(',').map(tag => tag.trim());
+                }
+            }
+
             const { data, error, count } = await supabaseClient
                 .rpc('search_public_forums', searchParams, { count: 'exact' });
             if (error) throw error;
@@ -71,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
             searchTitle.textContent = '検索結果';
             searchCount.textContent = `${totalposts}件の投稿が見つかりました。`;
             if (posts && posts.length > 0) {
-                console.log(posts);
                 postsListContainer.innerHTML = posts.map(post => renderPost(post)).join('');
             } else {
                 postsListContainer.innerHTML = '<p>該当する投稿は見つかりませんでした。</p>';
@@ -83,9 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
-
-
+    // (renderPost は変更なし)
     function renderPost(post) {
         let thumbnailHTML = '';
         if (post.forum_images && post.forum_images.length > 0) {
@@ -111,6 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
     }
 
+    /**
+     * ★7. ページネーションのリンク生成を修正
+     */
     function renderPagination(totalItems, currentPage, itemsPerPage) {
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         if (totalPages <= 1) {
@@ -118,26 +200,33 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // 現在のURLパラメータを維持しつつ、pageだけを書き換える
+        const urlParams = new URLSearchParams(window.location.search);
         let paginationHTML = '';
-        const baseLink = new URLSearchParams(window.location.search);
+
+        const createPageLink = (page) => {
+            urlParams.set('page', page);
+            return `?${urlParams.toString()}`;
+        };
 
         if (currentPage > 1) {
-            paginationHTML += `<a href="${baseLink}&page=${currentPage - 1}">« 前へ</a>`;
+            paginationHTML += `<a href="${createPageLink(currentPage - 1)}">« 前へ</a>`;
         }
 
         for (let i = 1; i <= totalPages; i++) {
             if (i === currentPage) {
                 paginationHTML += `<span class="current-page">${i}</span>`;
             } else {
-                paginationHTML += `<a href="${baseLink}&page=${i}">${i}</a>`;
+                paginationHTML += `<a href="${createPageLink(i)}">${i}</a>`;
             }
         }
 
         if (currentPage < totalPages) {
-            paginationHTML += `<a href="${baseLink}&page=${currentPage + 1}">次へ »</a>`;
+            paginationHTML += `<a href="${createPageLink(currentPage + 1)}">次へ »</a>`;
         }
 
         paginationContainer.innerHTML = paginationHTML;
     }
+
     initializePage();
 });

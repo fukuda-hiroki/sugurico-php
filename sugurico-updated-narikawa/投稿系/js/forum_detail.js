@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data: { session } } = await supabaseClient.auth.getSession();
     const currentUser = session?.user;
 
+    let blockedUserIds = [];
+
     // --- 2. 初期化処理の開始 ---
     if (!forumId) {
         postContainer.innerHTML = '<h1>無効な投稿IDです。</h1>';
@@ -22,6 +24,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
+        // ★ もしログインしていれば、まずブロックリストを取得する
+        if (currentUser) {
+            const { data: blockedUsers, error: blockError } = await supabaseClient
+             .from('blocks')
+             .select('blocked_user_id')
+             .eq('blocker_user_id', currentUser.id);
+
+            if (blockError) {
+                console.error('ブロックリストの取得に失敗:', blockError);
+            } else if (blockedUsers) {
+                blockedUserIds = blockedUsers.map(b => b.blocked_user_id);
+            }
+        }
+
         // --- 3. 必要なデータを並行して取得 ---
         // プレミアム判定を共通関数に置き換え
         const isPremium = currentUser ? await isCurrentUserPremium() : false;
@@ -41,12 +57,27 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
+        // ★ コメント取得用のクエリを準備
+
+        let commentsQuery = supabaseClient
+            .from('comments')
+            .select('*, users!comments_user_id_auth_fkey(user_name)')
+            .eq('forum_id', forumId)
+
+         // ★ もしブロックリストにIDがあれば、除外条件を追加
+        if (blockedUserIds.length > 0) {
+            commentsQuery = commentsQuery.not('user_id_auth', 'in', `(${blockedUserIds.join(',')})`);
+        }
+
+        // ★ 最後に並び替え条件を追加
+        commentsQuery = commentsQuery.order('created_at', { ascending: false});
+
         // 投稿関連のデータを取得
         const [postRes, tagsRes, imagesRes, commentsRes] = await Promise.all([
             supabaseClient.from('forums').select('*, users!forums_user_id_auth_fkey(user_name)').eq('forum_id', forumId).single(),
             supabaseClient.from('tag').select('tag_dic(tag_name)').eq('forum_id', forumId),
             supabaseClient.from('forum_images').select('image_url').eq('post_id', forumId).order('display_order'),
-            supabaseClient.from('comments').select('*, users!comments_user_id_auth_fkey(user_name)').eq('forum_id', forumId).order('created_at', { ascending: false })
+            commentsQuery // ここを置き換え！
         ]);
 
         if (postRes.error || !postRes.data) throw new Error('投稿が見つからないか、取得に失敗しました。');
@@ -83,7 +114,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderPost(post, tags, images, isPremium, isBookmarked, isOwner) {
         const remainingTimeHTML = timeLeft(post.delete_date);
         const timeAgoHTML = timeAgo(post.created_at);
-        const tagsHTML = tags.map(tag => `<a href="../../メイン系/html/search.html?keyword=${encodeURIComponent(tag.tag_dic.tag_name)}&type=tag" class="tag-link">#${escapeHTML(tag.tag_dic.tag_name)}</a>`).join(' ');
+        const tagsHTML = tags.map(tag => `<a href="../../メイン系/html/search.html?terms=${encodeURIComponent(tag.tag_dic.tag_name)}&type=tag" class="tag-link">#${escapeHTML(tag.tag_dic.tag_name)}</a>`).join(' ');
         const imagesHTML = images.map(image => `<div class="post-image-wrapper"><img src="${image.image_url}" alt="投稿画像" class="post-image"></div>`).join('');
         
         let authorHTML = escapeHTML(post.users?.user_name || '不明');
@@ -95,7 +126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (isOwner) {
             ownerButtonsHTML = `
                 <div class="post-owner-actions">
-                    <a href="forum_input.html?edit_id=${post.forum_id}" class="action-button edit-button">編集</a>
+                    <a href="forum_input.html?edit_id=${post.forum_id}"><button class="action-button edit-button">編集</button></a>
                     <button type="button" id="delete-post-button" class="action-button delete-button">削除</button>
                 </div>`;
         }
@@ -169,7 +200,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     async function fetchAndRenderComments() {
-        const { data: comments, error } = await supabaseClient.from('comments').select('*, users!comments_user_id_auth_fkey(user_name)').eq('forum_id', forumId).order('created_at', { ascending: false });
+
+        let query = supabaseClient
+            .from('comments')
+            .select('*, users!comments_user_id_auth_fkey(user_name)')
+            .eq('forum_id', forumId);
+
+        // ★ ページ読み込み時に取得したブロックリストを再利用
+        if (blockedUserIds.length > 0) {
+            query = query.not('user_id_auth', 'in', `(${blockedUserIds.join(',')})`);
+        }
+
+        const { data: comments, error } = await query
+            .order('created_at', { ascending: false });
+            
         if (error) {
             commentListContainer.innerHTML = '<p>コメントの読み込みに失敗しました。</p>';
         } else {
@@ -254,7 +298,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     throw error;
                 }
             } else {
-                alert(`ユーザー「${targetUserName}」をブロックしました。\nページを再読み込みすると反映されます。`);
+                alert(`ユーザー「${targetUserName}」をブロックしました。\n以降、このユーザーの投稿は表示されなくなります。`);
                 button.textContent = 'ブロック済み';
                 button.disabled = true;
             }
