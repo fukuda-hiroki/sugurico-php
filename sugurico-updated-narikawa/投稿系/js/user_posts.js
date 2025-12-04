@@ -87,16 +87,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         paginationContainer.innerHTML = '';
         try {
             const postsPerPage = 10;
-            const { data, error, count } = await supabaseClient
-                .rpc('filter_other_user_posts', {//  mypage.jsにあるfilter_user_postsとは別(時間指定があるから)
-                    user_id_param: targetUserId,
-                    keyword_param: keywordInput.value.trim(),
-                    period_param: periodSelect.value,
-                    tag_id_param: tagSelect.value ? parseInt(tagSelect.value) : null,
-                    sort_order_param: sortSelect.value,
-                    page_param: page,
-                    limit_param: postsPerPage
-                }, { count: 'exact' });
+            // ▼▼▼ RPC呼び出しを直接クエリに置き換える ▼▼▼
+            // --------------------------------------------------------------------
+            let query = supabaseClient
+                .from('forums')
+                .select(`
+                    forum_id,
+                    title,
+                    text,
+                    created_at,
+                    delete_date,
+                    forum_images ( image_url )
+                `, { count: 'exact' })
+                .eq('user_id_auth', targetUserId); // targetUserId はページのURLから取得したID
+
+            // rpc('filter_other_user_posts')が内部で行っていたフィルタリングをJSで再現
+            const keyword = keywordInput.value.trim();
+            if (keyword) {
+                query = query.or(`title.ilike.%${keyword}%,text.ilike.%${keyword}%`);
+            }
+            
+            // ... ここに期間、タグ、ソート順などのフィルタリング条件を追加できます ...
+            
+            // ソート順
+            const sortOrder = sortSelect.value === 'asc'; // 'asc'ならtrue
+            query = query.order('forum_id', { ascending: sortOrder });
+
+            // ページネーション
+            query = query.range((page - 1) * postsPerPage, page * postsPerPage - 1);
+            
+            const { data, error, count } = await query;
 
             if (error) {
                 throw error;
@@ -120,13 +140,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializePage();
 
     function renderPostHTML(post) {
+        let thumbnailHTML = '';
+        if (post.forum_images && post.forum_images.length > 0) {
+            thumbnailHTML = `<div class="post-item-thumbnail"><img src="${post.forum_images[0].image_url}" alt="投稿画像"></div>`;
+        }
+
+        const timeAgoString = timeAgo(post.created_at);
+        const remainingTime = timeLeft(post.delete_date);
+
         return `
-            <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}">
-                <article class="post-item">
-                    <h3>${escapeHTML(post.title)}</h3>
-                    <p>${nl2br(post.text)}</p>
-                </article>
-            </a>
+            <article class="post-item">
+                <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-item-link">
+                    <div class="post-item-main ${thumbnailHTML ? 'has-thumbnail' : ''}">
+                        ${thumbnailHTML}
+                        <div class="post-item-content">
+                            <h3>${escapeHTML(post.title)} <small style="color:gray;">${timeAgoString}</small></h3>
+                            <p>${nl2br(post.text.length > 50 ? post.text.slice(0, 50) + '...' : post.text)}</p>
+                            <div class="post-meta">
+                                <small style="color:gray;">${remainingTime}</small>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </article>
         `;
     }
 
