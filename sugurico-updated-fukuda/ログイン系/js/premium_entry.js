@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const subscribeButton = document.getElementById('subscribe-button');
     const planSelect = document.getElementById('plan-select');
     const subscriptionStatus = document.getElementById('subscription-status');
+    const eyeBox = document.getElementById('eye-box');
+    const openEye = document.getElementById('open-eye');
+    const closeEye = document.getElementById('close-eye');
+
 
     let currentUser;
 
@@ -203,7 +207,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         return (sum % 10) === 0;
     }
-    
+
     function isValidExpiry(expiryDate) {
         const match = expiryDate.match(/^(\d{2})\s*\/\s*(\d{2})$/);
         if (!match) return false;
@@ -223,6 +227,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     initializePage();
 
+    eyeBox.addEventListener('click', () => {
+        console.log('fire');
+        if (closeEye.style.display === 'none') {
+            closeEye.style.display = 'block';
+            openEye.style.display = 'none';
+            passwordInput.type = "text";
+        } else {
+            closeEye.style.display = 'none';
+            openEye.style.display = 'block';
+            passwordInput.type = "password";
 
+        }
+    });
 
 });

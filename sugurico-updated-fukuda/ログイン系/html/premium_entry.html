@@ -23,7 +23,16 @@
             <div id="auth-message-area" class="message" style="display: none;"></div>
 
             <div class="form-group">
-                <input type="password" id="password-input" placeholder="パスワード" required>
+                <div style="display: flex;">
+                    <input type="password" id="password-input" placeholder="パスワード" required>
+                    <div id="eye-box" style="display: flex;">
+                        <img src="../../base/eye-solid-full.svg" alt="" class="toggle-eye" style="display: block;"
+                            id="open-eye">
+                        <img src="../../base/eye-slash-solid-full.svg" alt="" class="toggle-eye" style="display: none;"
+                            id="close-eye">
+                    </div>
+                </div>
+
                 <button type="button" id="auth-button">認証する</button>
             </div>
             <a href="mypage.html">マイページに戻る</a>
@@ -33,11 +42,12 @@
         <div id="payment-section" style="display: none;">
             <h2>ステップ2: プラン選択とお支払い</h2>
             <div class="premium-features">
-                <h3>プレミアム特典</h3>
+                <h3>プレミアム特典で、さらに快適な体験を</h3>
                 <ul>
-                    <li>広告非表示</li>
-                    <li>投稿の編集履歴閲覧</li>
-                    <li>限定タグの利用</li>
+                    <li>投稿可能な画像数の増加</li>
+                    <li>公開期限を撤廃</li>
+                    <li>ブックマーク機能の無制限利用</li>
+                    <li>詳細な検索の除外タグの設定</li>
                     <li>優先サポート</li>
                 </ul>
             </div>
