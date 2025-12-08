@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         // ★ データベース関数から返される 'first_image_url' をチェック
         if (post.first_image_url) {
             thumbnailHTML = `
-                <div class="post-item-thumbnail">
+                <div class="post-item-thumbnail" style="display:flex; justify-content:center; align-items:center;">
                     <img src="${post.first_image_url}" alt="投稿画像" class="my_forum-thumbnail">
                 </div>
             `;

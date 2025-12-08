@@ -416,8 +416,8 @@ h2 {
 
 .my_forum-thumbnail
 {
-  max-width: 100px;
-height: auto;
+  height: 100%;
+  width: auto;
 }
 /* トグルボタン */
 .toggle-search-btn {
