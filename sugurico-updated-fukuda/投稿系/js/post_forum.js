@@ -21,7 +21,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isEditMode = !!editId;
 
     let currentUser;
-    let isPremiumUser = false;
+    let isPremiumUser = await isCurrentUserPremium(); // ★2. プレミアム状態を管理する変数を宣言
+    console.log("isPremiumUser is " + isPremiumUser);
 
     /**
      * ページの初期化処理
@@ -35,8 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         currentUser = user;
 
-        const { data: profile } = await supabaseClient.from('users').select('premium_flag').eq('id', currentUser.id).single();
-        isPremiumUser = profile?.premium_flag === true;
+
 
         if (isPremiumUser) {
             expireSelect.style.display = 'none';

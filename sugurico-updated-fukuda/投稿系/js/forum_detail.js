@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         // --- 3. 必要なデータを並行して取得 ---
         // プレミアム判定を共通関数に置き換え
-        const isPremium = currentUser ? await isCurrentUserPremium() : false;
+        const isPremium = await isCurrentUserPremium();
         let isBookmarked = false;
 
         // ログインしている場合のみブックマーク情報を取得

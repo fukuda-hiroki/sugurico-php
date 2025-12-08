@@ -76,13 +76,10 @@ if (loginForm) {
             if (signInError) {
                 throw new Error('ログインIDまたはパスワードが違います。');
             }
-
-            // ▼▼▼ ここからが追加部分 ▼▼▼
             // --- ログイン成功後、プレミアム状態をチェック・更新 ---
             if (data.user) {
                 await checkAndUpdatePremiumStatus(data.user);
             }
-            // ▲▲▲ 追加ここまで ▲▲▲
 
             // ログイン成功
             alert('ログインに成功しました！');
@@ -108,7 +105,7 @@ async function checkAndUpdatePremiumStatus(user) {
             .from('premium')
             .select('status, limit_date, plan')
             .eq('id', user.id)
-            .single();
+            .maybeSingle();
         if (selectError) {
             if (selectError.code === 'PGRST116' || (premium && premium.status === 'canceled')) {
                 return;

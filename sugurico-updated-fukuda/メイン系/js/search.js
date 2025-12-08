@@ -17,22 +17,12 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
     const sortSelect = document.getElementById('sort-select');
     const excludeTagInput = document.getElementById('exclude-tag-input');
 
-    let isPremiumUser = false; // ★2. プレミアム状態を管理する変数を宣言
-
+    let isPremiumUser = await isCurrentUserPremium(); // ★2. プレミアム状態を管理する変数を宣言
+    console.log("isPremiumUser is " + isPremiumUser);
     /**
      *  ページの初期化処理
      */
     async function initializePage() {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (user) {
-            const { data: premiumRecords } = await supabaseClient
-                .from('premium')
-                .select('status')
-                .eq('id', user.id);
-
-            const premiumStatus = premiumRecords && premiumRecords[0];
-            isPremiumUser = premiumStatus?.status === 'active';
-        }
         setupUIAndForms();
         setupEventListeners();
         performSearch(parseInt(new URLSearchParams(window.location.search).get('page')) || 1);

@@ -194,10 +194,11 @@ async function isCurrentUserPremium() {
     }
 
     // 4. ステータスが 'active' で、かつ有効期限が切れていないかチェック
-    const isActive = premium.status === 'active';
-    const isNotExpired = new Date(premium.limit_date) > new Date();
+    const isActive = premium.status === 'active'; // true:activeである。false:canceledである。
+    const isNotExpired = new Date(premium.limit_date) > new Date(); //true:期限切れでない false:期限切れである。
+    console.log("premium is (isActive: " + isActive + ", isNotExpired: " + isNotExpired + ") = " + (isActive || isNotExpired));
+    return isActive || isNotExpired;
 
-    return isActive && isNotExpired;
 }
 
 // --- 関数の実行 ---
