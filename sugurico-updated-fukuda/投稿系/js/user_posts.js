@@ -138,19 +138,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         // ★★★ mypage.js とは違い、「編集」「削除」ボタンは表示しない ★★★
         return `
-            <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-link">
-                <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}">
-                    <div class="post-item-content">
-                        <h3>${escapeHTML(post.title)} <small>${timeAgoString}</small></h3>
-                        <p>${nl2br(shortText)}</p>
-                        <div class="post-meta">
-                            <small>投稿者: ${escapeHTML(post.user_name)}</small>
-                            <small style="color:gray;">${remainingTime}</small>
-                        </div>
+            <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}" 
+                     data-href="../../投稿系/html/forum_detail.html?id=${post.forum_id}"
+                     role="link" 
+                     tabindex="0">
+                
+                <div class="post-item-main">
+                    <h3>${escapeHTML(post.title)} <small>${timeAgoString}</small></h3>
+                    <p>${shortText}</p>
+                    <div class="post-meta">
+                        <small>投稿者: ${escapeHTML(post.user_name)}</small>
+                        <small style="color:gray;">${remainingTime}</small>
                     </div>
-                    ${thumbnailHTML}
-                </article>
-            </a>
+                </div>
+                ${thumbnailHTML}
+            </article>
         `;
     }
 
