@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         currentUser = session.user;
 
         const userName = currentUser.user_metadata?.user_name || 'あなた';
-        mypageTitle.textContent = `${escapeHTML(userName)}の投稿一覧`;
+        mypageTitle.textContent = `${userName}の投稿一覧`;
 
         await populateUserTags();
 

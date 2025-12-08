@@ -2,12 +2,7 @@
 
 'use strict';
 
-// --- Supabaseクライアントの初期化 ---
-// ★ この初期化コードは、複数のJSファイルで共通して使うので、
-// ★ 本来は一つの共通ファイルにまとめるのがベストです。
-const SUPABASE_URL = 'https://ahyayuewvlbgrpkuxhvp.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFoeWF5dWV3dmxiZ3Jwa3V4aHZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM2NzQxNDgsImV4cCI6MjA2OTI1MDE0OH0.C3VoRGUdUxOIjUoAR4Hx2OLGpBy_5B0KSuuOqOu-arQ';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 
 
 /**
@@ -65,8 +60,6 @@ async function setupHeaderAndFooter() {
         <div class="header-logo">
             <h1><a href="../../メイン系/html/index.html">スグリコ</a></h1>
         </div>
-
-        <!-- ▼▼▼ 右側に寄せる要素をグループ化 ▼▼▼ -->
         <div class="header-right-group">
             <div class="search-form-container">
                 <form action="../../メイン系/html/search.html" method="get">
@@ -172,29 +165,6 @@ async function checkAndShowPremiumNotification(user) {
     }
 }
 
-/**
- * XSS対策のためのHTMLエスケープ関数
- */
-function escapeHTML(str) {
-    // もしstrがnullやundefinedなら、空文字列を返す
-    if (str === null || str === undefined) {
-        return '';
-    }
-    // 文字列でなければ、文字列に変換する
-    if (typeof str !== 'string') {
-        str = String(str);
-    }
-
-    return str.replace(/[&<>"']/g, function (match) {
-        return {
-            '&': '&',
-            '<': '<',
-            '>': '>',
-            '"': '"',
-            "'": "'"
-        }[match];
-    });
-}
 
 /**
  * ログイン中のユーザーが有効なプレミアム会員か判定する共通関数
