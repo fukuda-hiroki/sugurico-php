@@ -131,18 +131,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         // --- カード情報のバリデーション ---
         const cardNumber = document.getElementById('card-number').value;
         const expiryDate = document.getElementById('expiry-date').value;
-        if (!isValidLuhn(cardNumber)) {
-            showMessage(subscriptionStatus,
-                '有効なクレジットカード番号ではありません。',
-                'error'
-            );
-            return;
+        const cardholderName = document.getElementById('cardholder-name').value;
+        const cvc = document.getElementById('cvc').value;
+
+        let subscribeError = '';
+
+        if (cardNumber == '') {
+            subscribeError += 'クレジットカード番号が入力されていません。';
+        }else if (!isValidLuhn(cardNumber)) {
+            if (subscribeError !== '') subscribeError += '<br>';
+            subscribeError += '有効なクレジットカード番号ではありません。';
         }
 
-        if (!isValidExpiry(expiryDate)) {
+        if (expiryDate == '') {
+            if (subscribeError !== '') subscribeError += '<br>';
+            subscribeError += '有効期限が入力されていません。';
+        }else if (!isValidExpiry(expiryDate)) {
+            if (subscribeError !== '') subscribeError += '<br>';
+            subscribeError += '有効期限が不正です (MM/YY)。';
+        }
+
+        if (cardholderName == '') {
+            if (subscribeError !== '') subscribeError += '<br>';
+            subscribeError += '名義人が入力されていません。';
+        }
+
+        if (cvc == '') {
+            if (subscribeError !== '') subscribeError += '<br>';
+            subscribeError += 'セキュリティコードが入力されていません。';
+        }
+
+        if (subscribeError !== '') {
+            console.log(subscribeError);
             showMessage(
                 subscriptionStatus,
-                '有効期限が不正です (MM/YY)。',
+                subscribeError,
                 'error'
             );
             return;
@@ -181,7 +204,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function showMessage(element, text, type) {
-        element.textContent = text;
+        element.innerHTML = text;
         element.className = `message ${type}`;
         element.style.display = 'block';
     }
