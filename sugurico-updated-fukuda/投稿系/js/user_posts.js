@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .eq('id', targetUserId)
                 .single();
             if (userError || !targetUser) throw new Error('ユーザーが見つかりません。');
-            pageTitle.textContent = `${escapeHTML(targetUser.user_name)}さんの投稿一覧`
+            pageTitle.textContent = `${targetUser.user_name}さんの投稿一覧`
         } catch (e) {
             pageTitle.textContent = '';
             return;
@@ -120,11 +120,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializePage();
 
     function renderPostHTML(post) {
+        let thumbnailHTML = '';
+        if (post.first_image_url) {
+            thumbnailHTML = `
+                <div class="post-item-thumbnail">
+                    <img src="${post.first_image_url}" alt="投稿画像">
+                </div>
+            `;
+        }
+        
+        const remainingTime = typeof timeLeft === 'function' ? timeLeft(post.delete_date) : ''; 
+        const timeAgoString = typeof timeAgo === 'function' ? timeAgo(post.created_at) : '';
+
+        const shortText = post.text && post.text.length > 50 
+            ? escapeHTML(post.text.substring(0, 50)) + '...' 
+            : escapeHTML(post.text || '');
+        
+        // ★★★ mypage.js とは違い、「編集」「削除」ボタンは表示しない ★★★
         return `
-            <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}">
-                <article class="post-item">
-                    <h3>${escapeHTML(post.title)}</h3>
-                    <p>${nl2br(post.text)}</p>
+            <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-link">
+                <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}">
+                    <div class="post-item-content">
+                        <h3>${escapeHTML(post.title)} <small>${timeAgoString}</small></h3>
+                        <p>${nl2br(shortText)}</p>
+                        <div class="post-meta">
+                            <small>投稿者: ${escapeHTML(post.user_name)}</small>
+                            <small style="color:gray;">${remainingTime}</small>
+                        </div>
+                    </div>
+                    ${thumbnailHTML}
                 </article>
             </a>
         `;

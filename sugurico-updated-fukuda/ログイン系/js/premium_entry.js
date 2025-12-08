@@ -102,22 +102,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     async function checkPremiumStatus() {
-        // ▼▼▼ "data" を "premiumRecords" という変数名で受け取るように修正 ▼▼▼
-        const { data: premiumRecords, error } = await supabaseClient
-            .from('premium')
-            .select('status')
-            .eq('id', currentUser.id);
 
-        if (error) {
-            console.error('プレミアム状態のチェックに失敗:', error);
-            return;
-        }
-
-        // ★ 配列 "premiumRecords" の最初の要素を取得する
-        const premiumStatus = premiumRecords && premiumRecords[0];
+        const premiumStatus = await isCurrentUserPremium()
 
         // ★★★ "premiumStatus" (オブジェクト) の "status" プロパティをチェック ★★★
-        if (premiumStatus && premiumStatus.status === 'active') {
+        if (premiumStatus) {
             alert('あなたは既にプレミアム会員です。会員情報ページに移動します。');
             window.location.href = 'premium_edit.html';
         }
