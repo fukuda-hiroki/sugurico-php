@@ -389,36 +389,36 @@ h2 {
 }
 
 /* JSで追加されるアニメーション用クラス */
-.action-card.is-visible{
+.action-card.is-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
 /* --- ▼▼▼ 自分の投稿から検索セクションのスタイル ▼▼▼ --- */
-.search-section{
+.search-section {
   margin-top: 30px;
   padding-top: 30px;
   border-top: 1px solid var(--border-light-color);
 }
 
-.search-section-header{
+.search-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
 }
 
-.search-section-header h3{
+.search-section-header h3 {
   margin: 0;
   font-size: 20px;
 }
 
 
-.my_forum-thumbnail
-{
+.my_forum-thumbnail {
   height: 100%;
   width: auto;
 }
+
 /* トグルボタン */
 .toggle-search-btn {
   display: flex;
@@ -436,13 +436,13 @@ h2 {
   box-shadow: var(--shadow-sm);
 }
 
-.toggle-search-btn:hover{
+.toggle-search-btn:hover {
   background: var(--primary-hover-color);
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
-.toggle-search-btn:active{
+.toggle-search-btn:active {
   transform: translateY(0);
 }
 

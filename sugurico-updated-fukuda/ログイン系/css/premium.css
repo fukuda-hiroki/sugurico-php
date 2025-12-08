@@ -36,7 +36,7 @@ h3 {
   margin-bottom: 16px;
 }
 
-main > hr {
+main>hr {
   margin: 40px 0;
   border: none;
   border-top: 2px solid var(--border-light-color);
@@ -266,6 +266,7 @@ button[type="button"]:disabled,
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
