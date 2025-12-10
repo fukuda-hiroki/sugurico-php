@@ -87,9 +87,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         const imagesHTML = images.map(image => `<div class="post-image-wrapper"><img src="${image.image_url}" alt="投稿画像" class="post-image"></div>`).join('');
 
         let authorHTML = escapeHTML(post.users?.user_name || '不明');
-        if (currentUser && post.user_id_auth !== currentUser.id) {
+        if (!currentUser) {
             authorHTML = `<a href="user_posts.html?id=${post.user_id_auth}">${authorHTML}</a>`;
+        } else if (post.user_id_auth !== currentUser.id) {
+            authorHTML = `<a href="user_posts.html?id=${post.user_id_auth}">${authorHTML}</a>`;
+        } else {
+            authorHTML = `<a href="../../ログイン系/html/mypage.html">${authorHTML}</a>`;
         }
+
 
         let ownerButtonsHTML = '';
         if (isOwner) {

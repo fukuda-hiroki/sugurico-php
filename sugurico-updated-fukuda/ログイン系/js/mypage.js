@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
     const periodSelect = document.getElementById('period-select');
     const sortSelect = document.getElementById('sort-select');
     const tagSelect = document.getElementById('tag-select');
+    const showedSelect = document.getElementById('showed-select');
 
     let currentUser;
 
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         periodSelect.value = urlParams.get('period') || 'all';
         sortSelect.value = urlParams.get('sort') || 'desc';
         tagSelect.value = urlParams.get('tag') || '';
+        showedSelect.value = urlParams.get('showed') || 'all';
 
         await fetchAndDisplayUserPosts(parseInt(urlParams.get('page')) || 1);
 
@@ -131,6 +133,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
                 period_param: periodSelect.value,
                 tag_id_param: tagSelect.value ? parseInt(tagSelect.value) : null,
                 sort_order_param: sortSelect.value,
+                showed_param: showedSelect.value,
                 page_param: page,
                 limit_param: postsPerPage
             }, { count: 'exact' });
@@ -233,6 +236,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         if (periodSelect.value !== 'all') params.set('period', periodSelect.value);
         if (sortSelect.value !== 'newest') params.set('sort', sortSelect.value);
         if (tagSelect.value !== '') params.set('tag', tagSelect.value);
+        if (showedSelect.value !== 'all') params.set('showed', showedSelect.value); 
 
         if (currentPage > 1) {
             params.set('page', currentPage - 1);

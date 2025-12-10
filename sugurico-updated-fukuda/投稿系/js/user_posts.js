@@ -128,31 +128,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             `;
         }
-        
-        const remainingTime = typeof timeLeft === 'function' ? timeLeft(post.delete_date) : ''; 
+
+        const remainingTime = typeof timeLeft === 'function' ? timeLeft(post.delete_date) : '';
         const timeAgoString = typeof timeAgo === 'function' ? timeAgo(post.created_at) : '';
 
-        const shortText = post.text && post.text.length > 50 
-            ? escapeHTML(post.text.substring(0, 50)) + '...' 
+        const shortText = post.text && post.text.length > 50
+            ? escapeHTML(post.text.substring(0, 50)) + '...'
             : escapeHTML(post.text || '');
-        
-        // ★★★ mypage.js とは違い、「編集」「削除」ボタンは表示しない ★★★
-        return `
-            <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}" 
-                     data-href="../../投稿系/html/forum_detail.html?id=${post.forum_id}"
-                     role="link" 
-                     tabindex="0">
-                
-                <div class="post-item-main">
-                    <h3>${escapeHTML(post.title)} <small>${timeAgoString}</small></h3>
-                    <p>${shortText}</p>
-                    <div class="post-meta">
-                        <small>投稿者: ${escapeHTML(post.user_name)}</small>
-                        <small style="color:gray;">${remainingTime}</small>
-                    </div>
-                </div>
-                ${thumbnailHTML}
-            </article>
+
+        return `<a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}">
+                    <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}" role="link" tabindex="0">
+                        <div class="post-item-main">
+                            <h3>${escapeHTML(post.title)} <small>${timeAgoString}</small></h3>
+                            <p>${shortText}</p>
+                            <div class="post-meta">
+                                <small>投稿者: ${escapeHTML(post.user_name)}</small>
+                                <small style="color:gray;">${remainingTime}</small>
+                            </div>
+                        </div>
+                        ${thumbnailHTML}
+                    </article>
+                </a>
         `;
     }
 
