@@ -239,6 +239,7 @@ main {
   border-bottom: 1px solid var(--border-light-color);
   padding: 20px 0;
   transition: all var(--transition-base);
+  width: 90%;
 }
 
 .comment-item:hover {

@@ -13,8 +13,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const currentExpirationInfo = document.getElementById('current-expiration-info');
     const imageInputContainer = document.getElementById('image-input-container');
     const submitButton = document.getElementById('submitButton');
-    const messageArea = document.getElementById('message-area');
-
     // --- ページ全体で使う変数 ---
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit_id');
