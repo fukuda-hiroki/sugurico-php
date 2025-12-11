@@ -67,7 +67,7 @@ async function fetchAndDisplayPosts(containerId, userId = null, excludeUserId = 
                 forum_images ( image_url ) 
             `)
             .or('delete_date.is.null,delete_date.gt.now()')
-            .order('forum_id', { ascending: false })
+            .order('created_at', { ascending: false })
             .limit(3);
 
         if (userId) {
