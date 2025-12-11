@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
     const sortSelect = document.getElementById('sort-select');
     const excludeTagInput = document.getElementById('exclude-tag-input');
 
+const POSTS_PER_PAGE = 10
+
     let isPremiumUser = await isCurrentUserPremium(); // ★2. プレミアム状態を管理する変数を宣言
     console.log("isPremiumUser is " + isPremiumUser);
     /**
@@ -97,7 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
                 period_param: 'all',
                 sort_order_param: 'desc',
                 page_param: page,
-                limit_param: 10
+                limit_param: POSTS_PER_PAGE
             };
 
             if (isPremiumUser) {
@@ -111,13 +113,13 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
                 }
             }
 
-            const { data, error, count } = await supabaseClient
+            const { data, error } = await supabaseClient
                 .rpc('search_public_forums', searchParams, { count: 'exact' });
 
             if (error) throw error;
 
             const posts = data;
-            const totalposts = count ?? 0;
+            const totalposts = posts && posts.length > 0 ? posts[0].total_count : 0;
 
             searchTitle.textContent = '検索結果';
             searchCount.textContent = `${totalposts}件の投稿が見つかりました。`;
@@ -169,15 +171,39 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
             return;
         }
 
-        // 現在のURLパラメータを維持しつつ、pageだけを書き換える
-        const urlParams = new URLSearchParams(window.location.search);
         let paginationHTML = '';
 
+        /**
+         * ★ ページ番号を指定して、現在の検索条件を維持したリンクを生成する関数
+         * @param {number} page
+         */
         const createPageLink = (page) => {
-            urlParams.set('page', page);
-            return `?${urlParams.toString()}`;
+            // 毎回、現在のフォームの値からパラメータを再生成する
+            const params = new URLSearchParams();
+            
+            // 共通の検索条件
+            if (keywordInput.value.trim()) params.set('terms', keywordInput.value.trim());
+
+            // プレミアム会員のみの検索条件
+            if (isPremiumUser) {
+                if (authorInput.value.trim()) params.set('author', authorInput.value.trim());
+                if (tagInput.value.trim()) params.set('tag', tagInput.value.trim());
+                
+                if (excludeTagInput && excludeTagInput.value.trim()) {
+                    params.set('exclude_tags', excludeTagInput.value.trim());
+                }
+                
+                if (periodSelect.value !== 'all') params.set('period', periodSelect.value);
+                if (sortSelect.value !== 'desc') params.set('sort', sortSelect.value);
+            }
+
+            // 最後にページ番号を設定
+            params.set('page', page);
+            
+            return `?${params.toString()}`;
         };
 
+        // --- ページネーションHTMLの生成 (ここから下は変更なし) ---
         if (currentPage > 1) {
             paginationHTML += `<a href="${createPageLink(currentPage - 1)}">« 前へ</a>`;
         }
