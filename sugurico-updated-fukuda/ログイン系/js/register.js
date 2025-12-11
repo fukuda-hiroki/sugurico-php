@@ -41,20 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (error) {
                 // 登録失敗
 
-                if (error.message, includes('unique constraint')) {
+                if (error.message && error.message.includes('unique constraint')) {
                     messageArea.textContent = 'このメールアドレスまたはログインIDは既に使用されています。';
                 } else {
-                    messageArea.textContent = '登録に失敗しました。:' + error.message;
+                    messageArea.textContent = '登録に失敗しました: ' + (error ? error.message : '不明なエラーです。');
                 }
                 messageArea.className = 'message error';
                 messageArea.style.display = 'block';
             } else {
                 // 登録成功
-                alert('確認メールを送信しました。メール内のリンクをクリックして登録を完了してください。');
-                window.location.href = 'login.html?register_success=1';
+                alert('登録が完了しました。');
+                window.location.href = '../../メイン系/html/index.html';
             }
 
-// 失敗した場合のみボタンを元に戻す
+    // 失敗した場合のみボタンを元に戻す
             if (error) {
                 submitButton.disabled = false;
                 submitButton.textContent = '登録する';
