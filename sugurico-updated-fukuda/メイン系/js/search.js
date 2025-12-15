@@ -1,6 +1,6 @@
 // search.js
 
-document.addEventListener('DOMContentLoaded', async () => { // ★1. async を追加
+document.addEventListener('header-loaded', async () => {
 
     // --- HTML要素の取得 ---
     const searchTitle = document.getElementById('search-title');
@@ -17,27 +17,35 @@ document.addEventListener('DOMContentLoaded', async () => { // ★1. async を�
     const sortSelect = document.getElementById('sort-select');
     const excludeTagInput = document.getElementById('exclude-tag-input');
 
-const POSTS_PER_PAGE = 10
 
-    let isPremiumUser = await isCurrentUserPremium(); // ★2. プレミアム状態を管理する変数を宣言
-    console.log("isPremiumUser is " + isPremiumUser);
+    const POSTS_PER_PAGE = 10;
+    let isPremiumUser = false;
+
     /**
      *  ページの初期化処理
      */
     async function initializePage() {
+        isPremiumUser = await isCurrentUserPremium();
+        console.log("isPremiumUser is " + isPremiumUser);
+
         setupUIAndForms();
         setupEventListeners();
         performSearch(parseInt(new URLSearchParams(window.location.search).get('page')) || 1);
     }
     function setupUIAndForms() {
         const urlParams = new URLSearchParams(window.location.search);
-        // URLパラメータをフォームに反映
 
+        const termsBox = document.getElementById("terms-box");
+        termsBox.value = urlParams.get('terms') ?? "";
+
+        const typesBox = document.getElementById("types-box");
         const searchType = urlParams.get('type');
         if (searchType === 'tag') {
             tagInput.value = urlParams.get('terms');
+            typesBox.value = "tag";
         } else {
             keywordInput.value = urlParams.get('terms');
+            typesBox.value = "keyword";
         }
 
         if (isPremiumUser) {
@@ -51,6 +59,7 @@ const POSTS_PER_PAGE = 10
             toggleSearchButton.style.display = 'none';
             if (excludeTagInput) excludeTagInput.parentElement.style.display = 'none';
         }
+
     }
     function setupEventListeners() {
         if (isPremiumUser) {
@@ -180,7 +189,7 @@ const POSTS_PER_PAGE = 10
         const createPageLink = (page) => {
             // 毎回、現在のフォームの値からパラメータを再生成する
             const params = new URLSearchParams();
-            
+
             // 共通の検索条件
             if (keywordInput.value.trim()) params.set('terms', keywordInput.value.trim());
 
@@ -188,18 +197,18 @@ const POSTS_PER_PAGE = 10
             if (isPremiumUser) {
                 if (authorInput.value.trim()) params.set('author', authorInput.value.trim());
                 if (tagInput.value.trim()) params.set('tag', tagInput.value.trim());
-                
+
                 if (excludeTagInput && excludeTagInput.value.trim()) {
                     params.set('exclude_tags', excludeTagInput.value.trim());
                 }
-                
+
                 if (periodSelect.value !== 'all') params.set('period', periodSelect.value);
                 if (sortSelect.value !== 'desc') params.set('sort', sortSelect.value);
             }
 
             // 最後にページ番号を設定
             params.set('page', page);
-            
+
             return `?${params.toString()}`;
         };
 

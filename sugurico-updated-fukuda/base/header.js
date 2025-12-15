@@ -63,10 +63,9 @@ async function setupHeaderAndFooter() {
         <div class="header-right-group">
             <div class="search-form-container">
                 <form action="../../メイン系/html/search.html" method="get">
-                    <input type="text" name="terms" placeholder="キーワード検索...">
-                    <select name="type">
-                        <option value="title">タイトル</option>
-                        <option value="text">テキスト</option>
+                    <input type="text" name="terms" placeholder="キーワード検索..." id="terms-box">
+                    <select name="type" id="types-box">
+                        <option value="keyword">キーワード</option>
                         <option value="tag">タグ</option>
                     </select>
                     <button type="submit">検索</button>
@@ -115,6 +114,10 @@ async function setupHeaderAndFooter() {
 
 
     }
+
+        const event = new CustomEvent('header-loaded');
+    document.dispatchEvent(event);
+    console.log("Header loaded event dispatched.");
 }
 
 async function checkAndShowPremiumNotification(user) {
