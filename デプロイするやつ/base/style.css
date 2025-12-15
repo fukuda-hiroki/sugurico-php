@@ -1,0 +1,762 @@
+/* style.css */
+
+/* =================================================================
+   基本スタイル (サイト全体で共通)
+   ================================================================= */
+
+/* --- カラーパレットと基本設定 (CSS変数) --- */
+:root {
+  /* カラーパレットを統一感のあるものに改善 */
+  --primary-color: #007bff;
+  --primary-hover-color: #0056b3;
+  --primary-light: #4da3ff;
+
+  --success-color: #28a745;
+  --success-bg: #d4edda;
+  --success-border: #c3e6cb;
+  --success-text: #155724;
+
+  --error-color: #dc3545;
+  --error-bg: #f8d7da;
+  --error-border: #f5c6cb;
+  --error-text: #721c24;
+
+  --warning-color: #ffc107;
+  --warning-bg: #fff3cd;
+  --warning-border: #ffeaa7;
+  --warning-text: #856404;
+
+  --info-color: #17a2b8;
+  --info-bg: #d1ecf1;
+  --info-border: #bee5eb;
+  --info-text: #0c5460;
+
+  --background-color: #f0f2f5;
+  --content-bg-color: #ffffff;
+  --card-bg-color: #f8f9fa;
+  --card-hover-bg-color: #e9ecef;
+
+  --text-color: #212529;
+  --text-muted-color: #6c757d;
+  --text-light-color: #adb5bd;
+
+  --border-color: #dee2e6;
+  --border-light-color: #e9ecef;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --shadow-hover: 0 6px 20px rgba(0, 123, 255, 0.15);
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", Helvetica,
+    Arial, sans-serif;
+
+  --transition-base: 0.2s ease;
+  --transition-slow: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- bodyと基本タイポグラフィ --- */
+html{height: 100%;}
+body {
+
+    min-height: 100%; /* bodyの最小の高さを画面の高さに合わせる */
+  display: flex;         /* Flexboxレイアウトを有効にする */
+  flex-direction: column;/* 子要素を縦に並べる */
+
+  font-family: var(--font-family-base);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--primary-hover-color);
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+  line-height: 1.3;
+}
+
+.main-wrapper{
+  flex-grow: 1; 
+  width: 100%;
+}
+
+/* --- メインコンテンツのコンテナ --- */
+main {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px 30px;
+  background-color: var(--content-bg-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* =================================================================
+   共通コンポーネント
+   ================================================================= */
+
+/* --- ▼▼▼ ヘッダー ▼▼▼ --- */
+#header-container {
+  background-color: var(--content-bg-color);
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-logo h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.header-logo a {
+  color: var(--primary-color);
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: color var(--transition-base);
+}
+
+.header-right-group{
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-logo a:hover {
+  color: var(--primary-hover-color);
+}
+
+.search-form-container {
+  flex-grow: 1;
+  max-width: 600px;
+}
+
+.search-form-container form {
+  display: flex;
+  width: 100%;
+}
+
+.search-form-container input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  font-size: 14px;
+  transition: border-color var(--transition-base);
+}
+
+.search-form-container input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-form-container select,
+.search-form-container button {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-left: none;
+  background-color: var(--card-bg-color);
+  flex-shrink: 0;
+  font-size: 14px;
+  transition: background-color var(--transition-base);
+}
+
+.search-form-container select:hover,
+.search-form-container button:hover {
+  background-color: var(--card-hover-bg-color);
+}
+
+.search-form-container button {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.header-nav {
+  flex-shrink: 0;
+}
+
+.header-nav a {
+  margin-left: 15px;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* --- ヘッダーのドロップダウンメニュー --- */
+
+.header-nav .dropdown {
+  position: relative;
+  /* 子要素の位置の基準点にする */
+  display: inline-block;
+}
+
+.header-nav .dropdown-toggle {
+  cursor: pointer;
+  /* クリックできることを示す */
+  padding: 8px;
+  /* 少し余白を持たせる */
+}
+
+.header-nav .dropdown-menu {
+  display: none;
+  /* 初期状態では非表示 */
+  position: absolute;
+  /* 親要素(.dropdown)を基準に配置 */
+  top: 100%;
+  /* 親要素のすぐ下に表示 */
+  right: 0;
+  /* 右端に揃える */
+  background-color: var(--card-bg-color);
+  min-width: 200px;
+  /* メニューの最小幅 */
+  box-shadow: var(--shadow-lg);
+  /* 影を付けて立体感を出す */
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  z-index: 1000;
+  /* 他の要素より手前に表示 */
+  padding: 0.5rem 0;
+}
+
+.header-nav .dropdown-menu a {
+  color: var(--text-color);
+  padding: 10px 20px;
+  margin-right: 10px;
+  text-decoration: none;
+  display: block;
+  /* リンクをブロック要素にして、幅いっぱいに広げる */
+  text-align: left;
+  /* テキストを左揃えに */
+  border-radius: 10px;
+}
+
+.header-nav .dropdown-menu a:hover{
+  background-color: var(--content-bg-color);
+}
+
+.header-nav .dropdown-menu hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 0.5rem 0;
+}
+#logout-button {
+    /* 他の .dropdown-menu a のスタイルは継承される */
+    color: var(--danger-color, #dc3545); /* 少し危険な操作であることを示す赤色 */
+}
+
+#logout-button:hover {
+    background-color: #f8d7da; /* ホバー時の背景色も赤系統に */
+    color: #721c24; /* ホバー時の文字色を濃くする */
+}
+
+
+
+/* --- ▲▲▲ ヘッダーここまで ▲▲▲ --- */
+
+/* --- ▼▼▼ 詳細検索フォーム ▼▼▼ --- */
+.advanced-search-container {
+  padding: 20px;
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.search-item {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.search-item label {
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: var(--text-muted-color);
+  font-weight: 600;
+}
+
+.search-item input,
+.search-item select {
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.search-item input:focus,
+.search-item select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-item-keyword {
+  flex-grow: 2;
+}
+
+.search-item-button {
+  flex-grow: 0;
+}
+
+.search-item-button button {
+  width: 100%;
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color var(--transition-base), transform 0.1s ease;
+}
+
+.search-item-button button:hover {
+  background-color: var(--primary-hover-color);
+}
+
+.search-item-button button:active {
+  transform: scale(0.98);
+}
+
+#toggle-search-button {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted-color);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+#toggle-search-button:hover {
+  background-color: var(--card-bg-color);
+  border-color: var(--text-muted-color);
+}
+
+/* --- ▲▲▲ 詳細検索フォームここまで ▲▲▲ --- */
+
+/* --- ▼▼▼ 投稿一覧 (カード形式) ▼▼▼ --- */
+.post-list {
+  margin-top: 20px;
+}
+
+.post-item {
+  border: 1px solid var(--border-light-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 16px;
+  background-color: var(--content-bg-color);
+  transition: all var(--transition-base);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.post-item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--primary-light);
+}
+
+.post-item-main {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.post-item-link,
+.post-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.post-item.has-thumbnail .post-item-link,
+.post-item.has-thumbnail .post-link {
+  display: flex;
+  flex-direction: row;
+}
+
+.post-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-item h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-color);
+}
+
+.post-item h3 small {
+  font-size: 0.75em;
+  color: var(--text-muted-color);
+  font-weight: 400;
+}
+
+.post-item p {
+  font-size: 0.9em;
+  color: var(--text-muted-color);
+  margin: 0 0 10px 0;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.post-meta {
+  font-size: 0.85em;
+  color: var(--text-light-color);
+}
+
+.post-meta small {
+  display: inline-block;
+  margin-right: 12px;
+}
+
+.post-item-thumbnail {
+  flex-shrink: 0;
+  width: 140px;
+  height: 105px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: var(--card-bg-color);
+}
+
+.post-item-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.post-item:hover .post-item-thumbnail img {
+  transform: scale(1.05);
+}
+
+/* アクションボタンのスタイル追加 */
+.post-item-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.action-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition-base);
+}
+
+.action-button.edit-button {
+  background-color: var(--primary-color);
+}
+
+.action-button.edit-button:hover {
+  background-color: var(--primary-hover-color);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.action-button.delete-button,
+.action-button.unblock-button {
+  background-color: var(--error-color);
+}
+
+.action-button.delete-button:hover,
+.action-button.unblock-button:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --- ▲▲▲ 投稿一覧ここまで ▲▲▲ --- */
+
+/* --- ページネーション --- */
+.pagination,
+#pagination-container {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.pagination a,
+.pagination span,
+.pagination-button,
+#pagination-container a,
+#pagination-container span {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 0 4px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-base);
+}
+
+.pagination a:hover,
+.pagination-button:hover,
+#pagination-container a:hover {
+  background-color: var(--card-bg-color);
+  border-color: var(--primary-color);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.pagination .current-page,
+.pagination-button.current,
+#pagination-container .current-page {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* --- フローティングボタン --- */
+.floating-button {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 32px;
+  font-weight: 300;
+  border-radius: 50%;
+  text-decoration: none;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--transition-slow);
+}
+
+.floating-button:hover {
+  background-color: var(--primary-hover-color);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: var(--shadow-hover);
+}
+
+.floating-button:active {
+  transform: scale(1.05) rotate(90deg);
+}
+
+/* --- プレミアム更新通知バー --- */
+#premium-notification-bar {
+  background-color: var(--warning-bg);
+  color: var(--warning-text);
+  padding: 15px 20px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  margin: 10px;
+}
+
+#premium-notification-bar p {
+  margin: 0;
+  flex-grow: 1;
+  font-weight: 500;
+}
+
+#premium-notification-bar a {
+  font-weight: 700;
+  text-decoration: underline;
+  color: var(--warning-text);
+}
+
+#premium-notification-bar a:hover {
+  color: #533f03;
+}
+
+#premium-notification-bar button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  color: inherit;
+  padding: 0 10px;
+  transition: opacity var(--transition-base);
+}
+
+#premium-notification-bar button:hover {
+  opacity: 0.7;
+}
+
+/* =================================================================
+   2カラムレイアウト (index.html用)
+   ================================================================= */
+.posts-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.posts-column h2 {
+  font-size: 1.3em;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-color);
+  color: var(--text-color);
+}
+
+.posts-container:has(#my-posts-section[style*="display: none"]) {
+  grid-template-columns: 1fr;
+}
+
+.toggle-eye{
+  width: 32px;
+}
+
+/* =================================================================
+   レスポンシブ設定 (スマートフォンなど)
+   ================================================================= */
+@media (max-width: 768px) {
+  main {
+    margin: 10px;
+    padding: 15px;
+    border-radius: var(--radius-sm);
+  }
+
+  #header-container {
+    flex-direction: column;      /* ★ 要素を縦に並べる */
+    align-items: stretch;        /* ★ 要素をコンテナの幅いっぱいに伸ばす */
+    justify-content: flex-start; /* ★ 上揃えにする (space-betweenを解除) */
+    gap: 12px;
+    padding: 1rem;
+  }
+
+  .header-logo {
+      text-align: center; /* ロゴを中央寄せにする */
+    }
+
+     .header-right-group {
+    flex-direction: column; /* 右側グループ内の要素も縦に並べる */
+    align-items: stretch;   /* 幅を親に合わせる */
+    gap: 12px;
+  }
+
+ .header-nav {
+    order: -1;              /* ★ ナビゲーションメニューを一番上に持ってくる */
+    text-align: right;      /* メニュー内のリンクを右寄せにする */
+  }
+
+  .search-form-container {
+    width: 100%; /* 検索フォームの幅を100%にする */
+  }
+
+  .search-form-container form {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .search-form-container input[type="text"],
+  .search-form-container select,
+  .search-form-container button {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+  }
+
+  .advanced-search-container {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 15px;
+  }
+
+  .search-item {
+    width: 100%;
+  }
+
+  .post-item {
+    padding: 15px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .post-item.has-thumbnail .post-item-link,
+  .post-item.has-thumbnail .post-link {
+    flex-direction: column;
+  }
+
+  .post-item-thumbnail {
+    width: 100%;
+    height: 180px;
+  }
+
+  .post-item-actions {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .action-button {
+    flex-grow: 1;
+  }
+
+  .floating-button {
+    right: 20px;
+    bottom: 20px;
+    width: 56px;
+    height: 56px;
+    font-size: 28px;
+  }
+
+  .posts-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}

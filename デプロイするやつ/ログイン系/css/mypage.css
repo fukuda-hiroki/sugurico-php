@@ -1,0 +1,507 @@
+/* ================================================================
+   マイページ・ブックマーク・ブロックリスト 共通スタイル
+   ================================================================ */
+
+/* メインコンテンツエリアの上書き設定 */
+body {
+  font-family: var(--font-family-base);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+main {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 30px;
+  background-color: var(--content-bg-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+  color: var(--text-color);
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+
+/* ▼▼▼ 詳細検索フォームのスタイル (search.cssから移植) ▼▼▼ */
+.advanced-search-container {
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  animation: slideDown 0.3s ease;
+  box-shadow: var(--shadow-sm);
+
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.search-item label {
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.search-item input,
+.search-item select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  background: var(--content-bg-color);
+  box-sizing: border-box;
+}
+
+.search-item input:focus .search-item select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.search-item-button {
+  flex-grow: 0;
+}
+
+.search-item-button {
+  width: 100%;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--shadow-sm);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ▲▲▲ スタイル移植ここまで ▲▲▲ */
+
+/* 投稿一覧エリア */
+.post-list {
+  margin-top: 24px;
+}
+
+.post-list>p {
+  text-align: center;
+  color: var(--text-muted-color);
+  padding: 40px 20px;
+}
+
+/* 投稿アイテムカード */
+.post-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  border: 1px solid var(--border-light-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 16px;
+  background-color: var(--content-bg-color);
+  transition: all 0.2s ease;
+}
+
+.post-item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* 投稿のメインコンテンツ */
+.post-item-main {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.post-item-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.post-item h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+.post-item h3:hover {
+  color: var(--primary-color);
+}
+
+.post-item h3 small {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-muted-color);
+  margin-left: 8px;
+}
+
+.post-item p {
+  font-size: 14px;
+  color: var(--text-muted-color);
+  margin: 0 0 10px 0;
+  line-height: 1.6;
+}
+
+.post-item .post-meta {
+  font-size: 13px;
+  color: var(--text-light-color);
+}
+
+/* 投稿アクションボタン */
+.post-item-actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.action-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  color: white;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.action-button.edit-button {
+  background-color: var(--primary-color);
+}
+
+.action-button.edit-button:hover {
+  background-color: var(--primary-hover-color);
+  transform: translateY(-1px);
+}
+
+.action-button.delete-button {
+  background-color: #dc3545;
+}
+
+.action-button.delete-button:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.action-button:active {
+  transform: translateY(0);
+}
+
+/* 詳細検索コンテナ（base/style.cssから継承） */
+.advanced-search-container {
+  padding: 20px;
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.search-item {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.search-item label {
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: var(--text-muted-color);
+  font-weight: 600;
+}
+
+.search-item input,
+.search-item select {
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.search-item input:focus,
+.search-item select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.search-item-keyword {
+  flex-grow: 2;
+}
+
+.search-item-button {
+  flex-grow: 0;
+}
+
+.search-item-button button {
+  width: 100%;
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.search-item-button button:hover {
+  background-color: var(--primary-hover-color);
+}
+
+/* ブロックリスト専用スタイル */
+.blocked-user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border-light-color);
+  border-radius: var(--radius-md);
+  background-color: var(--content-bg-color);
+  transition: all 0.2s ease;
+}
+
+.blocked-user-item:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.blocked-user-item .user-info {
+  flex-grow: 1;
+}
+
+.blocked-user-item .user-info strong {
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+.blocked-user-item button {
+  padding: 8px 16px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.blocked-user-item button:hover {
+  background-color: #5a6268;
+}
+
+.mypage-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 16px;
+  background-color: var(--card-bg-color);
+  border: 1px solid var(--border-light-color);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text-color);
+
+  text-align: center;
+  /* JSアニメーション用の初期状態 */
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.action-card .action-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.action-card .action-text {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* JSで追加されるアニメーション用クラス */
+.action-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- ▼▼▼ 自分の投稿から検索セクションのスタイル ▼▼▼ --- */
+.search-section {
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 1px solid var(--border-light-color);
+}
+
+.search-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-section-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+
+.my_forum-thumbnail {
+  height: 100%;
+  width: auto;
+}
+
+/* トグルボタン */
+.toggle-search-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.toggle-search-btn:hover {
+  background: var(--primary-hover-color);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.toggle-search-btn:active {
+  transform: translateY(0);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+  main {
+    margin: 10px;
+    padding: 20px 15px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  main>p {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  main>p>a,
+  main>p>button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .advanced-search-container {
+    padding: 15px;
+  }
+
+  .search-item {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .post-item {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .post-item-actions {
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .action-button {
+    flex: 1;
+  }
+
+  .blocked-user-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .blocked-user-item button {
+    width: 100%;
+  }
+}
