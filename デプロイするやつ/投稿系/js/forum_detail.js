@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const { error } = await supabaseClient.rpc('delete_forum_with_related_data', { forum_id_param: forumIdToDelete });
             if (error) throw error;
             alert('投稿を削除しました。');
-            window.location.href = '/メイン系/html/index.html';
+            window.location.href = '/index.html';
         } catch (error) {
             console.error('削除エラー:', error);
             alert(`投稿の削除に失敗しました: ${error.message}`);

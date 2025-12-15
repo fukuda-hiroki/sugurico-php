@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initializePage() {
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (user) {
-        window.location.href = '/メイン系/html/index.html';
+        window.location.href = '/index.html';
         return;
     }
 }
@@ -83,7 +83,7 @@ if (loginForm) {
 
             // ログイン成功
             alert('ログインに成功しました！');
-            window.location.href = '/メイン系/html/index.html'; // パスは適宜調整してください
+            window.location.href = '/index.html'; // パスは適宜調整してください
 
         } catch (error) {
             // ログイン失敗 (全てのエラーをここでキャッチ)

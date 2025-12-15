@@ -58,7 +58,7 @@ async function setupHeaderAndFooter() {
 
     const headerHTML = `
         <div class="header-logo">
-            <h1><a href="/メイン系/html/index.html">スグリコ</a></h1>
+            <h1><a href="/index.html">スグリコ</a></h1>
         </div>
         <div class="header-right-group">
             <div class="search-form-container">
@@ -95,7 +95,7 @@ async function setupHeaderAndFooter() {
                 console.error('ログアウトエラー:', error.message);
                 alert('ログアウトに失敗しました。');
             } else {
-                window.location.href = '/メイン系/html/index.html';
+                window.location.href = '/index.html';
             }
         });
     }
