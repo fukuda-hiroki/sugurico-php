@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             ? escapeHTML(post.text.substring(0, 50)) + '...'
             : escapeHTML(post.text || '');
 
-        return `<a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}">
+        return `<a href="/投稿系/html/forum_detail.html?id=${post.forum_id}">
                     <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}" role="link" tabindex="0">
                         <div class="post-item-main">
                             <h3>${escapeHTML(post.title)} <small>${timeAgoString}</small></h3>

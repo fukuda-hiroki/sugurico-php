@@ -37,11 +37,11 @@ async function setupHeaderAndFooter() {
             <div class="dropdown">
                 <a href="#" class="dropdown-toggle">${escapeHTML(userName)}さん ▼</a>
                 <div class="dropdown-menu">
-                    <a href="../../ログイン系/html/mypage.html">マイページ</a>
-                    <a href="../../ログイン系/html/update.html">登録情報を変更する</a>
-                    <a href="../../ログイン系/html/bookmarks.html">ブックマーク一覧</a>
-                    <a href="../../ログイン系/html/block_list.html">ブロック中のユーザー管理</a>
-                    <a href="../../ログイン系/html/premium_entry.html">プレミアム機能</a>
+                    <a href="/ログイン系/html/mypage.html">マイページ</a>
+                    <a href="/ログイン系/html/update.html">登録情報を変更する</a>
+                    <a href="/ログイン系/html/bookmarks.html">ブックマーク一覧</a>
+                    <a href="/ログイン系/html/block_list.html">ブロック中のユーザー管理</a>
+                    <a href="/ログイン系/html/premium_entry.html">プレミアム機能</a>
                     <hr>
                     <a href="#" id="logout-button">ログアウト</a>
                 </div>
@@ -51,18 +51,18 @@ async function setupHeaderAndFooter() {
     } else {
         // 【ログインしていない場合のナビゲーション】
         navHTML = `
-            <a href="../../ログイン系/html/login.html">ログイン</a>
-            <a href="../../ログイン系/html/register.html">新規登録</a>
+            <a href="/ログイン系/html/login.html">ログイン</a>
+            <a href="/ログイン系/html/register.html">新規登録</a>
         `;
     }
 
     const headerHTML = `
         <div class="header-logo">
-            <h1><a href="../../メイン系/html/index.html">スグリコ</a></h1>
+            <h1><a href="/メイン系/html/index.html">スグリコ</a></h1>
         </div>
         <div class="header-right-group">
             <div class="search-form-container">
-                <form action="../../メイン系/html/search.html" method="get">
+                <form action="/メイン系/html/search.html" method="get">
                     <input type="text" name="terms" placeholder="キーワード検索..." id="terms-box">
                     <select name="type" id="types-box">
                         <option value="keyword">キーワード</option>
@@ -95,7 +95,7 @@ async function setupHeaderAndFooter() {
                 console.error('ログアウトエラー:', error.message);
                 alert('ログアウトに失敗しました。');
             } else {
-                window.location.href = '../..//メイン系/html/index.html';
+                window.location.href = '/メイン系/html/index.html';
             }
         });
     }
@@ -150,7 +150,7 @@ async function checkAndShowPremiumNotification(user) {
             notificationBar.innerHTML = `
             
                 <p>プレミアム会員の有効期限が近づいています。あと${daysLeft}日で自動更新されます。
-                   <a href="../../ログイン系/html/premium_edit.html">会員情報の確認・変更はこちら</a>
+                   <a href="/ログイン系/html/premium_edit.html">会員情報の確認・変更はこちら</a>
                 </p>
                 <button id="close-notification-button">&times;</button>
             `;

@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 alert('アカウントを削除しました。ご利用ありがとうございました。');
                 // ログアウト処理をしてトップページにリダイレクト
                 await supabaseClient.auth.signOut();
-                window.location.href = '../../メイン系/html/index.html';
+                window.location.href = '/メイン系/html/index.html';
 
             } catch (error) {
                 console.error('アカウント削除エラー:', error);

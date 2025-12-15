@@ -96,7 +96,7 @@ async function fetchAndDisplayPosts(containerId, userId = null, excludeUserId = 
                 const timeAgoString = timeAgo(post.created_at);
 
                 return `
-                    <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-link">
+                    <a href="/投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-link">
                         <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}">
                             <div class="post-item-content">
                                 <h3>${escapeHTML(post.title)} <small style="color:gray;">${timeAgoString}</small> </h3>

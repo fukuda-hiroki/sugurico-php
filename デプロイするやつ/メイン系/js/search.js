@@ -154,7 +154,7 @@ document.addEventListener('header-loaded', async () => {
         const timeAgoString = timeAgo(post.created_at);
 
         return `
-                    <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-link">
+                    <a href="/投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-link">
                         <article class="post-item ${thumbnailHTML ? 'has-thumbnail' : ''}" style="min-width:96%">
                             
                             <div class="post-item-content">

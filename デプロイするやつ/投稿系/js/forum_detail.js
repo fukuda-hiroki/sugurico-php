@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (currentUser) {
             renderCommentForm();
         } else {
-            commentFormContainer.innerHTML = `<p><a href="../../ログイン系/html/login.html">ログイン</a>してコメントを投稿する</p>`;
+            commentFormContainer.innerHTML = `<p><a href="/ログイン系/html/login.html">ログイン</a>してコメントを投稿する</p>`;
         }
 
     } catch (error) {
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function renderPost(post, tags, images, isPremium, isBookmarked, isOwner) {
         const remainingTimeHTML = timeLeft(post.delete_date);
         const timeAgoHTML = timeAgo(post.created_at);
-        const tagsHTML = tags.map(tag => `<a href="../../メイン系/html/search.html?terms=${encodeURIComponent(tag.tag_dic.tag_name)}&type=tag" class="tag-link">#${escapeHTML(tag.tag_dic.tag_name)}</a>`).join(' ');
+        const tagsHTML = tags.map(tag => `<a href="/メイン系/html/search.html?terms=${encodeURIComponent(tag.tag_dic.tag_name)}&type=tag" class="tag-link">#${escapeHTML(tag.tag_dic.tag_name)}</a>`).join(' ');
         const imagesHTML = images.map(image => `<div class="post-image-wrapper"><img src="${image.image_url}" alt="投稿画像" class="post-image"></div>`).join('');
 
         let authorHTML = escapeHTML(post.users?.user_name || '不明');
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else if (post.user_id_auth !== currentUser.id) {
             authorHTML = `<a href="user_posts.html?id=${post.user_id_auth}">${authorHTML}</a>`;
         } else {
-            authorHTML = `<a href="../../ログイン系/html/mypage.html">${authorHTML}</a>`;
+            authorHTML = `<a href="/ログイン系/html/mypage.html">${authorHTML}</a>`;
         }
 
 
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const { error } = await supabaseClient.rpc('delete_forum_with_related_data', { forum_id_param: forumIdToDelete });
             if (error) throw error;
             alert('投稿を削除しました。');
-            window.location.href = '../../メイン系/html/index.html';
+            window.location.href = '/メイン系/html/index.html';
         } catch (error) {
             console.error('削除エラー:', error);
             alert(`投稿の削除に失敗しました: ${error.message}`);

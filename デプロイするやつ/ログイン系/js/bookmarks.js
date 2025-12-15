@@ -95,14 +95,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (currentUser.id === post.user_id_auth) {
             actionsHTML = `
                 <div class="post-item-actions">
-                    <a href="../../投稿系/html/forum_input.html?edit_id=${post.forum_id}" class="action-button edit-button">編集</a>
+                    <a href="/投稿系/html/forum_input.html?edit_id=${post.forum_id}" class="action-button edit-button">編集</a>
                     <button type="button" class="action-button delete-button" data-post-id="${post.forum_id}">削除</button>
                 </div>`;
         }
 
         return `
             <article class="post-item">
-                <a href="../../投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-item-link">
+                <a href="/投稿系/html/forum_detail.html?id=${post.forum_id}" class="post-item-link">
                     <div class="post-item-main ${thumbnailHTML ? 'has-thumbnail' : ''}">
                         ${thumbnailHTML}
                         <div class="post-item-content">

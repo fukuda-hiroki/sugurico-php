@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const { data: { user } } = await supabaseClient.auth.getUser();
         if (!user) {
             alert('この操作にはログインが必要です。');
-            window.location.href = '../../ログイン系/html/login.html';
+            window.location.href = '/ログイン系/html/login.html';
             return;
         }
         currentUser = user;
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (error || !post) throw new Error('投稿が見つからないか、読み込めませんでした');
             if (post.user_id_auth !== currentUser.id) {
                 alert('他人の投稿は編集できません。');
-                window.location.href = '../../メイン系/html/index.html';
+                window.location.href = '/メイン系/html/index.html';
                 return;
             }
 
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('編集データの読み込みエラー:', error);
             alert('データの読み込みに失敗しました。');
-            window.location.href = '../../メイン系/html/index.html';
+            window.location.href = '/メイン系/html/index.html';
         }
     }
 
@@ -141,12 +141,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 submitButton.textContent = '更新中...';
                 await updatePost();
                 alert('投稿を更新しました。');
-                window.location.href = `../../投稿系/html/forum_detail.html?id=${editId}`;
+                window.location.href = `/投稿系/html/forum_detail.html?id=${editId}`;
             } else {
                 submitButton.textContent = '投稿中...';
                 await createPost();
                 alert('投稿が完了しました。');
-                window.location.href = '../../メイン系/html/index.html';
+                window.location.href = '/メイン系/html/index.html';
             }
         } catch (error) {
             console.error('投稿/更新エラー', error);
