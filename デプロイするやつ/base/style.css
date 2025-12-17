@@ -1,12 +1,9 @@
-/* style.css */
-
 /* =================================================================
    基本スタイル (サイト全体で共通)
    ================================================================= */
 
 /* --- カラーパレットと基本設定 (CSS変数) --- */
 :root {
-  /* カラーパレットを統一感のあるものに改善 */
   --primary-color: #007bff;
   --primary-hover-color: #0056b3;
   --primary-light: #4da3ff;
@@ -60,12 +57,18 @@
 }
 
 /* --- bodyと基本タイポグラフィ --- */
-html{height: 100%;}
+html {
+  height: 100%;
+}
+
 body {
 
-    min-height: 100%; /* bodyの最小の高さを画面の高さに合わせる */
-  display: flex;         /* Flexboxレイアウトを有効にする */
-  flex-direction: column;/* 子要素を縦に並べる */
+  min-height: 100%;
+  /* bodyの最小の高さを画面の高さに合わせる */
+  display: flex;
+  /* Flexboxレイアウトを有効にする */
+  flex-direction: column;
+  /* 子要素を縦に並べる */
 
   font-family: var(--font-family-base);
   line-height: 1.6;
@@ -93,8 +96,8 @@ h3 {
   line-height: 1.3;
 }
 
-.main-wrapper{
-  flex-grow: 1; 
+.main-wrapper {
+  flex-grow: 1;
   width: 100%;
 }
 
@@ -140,7 +143,7 @@ main {
   transition: color var(--transition-base);
 }
 
-.header-right-group{
+.header-right-group {
   display: flex;
   align-items: center;
   gap: 20px;
@@ -255,7 +258,7 @@ main {
   border-radius: 10px;
 }
 
-.header-nav .dropdown-menu a:hover{
+.header-nav .dropdown-menu a:hover {
   background-color: var(--content-bg-color);
 }
 
@@ -264,14 +267,18 @@ main {
   border-top: 1px solid var(--border-color);
   margin: 0.5rem 0;
 }
+
 #logout-button {
-    /* 他の .dropdown-menu a のスタイルは継承される */
-    color: var(--danger-color, #dc3545); /* 少し危険な操作であることを示す赤色 */
+  /* 他の .dropdown-menu a のスタイルは継承される */
+  color: var(--danger-color, #dc3545);
+  /* 少し危険な操作であることを示す赤色 */
 }
 
 #logout-button:hover {
-    background-color: #f8d7da; /* ホバー時の背景色も赤系統に */
-    color: #721c24; /* ホバー時の文字色を濃くする */
+  background-color: #f8d7da;
+  /* ホバー時の背景色も赤系統に */
+  color: #721c24;
+  /* ホバー時の文字色を濃くする */
 }
 
 
@@ -657,7 +664,7 @@ main {
   grid-template-columns: 1fr;
 }
 
-.toggle-eye{
+.toggle-eye {
   width: 32px;
 }
 
@@ -672,30 +679,39 @@ main {
   }
 
   #header-container {
-    flex-direction: column;      /* ★ 要素を縦に並べる */
-    align-items: stretch;        /* ★ 要素をコンテナの幅いっぱいに伸ばす */
-    justify-content: flex-start; /* ★ 上揃えにする (space-betweenを解除) */
+    flex-direction: column;
+    /* ★ 要素を縦に並べる */
+    align-items: stretch;
+    /* ★ 要素をコンテナの幅いっぱいに伸ばす */
+    justify-content: flex-start;
+    /* ★ 上揃えにする (space-betweenを解除) */
     gap: 12px;
     padding: 1rem;
   }
 
   .header-logo {
-      text-align: center; /* ロゴを中央寄せにする */
-    }
+    text-align: center;
+    /* ロゴを中央寄せにする */
+  }
 
-     .header-right-group {
-    flex-direction: column; /* 右側グループ内の要素も縦に並べる */
-    align-items: stretch;   /* 幅を親に合わせる */
+  .header-right-group {
+    flex-direction: column;
+    /* 右側グループ内の要素も縦に並べる */
+    align-items: stretch;
+    /* 幅を親に合わせる */
     gap: 12px;
   }
 
- .header-nav {
-    order: -1;              /* ★ ナビゲーションメニューを一番上に持ってくる */
-    text-align: right;      /* メニュー内のリンクを右寄せにする */
+  .header-nav {
+    order: -1;
+    /* ★ ナビゲーションメニューを一番上に持ってくる */
+    text-align: right;
+    /* メニュー内のリンクを右寄せにする */
   }
 
   .search-form-container {
-    width: 100%; /* 検索フォームの幅を100%にする */
+    width: 100%;
+    /* 検索フォームの幅を100%にする */
   }
 
   .search-form-container form {

@@ -2,22 +2,18 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // --- HTML要素の取得 ---
     const postsListContainer = document.getElementById('bookmarks-list');
     const paginationContainer = document.getElementById('pagination-container');
 
-    // --- 1. ログイン状態をチェック ---
     const { data: { session } } = await supabaseClient.auth.getSession();
 
     if (!session) {
-        // ログインしていなければ、ログインページにリダイレクト
         window.location.href = 'login.html';
         return;
     }
 
     const currentUser = session.user;
 
-    // ★ 共通関数を呼び出すように変更
     const isPremium = await isCurrentUserPremium();
 
     if (!isPremium) {
@@ -25,17 +21,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // --- 2. ページネーションの準備 ---
     const urlParams = new URLSearchParams(window.location.search);
     const currentPage = parseInt(urlParams.get('page')) || 1;
     const postsPerPage = 10;
     const offset = (currentPage - 1) * postsPerPage;
 
-    // --- 3. ブックマークした投稿を取得して表示 ---
     try {
         postsListContainer.innerHTML = '<p>読み込み中...</p>';
 
-        // まず、自分がブックマークした投稿の総件数を取得
         const { count: totalPosts, error: countError } = await supabaseClient
             .from('bookmark')
             .select('*', { count: 'exact', head: true })
@@ -48,8 +41,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // 次に、現在のページに表示する投稿データを取得
-        // bookmarkテーブルを経由して、forumsテーブルの情報をJOINする
         const { data: posts, error: postsError } = await supabaseClient
             .from('bookmark')
             .select(`
@@ -61,15 +52,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 )
             `)
             .eq('user_id', currentUser.id)
-            .order('created_at', { ascending: false }) // ブックマークした日時で降順ソート
+            .order('created_at', { ascending: false })
             .range(offset, offset + postsPerPage - 1);
 
         if (postsError) throw postsError;
 
-        // --- 4. 取得したデータでHTMLを生成・表示 ---
         postsListContainer.innerHTML = posts.map(item => renderPostHTML(item.forums)).join('');
 
-        // --- 5. ページネーションを描画 ---
         renderPagination(totalPosts, currentPage, postsPerPage);
 
     } catch (error) {
@@ -82,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ==================================================
 
     function renderPostHTML(post) {
-        // search.jsやmypage.jsと同じHTML生成ロジックを再利用
         let thumbnailHTML = '';
         if (post.forum_images && post.forum_images.length > 0) {
             thumbnailHTML = `<div class="post-item-thumbnail"><img src="${post.forum_images[0].image_url}" alt="サムネイル"></div>`;
@@ -90,7 +78,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const remainingTime = timeLeft(post.delete_date);
         const timeAgoString = timeAgo(post.created_at);
 
-        // 自分投稿かどうかで編集・削除ボタンの表示を切り替え
         let actionsHTML = '';
         if (currentUser.id === post.user_id_auth) {
             actionsHTML = `
@@ -120,7 +107,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderPagination(totalItems, currentPage, itemsPerPage) {
-        // ★ 変数名を totalPages に修正
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         if (totalPages <= 1) {
             paginationContainer.innerHTML = '';
@@ -129,12 +115,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let paginationHTML = '';
 
-        // 前のページリンク
         if (currentPage > 1) {
             paginationHTML += `<a href="?page=${currentPage - 1}">« 前へ</a>`;
         }
 
-        // ページ番号リンク
         for (let i = 1; i <= totalPages; i++) {
             if (i === currentPage) {
                 paginationHTML += `<span class="current-page">${i}</span>`;
@@ -143,7 +127,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
         
-        // 次のページリンク
         if (currentPage < totalPages) {
             paginationHTML += `<a href="?page=${currentPage + 1}">次へ »</a>`;
         }
@@ -151,7 +134,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         paginationContainer.innerHTML = paginationHTML;
     }
 
-    // 削除ボタン用のイベントリスナーを設定
     postsListContainer.addEventListener('click', async (event) => {
         if (event.target.classList.contains('delete-button')) {
             const postId = event.target.dataset.postId;
@@ -161,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     alert('削除に失敗しました。');
                 } else {
                     alert('削除しました。');
-                    location.reload(); // 簡単にするためリロード
+                    location.reload();
                 }
             }
         }

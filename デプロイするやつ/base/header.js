@@ -1,4 +1,3 @@
-// header.js
 
 'use strict';
 
@@ -20,18 +19,15 @@ async function setupHeaderAndFooter() {
     const footerContainer = document.getElementById('footer-container');
 
     if (!headerContainer || !footerContainer) {
-        console.warn('header-containerまたはfooter-containerが見つかりません。');
         return;
     }
 
-    // --- ログイン状態を取得 ---
     const { data: { session } } = await supabaseClient.auth.getSession();
 
-    let navHTML = '';// ナビゲーション部分のHTML
+    let navHTML = '';
 
     if (session && session.user) {
         await checkAndShowPremiumNotification(session.user);
-        // 【ログインしている場合のナビゲーション】
         const userName = session.user.user_metadata?.user_name || 'ゲスト';
         navHTML = `
             <div class="dropdown">
@@ -49,7 +45,6 @@ async function setupHeaderAndFooter() {
         `;
 
     } else {
-        // 【ログインしていない場合のナビゲーション】
         navHTML = `
             <a href="/ログイン系/html/login.html">ログイン</a>
             <a href="/ログイン系/html/register.html">新規登録</a>
@@ -76,16 +71,12 @@ async function setupHeaderAndFooter() {
                 ${navHTML}
             </nav>
         </div>
-        <!-- ▲▲▲ グループ化ここまで ▲▲▲ -->
     `;
 
-    // 生成したHTMLをヘッダーコンテナに挿入
     headerContainer.innerHTML = headerHTML;
 
-    // フッターのHTMLを設定
     footerContainer.innerHTML = `<p>&copy; 2025 スグリコ. All Rights Reserved.</p>`;
 
-    // --- ログアウトボタンのイベントリスナー設定 ---
     const logoutButton = document.getElementById('logout-button');
     if (logoutButton) {
         logoutButton.addEventListener('click', async (event) => {
@@ -117,7 +108,7 @@ async function setupHeaderAndFooter() {
 
         const event = new CustomEvent('header-loaded');
     document.dispatchEvent(event);
-    console.log("Header loaded event dispatched.");
+
 }
 
 async function checkAndShowPremiumNotification(user) {
@@ -128,21 +119,19 @@ async function checkAndShowPremiumNotification(user) {
             .eq('id', user.id)
             .maybeSingle();
         if (error || !premium || premium.status !== 'active') {
-            return; // プレミアム会員でないか、アクティブでなければ何もしない
+            return;
         }
 
         const limitDate = new Date(premium.limit_date);
         const now = new Date();
         const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-        // --- 期限が、"現在" と "7日後" の間にあるかをチェック ---
         if (limitDate > now && limitDate < sevenDaysFromNow) {
-            // --- 今日すでに通知を表示したかチェック ---
             const lastShownKey = `premium_notify_${user.id}`;
             const lastShownTimestamp = localStorage.getItem(lastShownKey);
-            const today = new Date().toLocaleDateString();// "2025/8/1" のような日付文字列を取得
+            const today = new Date().toLocaleDateString();
 
             if (lastShownTimestamp === today) {
-                return;// 今日すでに表示済みなら何もしない
+                return;
             }
             const notificationBar = document.getElementById('premium-notification-bar');
             const daysLeft = Math.ceil((limitDate - now) / (1000 * 60 * 60 * 24));
@@ -156,7 +145,6 @@ async function checkAndShowPremiumNotification(user) {
             `;
             notificationBar.style.display = 'flex';
 
-            // --- 通知を閉じる処理 ---
             document.getElementById('close-notification-button').addEventListener('click', () => {
                 notificationBar.style.display = 'none';
                 localStorage.setItem(lastShownKey, today);
@@ -174,17 +162,13 @@ async function checkAndShowPremiumNotification(user) {
  * @returns {Promise<boolean>} プレミアムならtrue, それ以外はfalse
  */
 async function isCurrentUserPremium() {
-    // Supabaseクライアントはheader.jsで既に初期化済み
 
-    // 1. 現在のログインユーザー情報を取得
     const { data: { user } } = await supabaseClient.auth.getUser();
 
-    // 2. ログインしていなければプレミアムではない
     if (!user) {
         return false;
     }
 
-    // 3. 'premium'テーブルからユーザーの情報を取得
     const { data: premium, error } = await supabaseClient
         .from('premium')
         .select('status, limit_date')
@@ -192,17 +176,13 @@ async function isCurrentUserPremium() {
         .maybeSingle();
 
     if (error || !premium) {
-        // レコードが存在しない、または取得時にエラーが発生した場合
         return false;
     }
 
-    // 4. ステータスが 'active' で、かつ有効期限が切れていないかチェック
-    const isActive = premium.status === 'active'; // true:activeである。false:canceledである。
-    const isNotExpired = new Date(premium.limit_date) > new Date(); //true:期限切れでない false:期限切れである。
-    console.log("premium is (isActive: " + isActive + ", isNotExpired: " + isNotExpired + ") = " + (isActive || isNotExpired));
+    const isActive = premium.status === 'active'; 
+    const isNotExpired = new Date(premium.limit_date) > new Date(); 
     return isActive || isNotExpired;
 
 }
 
-// --- 関数の実行 ---
 setupHeaderAndFooter();

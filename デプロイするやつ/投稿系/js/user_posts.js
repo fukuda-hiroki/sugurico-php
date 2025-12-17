@@ -1,14 +1,11 @@
-// user_posts.js
 
 'use strict';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // --- HTML要素の取得 ---
     const pageTitle = document.getElementById('page-title');
     const postsListContainer = document.getElementById('posts-list-container');
     const paginationContainer = document.getElementById('pagination-container');
 
-    // 詳細検索フォームの要素
     const toggleSearchButton = document.getElementById('toggle-search-button');
     const advancedSearchForm = document.getElementById('advanced-search-form');
     const filterButton = document.getElementById('filter-button');
@@ -26,7 +23,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // --- 1. 表示対象ユーザーのプロフィール情報(user_name)を取得 ---
         try {
             const { data: targetUser, error: userError } = await supabaseClient
                 .from('users')
@@ -56,7 +52,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         filterButton.addEventListener('click', () => {
             fetchAndDisplayUserPosts(1);
         });
-        console.log(3);
     }
 
     async function populateUserTags() {
@@ -71,8 +66,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (tags && tags.length > 0) {
                 tags.forEach(tag => {
                     const option = document.createElement('option');
-                    option.value = tag.tag_id;  //  valueにはIDを設定
-                    option.textContent = tag.tag_name;  //  表示はタグ名
+                    option.value = tag.tag_id;
+                    option.textContent = tag.tag_name;
                     tagSelect.appendChild(option);
                 });
             }
@@ -82,13 +77,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     async function fetchAndDisplayUserPosts(page = 1) {
-        console.log(tagSelect.value);
         postsListContainer.innerHTML = '読み込み中...';
         paginationContainer.innerHTML = '';
         try {
             const postsPerPage = 10;
             const { data, error, count } = await supabaseClient
-                .rpc('filter_other_user_posts', {//  mypage.jsにあるfilter_user_postsとは別(時間指定があるから)
+                .rpc('filter_other_user_posts', {
                     user_id_param: targetUserId,
                     keyword_param: keywordInput.value.trim(),
                     period_param: periodSelect.value,
@@ -114,7 +108,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.error('投稿の取得に失敗:', error);
             postsListContainer.innerHTML = `<p>投稿の取得中にエラーが発生しました。${error.message}</p>`;
         }
-        console.log(4);
     }
 
     initializePage();

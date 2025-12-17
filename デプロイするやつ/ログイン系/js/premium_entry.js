@@ -2,7 +2,6 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // --- HTML要素の取得 ---
     const passwordAuthSection = document.getElementById('password-auth-section');
     const paymentSection = document.getElementById('payment-section');
     const passwordInput = document.getElementById('password-input');
@@ -30,7 +29,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         currentUser = user;
 
-        // --- 登録済みか & ロック状態かチェック ---
         checkLockStatus();
         checkPremiumStatus();
         setupEventListner();
@@ -64,9 +62,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             handleAuthSuccess();
         }
     }
-
-    // --- 認証成功/失敗/ロック関連の関数 ---
-
     function handleAuthSuccess() {
         localStorage.removeItem(`auth_fails_${currentUser.id}`);
         passwordAuthSection.style.display = 'none';
@@ -105,7 +100,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const premiumStatus = await isCurrentUserPremium()
 
-        // ★★★ "premiumStatus" (オブジェクト) の "status" プロパティをチェック ★★★
         if (premiumStatus) {
             alert('あなたは既にプレミアム会員です。会員情報ページに移動します。');
             window.location.href = 'premium_edit.html';
@@ -117,7 +111,6 @@ document.addEventListener('DOMContentLoaded', async () => {
      */
 
     async function handleSubscription() {
-        // --- カード情報のバリデーション ---
         const cardNumber = document.getElementById('card-number').value;
         const expiryDate = document.getElementById('expiry-date').value;
         const cardholderName = document.getElementById('cardholder-name').value;
@@ -151,7 +144,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         if (subscribeError !== '') {
-            console.log(subscribeError);
             showMessage(
                 subscriptionStatus,
                 subscribeError,
@@ -240,7 +232,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     initializePage();
 
     eyeBox.addEventListener('click', () => {
-        console.log('fire');
         if (closeEye.style.display === 'none') {
             closeEye.style.display = 'block';
             openEye.style.display = 'none';

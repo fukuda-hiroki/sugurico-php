@@ -10,7 +10,6 @@
 </head>
 
 <body>
-    <!-- 共通ヘッダー -->
     <header id="header-container"></header>
     <div class="main-wrapper">
         <main>
@@ -18,19 +17,15 @@
             <p>あなたがブックマークした一覧です</p>
             <hr>
 
-            <!-- ブックマーク一覧を表示するエリア -->
             <div id="bookmarks-list" class="post-list">
                 <p>読み込み中…</p>
-                <!-- JSでここにブックマークが挿入される -->
             </div>
-            <!-- ページネーションリンクを表示するエリア -->
             <nav id="pagination-container" class="pagination"></nav>
         </main>
     </div>
 
     <footer id="footer-container"></footer>
 
-    <!-- JSライブラリと、このページ専用のJS -->
     <script src="/base/supabase.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/base/header.js" defer></script>

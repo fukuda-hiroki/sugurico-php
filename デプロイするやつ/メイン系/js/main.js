@@ -2,14 +2,10 @@
 'use strict';
 
 
-// --- ページ読み込み完了時のメイン処理 ---
-// ▼▼▼ async を追加 ▼▼▼
 document.addEventListener('DOMContentLoaded', async () => {
     
-    // --- 1. ログイン状態をチェック ---
     const { data: { session } } = await supabaseClient.auth.getSession();
 
-    // ▼▼▼ ブロックユーザーリストをここで一度だけ取得する ▼▼▼
     let blockedUserIds = [];
     if (session) {
         const { data: blockedUsers, error } = await supabaseClient
@@ -25,18 +21,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (session) {
-        // 【ログインしている場合の処理】
         document.getElementById('my-posts-section').style.display = 'block';
         document.getElementById('new-post-button').style.display = 'flex';
-
-        // 自分の投稿を取得して表示 (ブロックリストは不要)
         fetchAndDisplayPosts('my-posts-list', session.user.id, null, []);
-        // 皆さんの投稿（自分を除く）を取得して表示 (ブロックリストを渡す)
         fetchAndDisplayPosts('all-posts-list', null, session.user.id, blockedUserIds);
 
     } else {
-        // 【ログインしていない場合の処理】
-        // 皆さんの投稿（すべて）を取得して表示 (ブロックリストは空)
         fetchAndDisplayPosts('all-posts-list', null, null, []);
     }
 });

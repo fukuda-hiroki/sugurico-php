@@ -2,13 +2,11 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // --- HTML要素の取得 ---
     const listContainer = document.getElementById('blocked-users-list');
 
-    // --- 1. ログイン状態をチェック ---
     const { data: { user: currentUser } } = await supabaseClient.auth.getUser();
     if (!currentUser) {
-        window.location.href = 'login.html'; // 未ログインならリダイレクト
+        window.location.href = 'login.html';
         return;
     }
 
@@ -17,8 +15,6 @@ document.addEventListener('DOMContentLoaded', async () => {
      */
     async function fetchAndDisplayBlockedUsers() {
         try {
-            // blocksテーブルから、自分がブロックしているユーザーの情報を取得
-            // usersテーブルをJOINして、ブロック相手のユーザー名も取得する
             const { data: blockedUsers, error } = await supabaseClient
                 .from('blocks')
                 .select(`
@@ -34,11 +30,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // 取得したデータからHTMLを生成
             listContainer.innerHTML = blockedUsers.map(item => {
-                const blockedUser = item.users; // JOINしたusersテーブルのデータ
-                if (!blockedUser) return ''; // 念のため
-
+                const blockedUser = item.users; 
+                if (!blockedUser) return '';
                 return `
                     <div class="post-item">
                         <div class="post-item-main">
@@ -63,13 +57,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // --- 2. ページ初期化時にブロックリストを取得・表示 ---
     await fetchAndDisplayBlockedUsers();
 
 
-    // --- 3. [解除]ボタンのクリックイベント処理 (イベント委譲) ---
     listContainer.addEventListener('click', async (event) => {
-        // クリックされたのが解除ボタンかチェック
         if (!event.target.classList.contains('unblock-button')) {
             return;
         }
@@ -83,17 +74,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            // blocksテーブルから該当のレコードを削除
             const { error } = await supabaseClient
                 .from('blocks')
                 .delete()
-                .eq('blocker_user_id', currentUser.id) // 自分が
-                .eq('blocked_user_id', targetUserId);  // 相手をブロックした記録
+                .eq('blocker_user_id', currentUser.id) 
+                .eq('blocked_user_id', targetUserId);  
 
             if (error) throw error;
 
             alert(`「${targetUserName}」のブロックを解除しました。`);
-            // リストを再読み込みして表示を更新
             await fetchAndDisplayBlockedUsers();
 
         } catch (error) {

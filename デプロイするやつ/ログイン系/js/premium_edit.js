@@ -1,9 +1,7 @@
-// premium_edit.js
 
 'use strict';
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // --- HTML要素の取得 ---
     const currentPlanEl = document.getElementById('current-plan');
     const currentStatusEl = document.getElementById('current-status');
     const nextBillingDateEl = document.getElementById('next-billing-date');
@@ -44,11 +42,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             currentPremiumData = data;
 
-            console.log(data);
-
             currentPlanEl.textContent = data.plan === 'monthly' ? '月額プラン' : '年間プラン';
             currentStatusEl.textContent = '有効';
-            //data.status === 'active' ? '有効' : '解約済み';
             nextBillingDateEl.textContent = new Date(data.limit_date).toLocaleString('ja-JP');
             planSelect.value = data.plan;
 

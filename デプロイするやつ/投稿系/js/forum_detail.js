@@ -1,33 +1,26 @@
-//forum_detail.js
 
 'use strict';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-    // --- HTML要素の取得 ---
     const postContainer = document.getElementById('post-detail-container');
     const commentFormContainer = document.getElementById('comment-form-container');
     const commentListContainer = document.getElementById('comment-list-container');
 
-    // --- 1. ページで共通して使う変数を定義 ---
     const urlParams = new URLSearchParams(window.location.search);
     const forumId = parseInt(urlParams.get('id'));
     const { data: { session } } = await supabaseClient.auth.getSession();
     const currentUser = session?.user;
 
-    // --- 2. 初期化処理の開始 ---
     if (!forumId) {
         postContainer.innerHTML = '<h1>無効な投稿IDです。</h1>';
         return;
     }
 
     try {
-        // --- 3. 必要なデータを並行して取得 ---
-        // プレミアム判定を共通関数に置き換え
         const isPremium = await isCurrentUserPremium();
         let isBookmarked = false;
 
-        // ログインしている場合のみブックマーク情報を取得
         if (currentUser) {
             const { data: bookmarkRes } = await supabaseClient
                 .from('bookmark')
@@ -41,7 +34,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
 
-        // 投稿関連のデータを取得
         const [postRes, tagsRes, imagesRes, commentsRes] = await Promise.all([
             supabaseClient.from('forums').select('*, users!forums_user_id_auth_fkey(user_name)').eq('forum_id', forumId).single(),
             supabaseClient.from('tag').select('tag_dic(tag_name)').eq('forum_id', forumId),
@@ -54,23 +46,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         const post = postRes.data;
 
         try {
-            console.log(`Incrementing view count for post ID: ${forumId}`);
             const { error: rpcError } = await supabaseClient.rpc('increment_view_count', {
                 post_id_to_update: forumId
             });
             if (rpcError) throw rpcError;
-            console.log("View count incremented successfully.");
         } catch (error) {
             console.error("閲覧数の更新中にエラーが発生:", error);
         }
 
-        // --- 4. アクセス制御 ---
         const isOwner = currentUser && post.user_id_auth === currentUser.id;
         if (!isOwner && post.delete_date && new Date(post.delete_date) < new Date()) {
             throw new Error('この投稿の公開期限は終了しました。');
         }
 
-        // --- 5. ページを描画 ---
         renderPost(post, tagsRes.data || [], imagesRes.data || [], isPremium, isBookmarked, isOwner);
         renderComments(commentsRes.data || []);
 
@@ -127,7 +115,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         let blockButtonHTML = '';
-        // ログインしていて、かつ自分の投稿ではない場合にブロックボタンを表示
         if (currentUser && post.user_id_auth !== currentUser.id) {
             blockButtonHTML = `
                 <div class="block-action">
@@ -149,7 +136,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="post-tags">${tagsHTML}</div>
             ${remainingTimeHTML}`;
 
-        // イベントリスナーを設定
         if (isOwner) document.getElementById('delete-post-button').addEventListener('click', () => handleDeletePost(post.forum_id));
         if (isPremium) document.getElementById('bookmark-button').addEventListener('click', handleBookmarkToggle);
 
@@ -225,11 +211,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const isCurrentlyBookmarked = button.dataset.bookmarked === 'true';
         try {
             if (isCurrentlyBookmarked) {
-                // ブックマークを削除
                 const { error } = await supabaseClient.from('bookmark').delete().eq('user_id', currentUser.id).eq('post_id', forumId);
                 if (error) throw error;
             } else {
-                // ブックマークを追加
                 const { error } = await supabaseClient.from('bookmark').insert({ user_id: currentUser.id, post_id: forumId });
                 if (error) throw error;
             }
@@ -247,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async () => {
      * ユーザーブロック処理
      */
     async function handleBlockUser(event) {
-        const button = event.target; // 'botton' -> 'button' に修正
+        const button = event.target; 
         const targetUserId = button.dataset.targetUserId;
         const targetUserName = postContainer.querySelector('a[href^="user_posts.html"]').textContent;
 
@@ -256,12 +240,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            // blockテーブルにブロック情報を追加
             const { error } = await supabaseClient
                 .from('blocks')
                 .insert({
-                    blocker_user_id: currentUser.id, //ブロック」する側(自分)
-                    blocked_user_id: targetUserId //ブロックされる側(相手)
+                    blocker_user_id: currentUser.id,
+                    blocked_user_id: targetUserId
                 });
 
             if (error) {

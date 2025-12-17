@@ -1,8 +1,6 @@
-// update.js
 'use strict';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // --- HTML要素の取得 ---
     const updateForm = document.getElementById('update-form');
     const nameInput = document.getElementById('nameInput');
     const usernameInput = document.getElementById('usernameInput');
@@ -12,21 +10,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const submitButton = document.getElementById('submitButton');
     const messageArea = document.getElementById('message-area');
 
-    // --- 1. ログイン状態をチェックし、現在のユーザー情報を取得 ---
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    console.log("取得したユーザー情報:", user);
-    console.log("ユーザー情報取得時のエラー:", userError);
     if (!user) {
         window.location.href = 'login.html';
         return;
     }
 
-    // --- 2. DBからプロフィール情報を取得してフォームに表示 ---
     try {
         const { data: profile, error } = await supabaseClient
             .from('users')
             .select('name, user_name, login_id, mail')
-            .eq('id', user.id)// AuthのIDを使って検索
+            .eq('id', user.id)
             .single();
         if (error) throw error;
         if (profile) {
@@ -41,14 +35,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         messageArea.style.display = 'block';
     }
 
-    // --- 3. フォーム送信イベントの処理 ---
     updateForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         submitButton.disabled = true;
         submitButton.textContent = '更新中...';
         messageArea.style.display = 'none';
         try {
-            // --- 3a. パスワードの更新 ---
             const newPassword = passwordInput.value;
             if (newPassword) {
                 const { error: passwordError } = await supabaseClient
@@ -57,7 +49,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (passwordError) throw passwordError;
             }
 
-            // --- 3b. プロフィール情報(usersテーブル)の更新 ---
             const { error: profileError } = await supabaseClient
                 .from('users')
                 .update({
@@ -68,7 +59,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 .eq('id', user.id);
             if (profileError) throw profileError;
 
-            // --- 3c. Authのメタデータも更新 (任意だが推奨) ---
             await supabaseClient.auth.updateUser({
                 data: {
                     name: nameInput.value,
@@ -77,14 +67,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
 
-            // --- 成功処理 ---
             messageArea.textContent = 'ユーザー情報を更新しました。';
             messageArea.className = 'message success';
             messageArea.style.display = 'block';
-            passwordInput.value = '';// パスワード欄をクリア
+            passwordInput.value = '';
         } catch (error) {
 
-            // エラー処理
             if (error.message.includes('duplicate key value violates unique constraint "users_login_id_key"')) {
                 messageArea.textContent = 'このログインIDは既に使用されています';
 
@@ -99,12 +87,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     })
 
-    // --- 4. アカウント削除ボタンの処理 ---
     const deleteButton = document.getElementById('delete-account-button');
     if (deleteButton) {
         deleteButton.addEventListener('click', async () => {
             const confirmation = prompt('アカウント削除の確認のため、あなたのログインIDを入力してください。');
-            if (confirmation === null) return; // キャンセルされた場合
+            if (confirmation === null) return;
 
             if (confirmation !== loginIdInput.value) {
                 alert('入力されたログインIDが一致しません。');
@@ -116,12 +103,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             try {
-                // 作成したRPCを呼び出す
                 const { error } = await supabaseClient.rpc('delete_current_user');
                 if (error) throw error;
 
                 alert('アカウントを削除しました。ご利用ありがとうございました。');
-                // ログアウト処理をしてトップページにリダイレクト
                 await supabaseClient.auth.signOut();
                 window.location.href = '/index.html';
 
@@ -133,5 +118,4 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
     }
-// 誤操作を防ぐため、`prompt` を使ってログインIDを入力させる一手間を加えています。
 });

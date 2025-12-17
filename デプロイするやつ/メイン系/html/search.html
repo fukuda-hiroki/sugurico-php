@@ -10,11 +10,9 @@
 </head>
 
 <body>
-    <!-- 共通ヘッダー -->
     <header id="header-container"></header>
     <div class="main-wrapper">
         <main class="search-main">
-            <!-- 検索タイトルとトグルボタン -->
             <div class="search-header">
                 <h1 id="search-title">検索結果</h1>
                 <button type="button" id="toggle-search-button" class="toggle-search-btn" aria-label="詳細検索を開く">
@@ -23,10 +21,8 @@
                 </button>
             </div>
 
-            <!-- 詳細検索フォーム -->
             <div id="advanced-search-form" class="advanced-search-container" style="display: none;">
                 <div class="search-grid">
-                    <!-- キーワード入力 -->
                     <div class="search-field">
                         <label for="keyword-input">
                             <span class="label-icon">📝</span>
@@ -35,7 +31,6 @@
                         <input type="text" id="keyword-input" placeholder="タイトルか本文で検索">
                     </div>
 
-                    <!-- 投稿者名 -->
                     <div class="search-field">
                         <label for="author-input">
                             <span class="label-icon">👤</span>
@@ -44,7 +39,6 @@
                         <input type="text" id="author-input" placeholder="ユーザー名で絞り込み">
                     </div>
 
-                    <!-- タグ名 -->
                     <div class="search-field">
                         <label for="tag-input">
                             <span class="label-icon">🏷️</span>
@@ -53,7 +47,6 @@
                         <input type="text" id="tag-input" placeholder="タグ名で絞り込み">
                     </div>
 
-                    <!-- 投稿期間 -->
                     <div class="search-field">
                         <label for="period-select">
                             <span class="label-icon">📅</span>
@@ -74,7 +67,6 @@
                         <small>複数指定する場合はカンマ(,)で区切ってください。</small>
                     </div>
 
-                    <!-- 並び順 -->
                     <div class="search-field">
                         <label for="sort-select">
                             <span class="label-icon">⬇️</span>
@@ -87,7 +79,6 @@
                     </div>
                 </div>
 
-                <!-- 絞り込みボタン -->
                 <div class="search-actions">
                     <button type="button" id="filter-button" class="filter-btn">
                         <span class="btn-icon">🔍</span>
@@ -96,23 +87,18 @@
                 </div>
             </div>
 
-            <!-- 検索結果件数 -->
             <p id="search-count" class="search-count"></p>
 
-            <!-- 投稿一覧 -->
             <section id="posts-list-container" class="post-list">
                 <p class="loading-text">検索中...</p>
             </section>
 
-            <!-- ページネーション -->
             <nav id="pagination-container" class="pagination" aria-label="ページネーション"></nav>
         </main>
     </div>
 
-    <!-- 共通フッター -->
     <footer id="footer-container"></footer>
 
-    <!-- JSライブラリと、このページ専用のJS -->
     <script src="/base/supabase.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/base/util.js"></script>

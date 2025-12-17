@@ -1,5 +1,3 @@
-// util.js - 共通ユーティリティ関数
-
 'use strict';
 
 function timeAgo(utcDatestr) {
@@ -27,14 +25,10 @@ function timeAgo(utcDatestr) {
 function timeLeft(utcDatestr) {
     if (!utcDatestr) return '無期限';
 
-    // DBからのUTC文字列を、正しくDateオブジェクトに変換
     const deadline = new Date(utcDatestr);
     
-    // JavaScriptの現在時刻を取得
     const now = new Date();
 
-    // 期限が過去（または現在）なら、空文字列を返す
-    // Dateオブジェクト同士の比較は、内部的にミリ秒で行われるため、これでOK
     if (deadline <= now) {
         return '';
     }
@@ -53,10 +47,8 @@ function timeLeft(utcDatestr) {
     let result = '閲覧期限: あと';
     if (days > 0) result += ` ${days}日`;
     if (hours > 0) result += ` ${hours}時間`;
-    // 1時間未満の場合のみ分を表示すると、より自然に見える
     if (days === 0 && minutes > 0) result += ` ${minutes}分`;
     
-    // 何も追加されなかった場合（1分未満）
     if (result === '閲覧期限: あと') {
         return '閲覧期限: あとわずか';
     }

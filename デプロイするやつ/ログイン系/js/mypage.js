@@ -1,8 +1,7 @@
 'use strict';
 
-document.addEventListener('DOMContentLoaded', async () => { // ★ async を追加
+document.addEventListener('DOMContentLoaded', async () => { 
 
-    // --- HTML要素の取得 ---
     const mypageTitle = document.getElementById('mypage-title');
     const postsListContainer = document.getElementById('my-posts-list');
     const paginationContainer = document.getElementById('pagination-container');
@@ -31,7 +30,6 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         await populateUserTags();
 
         const urlParams = new URLSearchParams(window.location.search);
-        // URLパラメータをフォームに反映
         keywordInput.value = urlParams.get('keyword') || '';
         periodSelect.value = urlParams.get('period') || 'all';
         sortSelect.value = urlParams.get('sort') || 'desc';
@@ -55,7 +53,6 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
             const isHidden = advancedSearchForm.style.display === 'none';
             advancedSearchForm.style.display = isHidden ? 'block' : 'none';
 
-            // ボタンの表示をsearch.htmlと統一
             const btnIcon = toggleSearchButton.querySelector('.btn-icon');
             const btnText = toggleSearchButton.querySelector('.btn-text');
             if (isHidden) {
@@ -68,10 +65,9 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         });
 
         filterButton.addEventListener('click', () => {
-            updateURL(); // URLを更新してから検索
+            updateURL(); 
             fetchAndDisplayUserPosts(1);
         });
-        // ★ イベント移譲を使って、動的に生成される削除ボタンに対応
         postsListContainer.addEventListener('click', (event) => {
             const actionButton = event.target.closest('.action-button');
 
@@ -122,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
     }
 
     async function fetchAndDisplayUserPosts(page = 1) {
-        postsListContainer.innerHTML = '<p class="loading-text">読み込み中...</p>'; // CSSに合わせてクラス名変更
+        postsListContainer.innerHTML = '<p class="loading-text">読み込み中...</p>';
         paginationContainer.innerHTML = '';
 
         try {
@@ -139,7 +135,6 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
             }, { count: 'exact' });
 
             if (error) throw error;
-            console.log(data);
             const posts = data;
             const totalPosts = count ?? 0;
 
@@ -156,10 +151,8 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
     }
 
     function renderPostHTML(post) {
-        // --- search.jsのrenderPost関数とほぼ同じロジック ---
 
         let thumbnailHTML = '';
-        // ★ データベース関数から返される 'first_image_url' をチェック
         if (post.first_image_url) {
             thumbnailHTML = `
                 <div class="post-item-thumbnail" style="display:flex; justify-content:center; align-items:center;">
@@ -168,11 +161,9 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
             `;
         }
 
-        // util.jsの関数が読み込まれていることを確認
         const remainingTime = typeof timeLeft === 'function' ? timeLeft(post.delete_date) : '';
         const timeAgoString = typeof timeAgo === 'function' ? timeAgo(post.created_at) : '';
 
-        // 本文を短くする
         const shortText = post.text && post.text.length > 50
             ? escapeHTML(post.text.substring(0, 50)) + '...'
             : escapeHTML(post.text || '');
@@ -205,7 +196,6 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         if (!confirm('この投稿を本当に削除しますか？\nこの操作は元に戻せません。')) return;
 
         try {
-            // forum_detail.js と同じRPCを呼び出す
             const { error } = await supabaseClient.rpc('delete_forum_with_related_data', {
                 forum_id_param: parseInt(postIdToDelete)
             });
@@ -213,7 +203,6 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
             if (error) throw error;
 
             alert('投稿を削除しました。');
-            // ページを再読み込みして、一覧を更新
             window.location.reload();
 
         } catch (error) {
@@ -226,7 +215,6 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         if (totalPages <= 1) {
             paginationContainer.innerHTML = '';
-            return; // ページネーション不要
         }
 
         let paginationHTML = '';
@@ -260,7 +248,6 @@ document.addEventListener('DOMContentLoaded', async () => { // ★ async を追�
         paginationContainer.innerHTML = paginationHTML;
     }
 
-    // URLを現在のフォーム内容で更新する関数 (search.jsから移植)
     function updateURL() {
         const urlParams = new URLSearchParams();
         if (keywordInput.value.trim()) urlParams.set('keyword', keywordInput.value.trim());

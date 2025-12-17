@@ -1,7 +1,6 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // --- HTML要素の取得 ---
     const pageTitle = document.querySelector('.form-container h1');
     const postForm = document.getElementById('post-form');
     const titleInput = document.getElementById('titleInput');
@@ -13,14 +12,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     const currentExpirationInfo = document.getElementById('current-expiration-info');
     const imageInputContainer = document.getElementById('image-input-container');
     const submitButton = document.getElementById('submitButton');
-    // --- ページ全体で使う変数 ---
     const urlParams = new URLSearchParams(window.location.search);
     const editId = urlParams.get('edit_id');
     const isEditMode = !!editId;
 
     let currentUser;
-    let isPremiumUser = await isCurrentUserPremium(); // ★2. プレミアム状態を管理する変数を宣言
-    console.log("isPremiumUser is " + isPremiumUser);
+    let isPremiumUser = await isCurrentUserPremium(); 
 
     /**
      * ページの初期化処理
@@ -50,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             submitButton.textContent = '投稿する';
             if (window.imageManager) window.imageManager.init(isPremiumUser, []);
 
-            if (window.tagManager) window.tagManager.init([]);// 新規作成時は空のタグで初期化
+            if (window.tagManager) window.tagManager.init([])
         }
 
         setupEventListeners();
@@ -74,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // --- フォームに既存データを設定 ---
             titleInput.value = post.title;
             textInput.value = post.text;
 

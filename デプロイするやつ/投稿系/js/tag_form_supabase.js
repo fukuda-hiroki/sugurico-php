@@ -16,16 +16,14 @@ function initializeTags(initialTags = []) {
     const tagContainer = document.getElementById('tag-container');
     if (!tagContainer) return;
 
-    tagContainer.innerHTML = ''; // コンテナをクリア
+    tagContainer.innerHTML = '';
 
     if (initialTags.length > 0) {
         initialTags.forEach(tag => addTagInput(tag));
     }
     
-    // 常に最後に空の入力欄を1つ追加
     addTagInput();
     
-    // イベントリスナーが重複しないように一度だけ設定
     if (!tagContainer.dataset.initialized) {
         setupTagEventListeners();
         tagContainer.dataset.initialized = 'true';
@@ -53,7 +51,6 @@ function setupTagEventListeners() {
             if (allWrappers.length > 1) {
                 event.target.closest('.tag-input-wrapper').remove();
             } else {
-                // 最後の1つの場合は、中身を空にするだけ
                 event.target.closest('.tag-input-wrapper').querySelector('input').value = '';
             }
         }

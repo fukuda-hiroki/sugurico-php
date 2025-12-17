@@ -1,8 +1,6 @@
-// search.js
 
 document.addEventListener('header-loaded', async () => {
 
-    // --- HTML要素の取得 ---
     const searchTitle = document.getElementById('search-title');
     const searchCount = document.getElementById('search-count');
     const postsListContainer = document.getElementById('posts-list-container');
@@ -26,7 +24,6 @@ document.addEventListener('header-loaded', async () => {
      */
     async function initializePage() {
         isPremiumUser = await isCurrentUserPremium();
-        console.log("isPremiumUser is " + isPremiumUser);
 
         setupUIAndForms();
         setupEventListeners();
@@ -63,12 +60,10 @@ document.addEventListener('header-loaded', async () => {
     }
     function setupEventListeners() {
         if (isPremiumUser) {
-            // プレミアム会員なら、詳細検索を開く機能を有効化
-            toggleSearchButton.style.display = 'flex'; // ボタン自体を表示
+            toggleSearchButton.style.display = 'flex'; 
             toggleSearchButton.addEventListener('click', () => {
                 const isHidden = advancedSearchForm.style.display === 'none';
                 advancedSearchForm.style.display = isHidden ? 'block' : 'none';
-                // HTMLに合わせてアイコンとテキストを個別に操作
                 const btnIcon = toggleSearchButton.querySelector('.btn-icon');
                 const btnText = toggleSearchButton.querySelector('.btn-text');
                 if (isHidden) {
@@ -80,31 +75,28 @@ document.addEventListener('header-loaded', async () => {
                 }
             });
         } else {
-            // 通常会員・ログアウト時は、ボタンを非表示
             toggleSearchButton.style.display = 'none';
         }
 
-        // 絞り込みボタンの機能は誰でも使える
         filterButton.addEventListener('click', () => performSearch(1));
     }
     /**
      * ★6. 検索の実行もプレミアム状態で分岐させる
      */
     async function performSearch(page = 1) {
-        postsListContainer.innerHTML = '<p class="loading-text">検索中...</p>'; // CSSに合わせてクラス名を追加
+        postsListContainer.innerHTML = '<p class="loading-text">検索中...</p>'; 
         paginationContainer.innerHTML = '';
 
         try {
             const { data: { user } } = await supabaseClient.auth.getUser();
             const currentUserId = user ? user.id : null;
 
-            // ★★★ パラメータをDB関数に完全に一致させる ★★★
             let searchParams = {
-                current_user_id_param: currentUserId, // ★ ログインユーザーIDを渡す
+                current_user_id_param: currentUserId,
                 keyword_param: keywordInput.value.trim() || '',
                 author_param: '',
                 tag_param: tagInput.value.trim() || '',
-                exclude_tags_param: [], // ★ プレミアム機能
+                exclude_tags_param: [],
                 period_param: 'all',
                 sort_order_param: 'desc',
                 page_param: page,
@@ -144,7 +136,6 @@ document.addEventListener('header-loaded', async () => {
         }
     }
 
-    // (renderPost は変更なし)
     function renderPost(post) {
         let thumbnailHTML = '';
         if (post.forum_images && post.forum_images.length > 0) {
@@ -187,13 +178,10 @@ document.addEventListener('header-loaded', async () => {
          * @param {number} page
          */
         const createPageLink = (page) => {
-            // 毎回、現在のフォームの値からパラメータを再生成する
             const params = new URLSearchParams();
 
-            // 共通の検索条件
             if (keywordInput.value.trim()) params.set('terms', keywordInput.value.trim());
 
-            // プレミアム会員のみの検索条件
             if (isPremiumUser) {
                 if (authorInput.value.trim()) params.set('author', authorInput.value.trim());
                 if (tagInput.value.trim()) params.set('tag', tagInput.value.trim());
@@ -206,13 +194,11 @@ document.addEventListener('header-loaded', async () => {
                 if (sortSelect.value !== 'desc') params.set('sort', sortSelect.value);
             }
 
-            // 最後にページ番号を設定
             params.set('page', page);
 
             return `?${params.toString()}`;
         };
 
-        // --- ページネーションHTMLの生成 (ここから下は変更なし) ---
         if (currentPage > 1) {
             paginationHTML += `<a href="${createPageLink(currentPage - 1)}">« 前へ</a>`;
         }

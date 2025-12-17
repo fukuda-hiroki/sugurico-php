@@ -1,15 +1,13 @@
 'use strict';
 
-// --- ファイルスコープの変数 ---
 const imageInputContainer = document.getElementById('image-input-container');
 const previewContainer = document.getElementById('image-preview-container');
 
 let maxImages = 3;
-let existingImages = []; // {id, url} の配列
-let existingImagesToDelete = []; // 削除対象のID配列
-let newImageObjectUrls = []; // 新規追加画像のプレビュー用URL
+let existingImages = [];
+let existingImagesToDelete = [];
+let newImageObjectUrls = [];
 
-// --- グローバルAPI (post_forum.jsからの窓口) ---
 window.imageManager = {
     init: initialize,
     getImagesToDelete: () => existingImagesToDelete,
@@ -27,12 +25,12 @@ function initialize(isPremium, initialImages = []) {
     if (maxImagesCountSpan) maxImagesCountSpan.textContent = maxImages;
 
     existingImages = initialImages;
-    existingImagesToDelete = []; // 初期化時にリセット
+    existingImagesToDelete = [];
 
     if (imageInputContainer) {
-        imageInputContainer.innerHTML = ''; // 既存のinputを一旦すべて削除
+        imageInputContainer.innerHTML = ''; 
         const availableSlots = maxImages - existingImages.length;
-        const slotsToCreate = Math.max(1, availableSlots); // 最低1つは作る
+        const slotsToCreate = Math.max(1, availableSlots); 
         if (availableSlots > 0) {
             for (let i = 0; i < slotsToCreate; i++) {
                 addFileInput();
@@ -41,30 +39,11 @@ function initialize(isPremium, initialImages = []) {
 
     }
 
-    updateAllPreviews(); // プレビューを初期描画
+    updateAllPreviews();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!imageInputContainer || !previewContainer) return;
-
-    // --- イベントリスナー ---
-    /*addButton.addEventListener('click', () => {
-        const existingImageCount = existingImages.length - existingImagesToDelete.length;
-        const newImageCount = imageInputContainer.querySelectorAll('.image-input').length;
-        if (existingImageCount + newImageCount < maxImages) {
-            addFileInput();
-        } else {
-            alert(`画像は最大${maxImages}枚までです。`);
-        }
-    });
-
-    removeButton.addEventListener('click', () => {
-        const wrappers = imageInputContainer.querySelectorAll('.image-input-wrapper');
-        if (wrappers.length > 1) {
-            wrappers[wrappers.length - 1].remove();
-            updateAllPreviews();
-        }
-    });*/
 
     imageInputContainer.addEventListener('change', (event) => {
         if (event.target.classList.contains('image-input')) {
@@ -103,24 +82,20 @@ document.addEventListener('DOMContentLoaded', () => {
 function addFileInput() {
     if (!imageInputContainer) return;
     
-    // ★ 全体を囲むlabel要素を作成
     const wrapperLabel = document.createElement('label');
     wrapperLabel.className = 'image-input-wrapper custom-file-input';
 
-    // アイコン
     const iconSpan = document.createElement('span');
     iconSpan.className = 'file-icon';
-    iconSpan.textContent = '📁'; // アイコン絵文字
+    iconSpan.textContent = '📁'; 
 
-    // ファイル名表示
     const fileNameSpan = document.createElement('span');
     fileNameSpan.className = 'file-name';
     fileNameSpan.textContent = 'クリックして画像を選択';
 
-    // input本体 (非表示)
     const newInput = document.createElement('input');
     newInput.type = 'file';
-    newInput.className = 'image-input'; // class名は維持
+    newInput.className = 'image-input'; 
     newInput.name = 'images[]';
     newInput.accept = 'image/*';
 
@@ -134,8 +109,7 @@ function addFileInput() {
         }
     });
     
-    // 全ての要素をlabelの中に追加
-    wrapperLabel.appendChild(newInput); // ★ inputを最初に追加
+    wrapperLabel.appendChild(newInput); 
     wrapperLabel.appendChild(iconSpan);
     wrapperLabel.appendChild(fileNameSpan);
 
