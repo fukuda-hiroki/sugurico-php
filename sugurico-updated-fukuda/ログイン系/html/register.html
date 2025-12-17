@@ -38,7 +38,16 @@
                 </div>
                 <div class="form-group">
                     <label for="passwordInput">パスワード</label>
-                    <input type="password" id="passwordInput" required>
+                    <div style="display: flex; ;">
+                        <input type="password" name="password" id="passwordInput" required>
+                        <div id="eye-box" style="display: flex;">
+                            <img src="../../base/eye-solid-full.svg" alt="" class="toggle-eye" style="display: block;"
+                                id="open-eye">
+                            <img src="../../base/eye-slash-solid-full.svg" alt="" class="toggle-eye"
+                                style="display: none;" id="close-eye">
+                        </div>
+                    </div>
+
                 </div>
                 <button type="submit" id="submitButton" class="form-button">登録する</button>
             </form>
