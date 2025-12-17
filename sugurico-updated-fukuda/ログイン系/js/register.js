@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const passwordInput = document.getElementById('passwordInput');
     const submitButton = document.getElementById('submitButton');
     const messageArea = document.getElementById('message-area');
+    const eyeBox = document.getElementById('eye-box');
+    const openEye = document.getElementById('open-eye');
+    const closeEye = document.getElementById('close-eye');
 
     // --- フォーム送信イベントのリスナー ---
     if (signinForm) {
@@ -54,11 +57,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = '../../メイン系/html/index.html';
             }
 
-    // 失敗した場合のみボタンを元に戻す
+            // 失敗した場合のみボタンを元に戻す
             if (error) {
                 submitButton.disabled = false;
                 submitButton.textContent = '登録する';
             }
         });
     }
+    eyeBox.addEventListener('click', () => {
+        console.log('fire');
+        if (closeEye.style.display === 'none') {
+            closeEye.style.display = 'block';
+            openEye.style.display = 'none';
+            passwordInput.type = "text";
+        } else {
+            closeEye.style.display = 'none';
+            openEye.style.display = 'block';
+            passwordInput.type = "password";
+
+        }
+    });
+
 });

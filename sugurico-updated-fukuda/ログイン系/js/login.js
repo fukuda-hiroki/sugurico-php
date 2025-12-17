@@ -14,8 +14,6 @@ const closeEye = document.getElementById('close-eye');
 // --- ページ読み込み時の処理 ---
 document.addEventListener('DOMContentLoaded', () => {
 
-
-
     // URLに ?register_success=1 が付いていたら、登録完了メッセージを表示
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('register_success')) {
@@ -150,7 +148,7 @@ async function checkAndUpdatePremiumStatus(user) {
     }
 }
 
-eyeBox.addEventListener('click',()=>{
+eyeBox.addEventListener('click', () => {
     console.log('fire');
     if (closeEye.style.display === 'none') {
         closeEye.style.display = 'block';
