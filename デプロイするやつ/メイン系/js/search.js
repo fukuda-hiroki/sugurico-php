@@ -103,7 +103,7 @@ document.addEventListener('header-loaded', async () => {
                 current_user_id_param: currentUserId, // ★ ログインユーザーIDを渡す
                 keyword_param: keywordInput.value.trim() || '',
                 author_param: '',
-                tag_param: '',
+                tag_param: tagInput.value.trim() || '',
                 exclude_tags_param: [], // ★ プレミアム機能
                 period_param: 'all',
                 sort_order_param: 'desc',
