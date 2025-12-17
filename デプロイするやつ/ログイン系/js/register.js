@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // 登録成功
                 alert('登録が完了しました。');
-                window.location.href = '../../メイン系/html/index.html';
+                window.location.href = '/index.html';
             }
 
             // 失敗した場合のみボタンを元に戻す
