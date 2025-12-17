@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規登録 | スグリコ</title>
-    <link rel="stylesheet" href="../../base/style.css">
-    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="/base/style.css">
+    <link rel="stylesheet" href="/ログイン系/css/login.css">
 </head>
 
 <body>
@@ -38,16 +38,7 @@
                 </div>
                 <div class="form-group">
                     <label for="passwordInput">パスワード</label>
-                    <div style="display: flex; ;">
-                        <input type="password" name="password" id="passwordInput" required>
-                        <div id="eye-box" style="display: flex;">
-                            <img src="../../base/eye-solid-full.svg" alt="" class="toggle-eye" style="display: block;"
-                                id="open-eye">
-                            <img src="../../base/eye-slash-solid-full.svg" alt="" class="toggle-eye"
-                                style="display: none;" id="close-eye">
-                        </div>
-                    </div>
-
+                    <input type="password" id="passwordInput" required>
                 </div>
                 <button type="submit" id="submitButton" class="form-button">登録する</button>
             </form>
@@ -58,10 +49,10 @@
     <!-- ▼▼▼ ここを完全に置き換える ▼▼▼ -->
 
     <!-- 1. Supabaseの公式ライブラリを読み込む -->
-    <script src="../../base/supabase.js" defer></script>
+    <script src="/base/supabase.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../../base/header.js" defer></script>
-    <script src="../js/register.js"></script>
+    <script src="/base/header.js" defer></script>
+    <script src="/ログイン系/js/register.js"></script>
 
 </body>
 
