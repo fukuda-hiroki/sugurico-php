@@ -52,20 +52,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (postRes.error || !postRes.data) throw new Error('投稿が見つからないか、取得に失敗しました。');
 
         const post = postRes.data;
-
-        try {
-            console.log(`Incrementing view count for post ID: ${forumId}`);
-            const { error: rpcError } = await supabaseClient.rpc('increment_view_count', {
+        const isOwner = currentUser && post.user_id_auth === currentUser.id;
+        if (!isOwner) {
+            supabaseClient.rpc('increment_view_count', {
                 post_id_to_update: forumId
-            });
-            if (rpcError) throw rpcError;
-            console.log("View count incremented successfully.");
-        } catch (error) {
-            console.error("閲覧数の更新中にエラーが発生:", error);
+            }).then(({ error }) => {
+                if (error) console.error('閲覧数の更新中にエラーが発生:', error)
+            })
+        }
+
+        if (currentUser && !isOwner) {
+            supabaseClient
+                .from('history')
+                .upsert({
+                    user_id: currentUser.id,
+                    forum_id: forumId,
+                    last_view_at: new Date().toISOString()
+                }, { onConflict: 'user_id, forum_id' })
+                .then(({error})=>{
+                    if (error) console.error("履歴追加に失敗しました。:",error);
+                })
         }
 
         // --- 4. アクセス制御 ---
-        const isOwner = currentUser && post.user_id_auth === currentUser.id;
+
         if (!isOwner && post.delete_date && new Date(post.delete_date) < new Date()) {
             throw new Error('この投稿の公開期限は終了しました。');
         }
