@@ -211,7 +211,9 @@ main {
 }
 
 /* --- ヘッダーのドロップダウンメニュー --- */
-
+.premium-badge{
+  max-width: 15px;
+}
 .header-nav .dropdown {
   position: relative;
   /* 子要素の位置の基準点にする */

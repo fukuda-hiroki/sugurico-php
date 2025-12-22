@@ -1,7 +1,6 @@
-
 'use strict';
 
-
+let isPremium;
 
 
 /**
@@ -29,9 +28,10 @@ async function setupHeaderAndFooter() {
     if (session && session.user) {
         await checkAndShowPremiumNotification(session.user);
         const userName = session.user.user_metadata?.user_name || 'ゲスト';
+        const premiumIconHTML = isPremium ? '<img src="../../common/circle-check-solid-full.svg" class="premium-badge">' : '';
         navHTML = `
             <div class="dropdown">
-                <a href="#" class="dropdown-toggle">${escapeHTML(userName)}さん ▼</a>
+                <a href="#" class="dropdown-toggle">${escapeHTML(userName)}さん ${premiumIconHTML}▼</a>
                 <div class="dropdown-menu">
                     <a href="/auth/html/mypage.html">マイページ</a>
                     <a href="/auth/html/update.html">登録情報を変更する</a>
@@ -106,7 +106,7 @@ async function setupHeaderAndFooter() {
 
     }
 
-        const event = new CustomEvent('header-loaded');
+    const event = new CustomEvent('header-loaded');
     document.dispatchEvent(event);
 
 }
@@ -121,7 +121,7 @@ async function checkAndShowPremiumNotification(user) {
         if (error || !premium || premium.status !== 'active') {
             return;
         }
-
+        isPremium = true;
         const limitDate = new Date(premium.limit_date);
         const now = new Date();
         const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -179,8 +179,8 @@ async function isCurrentUserPremium() {
         return false;
     }
 
-    const isActive = premium.status === 'active'; 
-    const isNotExpired = new Date(premium.limit_date) > new Date(); 
+    const isActive = premium.status === 'active';
+    const isNotExpired = new Date(premium.limit_date) > new Date();
     return isActive || isNotExpired;
 
 }

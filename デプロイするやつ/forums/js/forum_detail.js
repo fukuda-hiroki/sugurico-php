@@ -35,16 +35,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const [postRes, tagsRes, imagesRes, commentsRes] = await Promise.all([
-            supabaseClient.from('forums').select('*, users!forums_user_id_auth_fkey(user_name)').eq('forum_id', forumId).single(),
+            supabaseClient.from('forums').select('*, users!forums_user_id_auth_fkey(user_name, premium_flag)').eq('forum_id', forumId).single(),
             supabaseClient.from('tag').select('tag_dic(tag_name)').eq('forum_id', forumId),
             supabaseClient.from('forum_images').select('image_url').eq('post_id', forumId).order('display_order'),
-            supabaseClient.from('comments').select('*, users!comments_user_id_auth_fkey(user_name)').eq('forum_id', forumId).order('created_at', { ascending: false })
+            supabaseClient.from('comments').select('*, users!comments_user_id_auth_fkey(user_name, premium_flag)').eq('forum_id', forumId).order('created_at', { ascending: false })
         ]);
 
         if (postRes.error || !postRes.data) throw new Error('投稿が見つからないか、取得に失敗しました。');
 
         const post = postRes.data;
-        
+
         const isOwner = currentUser && post.user_id_auth === currentUser.id;
 
         if (!isOwner) {
@@ -99,7 +99,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tagsHTML = tags.map(tag => `<a href="/pages/html/search.html?terms=${encodeURIComponent(tag.tag_dic.tag_name)}&type=tag" class="tag-link">#${escapeHTML(tag.tag_dic.tag_name)}</a>`).join(' ');
         const imagesHTML = images.map(image => `<div class="post-image-wrapper"><img src="${image.image_url}" alt="投稿画像" class="post-image"></div>`).join('');
 
-        let authorHTML = escapeHTML(post.users?.user_name || '不明');
+        const premiumIconHTML = post.users?.premium_flag === true ? '<img src="../../common/circle-check-solid-full.svg" class="premium-badge">' : '';
+        let authorName = escapeHTML(post.users?.user_name || '不明');
+        let authorHTML = `${authorName} ${premiumIconHTML}`;
+
         if (!currentUser) {
             authorHTML = `<a href="user_posts.html?id=${post.user_id_auth}">${authorHTML}</a>`;
         } else if (post.user_id_auth !== currentUser.id) {
@@ -196,16 +199,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function renderComments(comments) {
         if (comments && comments.length > 0) {
-            commentListContainer.innerHTML = comments.map(comment => `
+            commentListContainer.innerHTML = comments.map(comment => {
+                const premiumIconHTML = comment.users?.premium_flag === true ? '<img src="../../common/circle-check-solid-full.svg" class="premium-badge">' : '';
+
+                const userNameWithBadge = `${escapeHTML(comment.users?.user_name || '不明')} ${premiumIconHTML}`;
+                return `
                 <div class="comment-item">
-                    <strong>${escapeHTML(comment.users?.user_name || '不明')}:</strong>
+                    <strong>${userNameWithBadge}:</strong>
                     <p>${nl2br(comment.comment_text)}</p>
                     <small>${timeAgo(comment.created_at)}</small>
-                </div>`).join('');
+                </div>`}).join('');
         } else {
             commentListContainer.innerHTML = "<p>まだコメントはありません。</p>";
         }
     }
+
 
     async function handleDeletePost(forumIdToDelete) {
         if (!confirm('この投稿を本当に削除しますか？\nこの操作は元に戻せません。')) return;
