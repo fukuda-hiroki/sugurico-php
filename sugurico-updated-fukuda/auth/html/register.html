@@ -1,0 +1,68 @@
+<!-- register.html -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規登録 | スグリコ</title>
+    <link rel="stylesheet" href="../../common/style.css">
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header id="header-container"></header>
+    <div class="main-wrapper">
+        <main class="form-container">
+            <h1>新規登録</h1>
+
+            <div id="message-area" class="message" style.display: none;"></div>
+
+            <form id="signin-form">
+                <div class="form-group">
+                    <label for="nameInput">名前</label>
+                    <input type="text" id="nameInput" required>
+                </div>
+                <div class="form-group">
+                    <label for="usernameInput">ユーザー名</label>
+                    <input type="text" id="usernameInput" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginIdInput">ログインID</label>
+                    <input type="text" id="loginIdInput" required>
+                </div>
+                <div class="form-group">
+                    <label for="emailInput">メールアドレス</label>
+                    <input type="email" id="emailInput" required>
+                </div>
+                <div class="form-group">
+                    <label for="passwordInput">パスワード</label>
+                    <div style="display: flex; ;">
+                        <input type="password" name="password" id="passwordInput" required>
+                        <div id="eye-box" style="display: flex;">
+                            <img src="../../common/eye-solid-full.svg" alt="" class="toggle-eye" style="display: block;"
+                                id="open-eye">
+                            <img src="../../common/eye-slash-solid-full.svg" alt="" class="toggle-eye"
+                                style="display: none;" id="close-eye">
+                        </div>
+                    </div>
+
+                </div>
+                <button type="submit" id="submitButton" class="form-button">登録する</button>
+            </form>
+        </main>
+    </div>
+    <!-- 共通フッター -->
+    <footer id="footer-container"></footer>
+    <!-- ▼▼▼ ここを完全に置き換える ▼▼▼ -->
+
+    <!-- 1. Supabaseの公式ライブラリを読み込む -->
+    <script src="../../common/supabase.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../common/header.js" defer></script>
+    <script src="../js/register.js"></script>
+
+</body>
+
+</html>

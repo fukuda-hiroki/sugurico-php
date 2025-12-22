@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ブックマーク一覧 | スグリコ</title>
+    <link rel="stylesheet" href="/common/style.css">
+    <link rel="stylesheet" href="/auth/css/mypage.css">
+</head>
+
+<body>
+    <header id="header-container"></header>
+    <div class="main-wrapper">
+        <main>
+            <h1>あなたのブックマーク一覧</h1>
+            <p>あなたがブックマークした一覧です</p>
+            <hr>
+
+            <div id="bookmarks-list" class="post-list">
+                <p>読み込み中…</p>
+            </div>
+            <nav id="pagination-container" class="pagination"></nav>
+        </main>
+    </div>
+
+    <footer id="footer-container"></footer>
+
+    <script src="/common/supabase.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/common/header.js" defer></script>
+    <script src="/common/util.js"></script>
+    <script src="/common/escape.js"></script>
+    <script src="/auth/js/bookmarks.js"></script>
+</body>
+
+</html>

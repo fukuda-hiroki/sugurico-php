@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>検索結果 | スグリコ</title>
+    <link rel="stylesheet" href="../../common/style.css">
+    <link rel="stylesheet" href="../css/search.css">
+</head>
+
+<body>
+    <!-- 共通ヘッダー -->
+    <header id="header-container"></header>
+    <div class="main-wrapper">
+        <main class="search-main">
+            <!-- 検索タイトルとトグルボタン -->
+            <div class="search-header">
+                <h1 id="search-title">検索結果</h1>
+                <button type="button" id="toggle-search-button" class="toggle-search-btn" aria-label="詳細検索を開く">
+                    <span class="btn-icon">🔍</span>
+                    <span class="btn-text">詳細検索</span>
+                </button>
+            </div>
+
+            <!-- 詳細検索フォーム -->
+            <div id="advanced-search-form" class="advanced-search-container" style="display: none;">
+                <div class="search-grid">
+                    <!-- キーワード入力 -->
+                    <div class="search-field">
+                        <label for="keyword-input">
+                            <span class="label-icon">📝</span>
+                            キーワード
+                        </label>
+                        <input type="text" id="keyword-input" placeholder="タイトルか本文で検索">
+                    </div>
+
+                    <!-- 投稿者名 -->
+                    <div class="search-field">
+                        <label for="author-input">
+                            <span class="label-icon">👤</span>
+                            投稿者名
+                        </label>
+                        <input type="text" id="author-input" placeholder="ユーザー名で絞り込み">
+                    </div>
+
+                    <!-- タグ名 -->
+                    <div class="search-field">
+                        <label for="tag-input">
+                            <span class="label-icon">🏷️</span>
+                            タグ
+                        </label>
+                        <input type="text" id="tag-input" placeholder="タグ名で絞り込み">
+                    </div>
+
+                    <!-- 投稿期間 -->
+                    <div class="search-field">
+                        <label for="period-select">
+                            <span class="label-icon">📅</span>
+                            投稿期間
+                        </label>
+                        <select id="period-select">
+                            <option value="all">指定なし</option>
+                            <option value="1day">1日以内</option>
+                            <option value="3days">3日以内</option>
+                            <option value="1week">1週間以内</option>
+                            <option value="1month">1ヶ月以内</option>
+                            <option value="1year">1年以内</option>
+                        </select>
+                    </div>
+                    <div class="search-item">
+                        <label for="exclude-tag-input">除外するタグ:</label>
+                        <input type="text" id="exclude-tag-input" placeholder="例: ニュース, 政治">
+                        <small>複数指定する場合はカンマ(,)で区切ってください。</small>
+                    </div>
+
+                    <!-- 並び順 -->
+                    <div class="search-field">
+                        <label for="sort-select">
+                            <span class="label-icon">⬇️</span>
+                            並び順
+                        </label>
+                        <select id="sort-select">
+                            <option value="desc">新しい順</option>
+                            <option value="asc">古い順</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 絞り込みボタン -->
+                <div class="search-actions">
+                    <button type="button" id="filter-button" class="filter-btn">
+                        <span class="btn-icon">🔍</span>
+                        絞り込み検索
+                    </button>
+                </div>
+            </div>
+
+            <!-- 検索結果件数 -->
+            <p id="search-count" class="search-count"></p>
+
+            <!-- 投稿一覧 -->
+            <section id="posts-list-container" class="post-list">
+                <p class="loading-text">検索中...</p>
+            </section>
+
+            <!-- ページネーション -->
+            <nav id="pagination-container" class="pagination" aria-label="ページネーション"></nav>
+        </main>
+    </div>
+
+    <!-- 共通フッター -->
+    <footer id="footer-container"></footer>
+
+    <!-- JSライブラリと、このページ専用のJS -->
+     <script src="../../common/supabase.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../common/util.js"></script>
+    <script src="../../common/header.js"defer></script>
+    <script src="../../common/escape.js"></script>
+    <script src="../js/search.js"></script>
+</body>
+
+</html>

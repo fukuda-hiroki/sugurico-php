@@ -5,11 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>スグリコ - メインページ</title>
-    <link rel="stylesheet" href="/common/style.css">
-    <link rel="stylesheet" href="/pages/css/index.css">
+    <link rel="stylesheet" href="../../common/style.css">
+    <link rel="stylesheet" href="../css/index.css">
 </head>
 
 <body>
+    <!-- ヘッダー -->
     <header id="header-container"></header>
     <div class="main-wrapper">
         <main class="main-container">
@@ -19,39 +20,46 @@
             </div>
 
             <div class="posts-container">
+                <!-- あなたの投稿エリア（ログイン時のみ表示） -->
                 <section id="my-posts-section" class="posts-column" style="display: none;">
                     <div class="section-header">
                         <h2 class="section-title">あなたの投稿</h2>
                         <span class="section-icon">📝</span>
                     </div>
                     <div id="my-posts-list" class="post-list">
+                        <!-- JSでここに投稿が挿入される -->
                     </div>
                 </section>
 
+                <!-- 皆さんの投稿エリア -->
                 <section id="all-posts-section" class="posts-column">
                     <div class="section-header">
                         <h2 class="section-title">皆さんの投稿</h2>
                         <span class="section-icon">🌐</span>
                     </div>
                     <div id="all-posts-list" class="post-list">
+                        <!-- JSでここに投稿が挿入される -->
                     </div>
                 </section>
             </div>
         </main>
     </div>
-    <a href="/forums/html/forum_input.html" id="new-post-button" class="floating-button" style="display: none;"
+    <!-- 新規投稿ボタン（ログイン時のみ表示） -->
+    <a href="../../forums/html/forum_input.html" id="new-post-button" class="floating-button" style="display: none;"
         aria-label="新規投稿">
         <span class="button-icon">+</span>
     </a>
 
+    <!-- フッター -->
     <footer id="footer-container"></footer>
 
-    <script src="/common/supabase.js" defer></script>
+    <!-- スクリプト読み込み -->
+    <script src="../../common/supabase.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/common/escape.js" defer></script>
-    <script src="/common/util.js"></script>
-    <script src="/common/header.js" defer></script>
-    <script src="/pages/js/main.js"></script>
+    <script src="../../common/escape.js" defer></script>
+    <script src="../../common/util.js"></script>
+    <script src="../../common/header.js"defer></script>
+    <script src="../js/main.js"></script>
 </body>
 
 </html>

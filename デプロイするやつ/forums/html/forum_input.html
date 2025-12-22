@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規投稿 | スグリコ</title>
+    <link rel="stylesheet" href="/common/style.css">
+    <link rel="stylesheet" href="/forums/css/forum_input.css">
+</head>
+
+<body>
+    <header id="header-container"></header>
+    <div class="main-wrapper">
+        <main class="form-container">
+            <h1>新しい記録を投稿</h1>
+            <form id="post-form">
+                <div class="form-group">
+                    <label for="titleInput">タイトル</label>
+                    <input type="text" id="titleInput" required>
+                </div>
+                <div class="form-group">
+                    <label for="textInput">本文</label>
+                    <textarea id="textInput" rows="10"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="expireSelect">公開期限</label>
+                    <small id="current-expiration-info" style="display: none; color: gray;"></small>
+                    <select id="expireSelect">
+                        <option value="private">非公開</option>
+                        <option value="1day">1日後</option>
+                        <option value="2days">2日後</option>
+                        <option value="3days">3日後</option>
+                        <option value="4days">4日後</option>
+                        <option value="5days">5日後</option>
+                        <option value="6days">6日後</option>
+                        <option value="7days">7日後</option>
+                        <option value="permanent" selected>無期限</option>
+                    </select>
+
+                    <div id="premium-expire-input-area" style="display: none;">
+                        <input type="datetime-local" id="premiumExpireInput"><label for="isPrivateCheckbox">非公開にする<input
+                                type="checkbox" id="isPrivateCheckbox"></label>
+
+                    </div>
+                    <p style="font-size: 0.8em; color: gray; margin-top: 5px;">
+                        分単位で日時を指定できます。空欄の場合は「無期限」になります。
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label>画像 (最大<span id="max-images-count">3</span>枚まで)</label>
+
+                    <div id="image-input-container">
+                        <div class="image-input-wrapper">
+                            <input type="file" name="images[]" class="image-input" accept="image/*">
+                        </div>
+                    </div>
+                    <div id="image-preview-container"></div>
+                </div>
+
+
+                <div class="form-group">
+                    <label>タグ (最大10個まで)</label>
+                    <div id="tag-container" class="modern-tag-container">
+                    </div>
+                </div>
+                <button type="submit" id="submitButton" class="submit-button">投稿する</button>
+            </form>
+        </main>
+    </div>
+    <footer id="footer-container"></footer>
+    <script src="/common/supabase.js" defer></script>
+    <script src="/common/escape.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/common/header.js" defer></script>
+    <script src="/forums/js/image_preview.js" defer></script>
+    <script src="/forums/js/tag_form_supabase.js" defer></script>
+    <script src="/forums/js/post_forum.js"></script>
+</body>
+
+</html>
